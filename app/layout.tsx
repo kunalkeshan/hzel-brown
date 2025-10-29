@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Libre_Baskerville, Lora, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
+import { SITE_CONFIG } from "@/config/site";
 
 const sans = Libre_Baskerville({
   variable: "--font-sans",
@@ -21,6 +22,7 @@ const mono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_CONFIG.URL),
   formatDetection: {
     address: false,
   },
