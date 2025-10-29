@@ -23,10 +23,6 @@ export const navigationItems: NavigationItem[] = [
     href: "/menu",
   },
   {
-    label: "Shop",
-    href: "/shop",
-  },
-  {
     label: "Contact",
     href: "/contact",
   },
@@ -123,7 +119,7 @@ export interface FooterSection {
 
 export const footerSections: FooterSection[] = [
   {
-    title: "Get In Touch",
+    title: "Order now",
     type: "contact",
     // Contact data is now dynamically loaded from Sanity CMS
   },
@@ -134,7 +130,6 @@ export const footerSections: FooterSection[] = [
       { label: "Home", href: "/" },
       { label: "About Us", href: "/about" },
       { label: "Menu", href: "/menu" },
-      { label: "Shop", href: "/shop" },
     ],
   },
   {

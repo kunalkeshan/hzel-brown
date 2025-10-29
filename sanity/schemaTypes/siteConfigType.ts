@@ -218,6 +218,20 @@ export const siteConfigType = defineType({
         "Add your social media profiles. Only platforms with URLs will be displayed.",
     },
     {
+      name: "menuCategories",
+      title: "Menu Categories",
+      type: "array",
+      group: "content",
+      of: [
+        {
+          type: "reference",
+          to: [{ type: "menuCategory" }],
+        },
+      ],
+      description:
+        "Select and order menu categories to be displayed in site pages. Only categories added in this list will appear on site pages.",
+    },
+    {
       name: "footerLegalLinks",
       title: "Footer Legal Links",
       type: "array",

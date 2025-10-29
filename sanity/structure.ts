@@ -12,24 +12,13 @@ export const structure: StructureResolver = (S) =>
       S.listItem()
         .title("FAQs")
         .child(S.document().schemaType("faqs").documentId("faqs")),
-      S.divider(),
-      // S.documentTypeListItem("city").title("Destinations"),
+      S.documentTypeListItem("menuCategory").title("Menu Categories"),
       S.divider(),
       ...S.documentTypeListItems().filter(
         (item) =>
           item.getId() &&
-          ![
-            // "city",
-            // "country",
-            // "state",
-            // "attraction",
-            // "attractionCategory",
-            // "hotel",
-            // "tourPackage",
-            // "packageCategory",
-            "faqs",
-            "siteConfig",
-            "legal",
-          ].includes(item.getId()!)
+          !["faqs", "siteConfig", "legal", "menuCategory"].includes(
+            item.getId()!
+          )
       ),
     ]);
