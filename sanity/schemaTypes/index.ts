@@ -4,6 +4,7 @@ import { blockContentType } from "./blockContentType";
 import { faqsType } from "./faqsType";
 import { legalType } from "./legalType";
 import { menuCategoryType } from "./menuCategoryType";
+import { menuItemType } from "./menuItemType";
 import { siteConfigType } from "./siteConfigType";
 
 export const schema: { types: SchemaTypeDefinition[] } = {
@@ -12,6 +13,7 @@ export const schema: { types: SchemaTypeDefinition[] } = {
     faqsType,
     legalType,
     menuCategoryType,
+    menuItemType,
     siteConfigType,
   ],
 };

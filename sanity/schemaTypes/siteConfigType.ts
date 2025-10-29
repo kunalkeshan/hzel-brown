@@ -232,6 +232,20 @@ export const siteConfigType = defineType({
         "Select and order menu categories to be displayed in site pages. Only categories added in this list will appear on site pages.",
     },
     {
+      name: "featuredMenuItems",
+      title: "Featured Menu Items",
+      type: "array",
+      group: "content",
+      of: [
+        {
+          type: "reference",
+          to: [{ type: "menuItem" }],
+        },
+      ],
+      description:
+        "Select and order featured menu items to be highlighted across the site. These items will be prominently displayed on homepage and other key pages.",
+    },
+    {
       name: "footerLegalLinks",
       title: "Footer Legal Links",
       type: "array",

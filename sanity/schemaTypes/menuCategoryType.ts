@@ -16,6 +16,10 @@ export const menuCategoryType = defineType({
       name: "media",
       title: "Media & Images",
     },
+    {
+      name: "related",
+      title: "Related Items",
+    },
   ],
   fields: [
     defineField({
@@ -57,15 +61,41 @@ export const menuCategoryType = defineType({
         }),
       ],
     }),
+    defineField({
+      name: "featuredItems",
+      title: "Featured Menu Items",
+      type: "array",
+      group: "related",
+      of: [
+        {
+          type: "reference",
+          to: [{ type: "menuItem" }],
+          options: {
+            filter: ({ document }) => {
+              // Only show menu items that belong to this category
+              if (!document._id) return {};
+              return {
+                filter: "references($categoryId) in categories[]._ref",
+                params: { categoryId: document._id },
+              };
+            },
+          },
+        },
+      ],
+      description:
+        "Select featured items for this category (optional - items are automatically linked when their category field is set)",
+    }),
   ],
   preview: {
     select: {
       title: "title",
       media: "thumbnail",
+      description: "description",
     },
-    prepare({ title, media }) {
+    prepare({ title, media, description }) {
       return {
         title,
+        subtitle: description || "Menu Category",
         media,
       };
     },
