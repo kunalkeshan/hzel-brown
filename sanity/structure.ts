@@ -1,15 +1,35 @@
-import type {StructureResolver} from 'sanity/structure'
+import type { StructureResolver } from "sanity/structure";
 
 // https://www.sanity.io/docs/structure-builder-cheat-sheet
 export const structure: StructureResolver = (S) =>
   S.list()
-    .title('Blog')
+    .title("Hezl Brown")
     .items([
-      S.documentTypeListItem('post').title('Posts'),
-      S.documentTypeListItem('category').title('Categories'),
-      S.documentTypeListItem('author').title('Authors'),
+      S.listItem()
+        .title("Site Configuration")
+        .child(S.document().schemaType("siteConfig").documentId("siteConfig")),
+      S.documentTypeListItem("legal").title("Legal Documents"),
+      S.listItem()
+        .title("FAQs")
+        .child(S.document().schemaType("faqs").documentId("faqs")),
+      S.divider(),
+      // S.documentTypeListItem("city").title("Destinations"),
       S.divider(),
       ...S.documentTypeListItems().filter(
-        (item) => item.getId() && !['post', 'category', 'author'].includes(item.getId()!),
+        (item) =>
+          item.getId() &&
+          ![
+            // "city",
+            // "country",
+            // "state",
+            // "attraction",
+            // "attractionCategory",
+            // "hotel",
+            // "tourPackage",
+            // "packageCategory",
+            "faqs",
+            "siteConfig",
+            "legal",
+          ].includes(item.getId()!)
       ),
-    ])
+    ]);
