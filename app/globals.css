@@ -182,3 +182,19 @@
     @apply bg-background text-foreground;
   }
 }
+
+@utility container {
+  margin-inline: auto;
+  max-width: 80rem;
+  padding-inline: 1rem;
+}
+@media (min-width: 640px) {
+  .container {
+    padding-inline: 1.5rem;
+  }
+}
+@media (min-width: 1024px) {
+  .container {
+    padding-inline: 2rem;
+  }
+}
