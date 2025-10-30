@@ -28,7 +28,7 @@ export function Hero({ heroImages = [] }: HeroProps) {
     })
     .filter((image) => image.src); // Filter out images without valid assets
   return (
-    <MotionSection className="relative isolate min-h-screen overflow-hidden">
+    <MotionSection className="relative isolate overflow-hidden flex items-center justify-center py-16 lg:pt-40">
       {/* Decorative SVG Background */}
       <svg
         aria-hidden="true"
@@ -74,106 +74,104 @@ export function Hero({ heroImages = [] }: HeroProps) {
         />
       </div>
 
-      <div className="overflow-hidden flex items-center justify-center min-h-screen py-16">
-        <div className="container">
-          <div className="mx-auto max-w-2xl gap-x-8 lg:mx-0 lg:flex lg:max-w-none lg:items-center">
-            {/* Text Content */}
-            <div className="relative w-full lg:max-w-xl lg:shrink-0 xl:max-w-2xl">
-              <h1 className="text-pretty text-5xl font-semibold tracking-tight text-foreground sm:text-7xl">
-                Authentic flavors, crafted with love
-              </h1>
-              <p className="mt-8 text-pretty text-lg font-medium text-muted-foreground sm:max-w-md sm:text-xl/8 lg:max-w-none">
-                Artisan dessert shop curating handcrafted brownies, brookies,
-                cupcakes and cookies, freshly baked with love. Order now,
-                delivery across Tamil Nadu.
-              </p>
-              <div className="mt-10 flex items-center gap-x-6">
-                <Button asChild size="lg">
-                  <Link href="/contact">Order Now</Link>
-                </Button>
-                <Button asChild variant="ghost" size="lg">
-                  <Link
-                    href="/menu"
-                    className="text-sm/6 font-semibold text-foreground"
-                  >
-                    View Menu <span aria-hidden="true">→</span>
-                  </Link>
-                </Button>
-              </div>
+      <div className="container">
+        <div className="mx-auto max-w-2xl gap-x-8 lg:mx-0 lg:flex lg:max-w-none lg:items-center">
+          {/* Text Content */}
+          <div className="relative w-full lg:max-w-xl lg:shrink-0 xl:max-w-2xl">
+            <h1 className="text-pretty text-5xl font-semibold tracking-tight text-foreground sm:text-7xl">
+              Authentic flavors, crafted with love
+            </h1>
+            <p className="mt-8 text-pretty text-lg font-medium text-muted-foreground sm:max-w-md sm:text-xl/8 lg:max-w-none">
+              Artisan dessert shop curating handcrafted brownies, brookies,
+              cupcakes and cookies, freshly baked with love. Order now, delivery
+              across Tamil Nadu.
+            </p>
+            <div className="mt-10 flex items-center gap-x-6">
+              <Button asChild size="lg">
+                <Link href="/contact">Order Now</Link>
+              </Button>
+              <Button asChild variant="ghost" size="lg">
+                <Link
+                  href="/menu"
+                  className="text-sm/6 font-semibold text-foreground"
+                >
+                  View Menu <span aria-hidden="true">→</span>
+                </Link>
+              </Button>
+            </div>
+          </div>
+
+          {/* Image Gallery - Two Column Layout */}
+          <div className="mt-12 lg:mt-0 lg:flex-1 lg:max-w-lg lg:ml-12">
+            {/* Mobile: Simple Grid */}
+            <div className="grid grid-cols-2 gap-4 lg:hidden">
+              {processedImages.slice(0, 4).map((image, index) => (
+                <Image
+                  key={index}
+                  alt={image.alt}
+                  src={image.src}
+                  width={200}
+                  height={200}
+                  className={cn(
+                    "w-full aspect-square object-cover rounded-md",
+                    {
+                      "rounded-tl-4xl": index === 0,
+                      "rounded-tr-4xl": index === 1,
+                      "rounded-bl-4xl": index === 2,
+                      "rounded-br-4xl": index === 3,
+                    }
+                  )}
+                  sizes="(max-width: 768px) 150px, 200px"
+                  priority={index < 2}
+                />
+              ))}
             </div>
 
-            {/* Image Gallery - Two Column Layout */}
-            <div className="mt-12 lg:mt-0 lg:flex-1 lg:max-w-lg lg:ml-12">
-              {/* Mobile: Simple Grid */}
-              <div className="grid grid-cols-2 gap-4 lg:hidden">
-                {processedImages.slice(0, 4).map((image, index) => (
+            {/* Desktop: Two Column Layout */}
+            <div
+              className={cn("hidden lg:flex justify-start items-start gap-8")}
+            >
+              <div
+                className={cn(
+                  "flex-col justify-start items-start gap-8 inline-flex"
+                )}
+              >
+                {processedImages.slice(0, 2).map((image, index) => (
                   <Image
                     key={index}
                     alt={image.alt}
                     src={image.src}
-                    width={200}
-                    height={200}
-                    className={cn(
-                      "w-full aspect-square object-cover rounded-md",
-                      {
-                        "rounded-tl-4xl": index === 0,
-                        "rounded-tr-4xl": index === 1,
-                        "rounded-bl-4xl": index === 2,
-                        "rounded-br-4xl": index === 3,
-                      }
-                    )}
-                    sizes="(max-width: 768px) 150px, 200px"
-                    priority={index < 2}
+                    width={280}
+                    height={280}
+                    className={cn("object-cover aspect-square rounded-md", {
+                      "rounded-tl-4xl": index === 0,
+                      "rounded-bl-4xl": index === 1,
+                    })}
+                    sizes="280px"
+                    priority={index === 0}
                   />
                 ))}
               </div>
-
-              {/* Desktop: Two Column Layout */}
               <div
-                className={cn("hidden lg:flex justify-start items-start gap-8")}
+                className={cn(
+                  "flex-col justify-start items-start gap-8 inline-flex"
+                )}
               >
-                <div
-                  className={cn(
-                    "flex-col justify-start items-start gap-8 inline-flex"
-                  )}
-                >
-                  {processedImages.slice(0, 2).map((image, index) => (
-                    <Image
-                      key={index}
-                      alt={image.alt}
-                      src={image.src}
-                      width={280}
-                      height={280}
-                      className={cn("object-cover aspect-square rounded-md", {
-                        "rounded-tl-4xl": index === 0,
-                        "rounded-bl-4xl": index === 1,
-                      })}
-                      sizes="280px"
-                      priority={index === 0}
-                    />
-                  ))}
-                </div>
-                <div
-                  className={cn(
-                    "flex-col justify-start items-start gap-8 inline-flex"
-                  )}
-                >
-                  {processedImages.slice(2, 4).map((image, index) => (
-                    <Image
-                      key={index + 2}
-                      alt={image.alt}
-                      src={image.src}
-                      width={280}
-                      height={280}
-                      className={cn("object-cover aspect-square rounded-md", {
-                        "rounded-tr-4xl": index === 0,
-                        "rounded-br-4xl": index === 1,
-                      })}
-                      sizes="280px"
-                      priority={false}
-                    />
-                  ))}
-                </div>
+                {processedImages.slice(2, 4).map((image, index) => (
+                  <Image
+                    key={index + 2}
+                    alt={image.alt}
+                    src={image.src}
+                    width={280}
+                    height={280}
+                    className={cn("object-cover aspect-square rounded-md", {
+                      "rounded-tr-4xl": index === 0,
+                      "rounded-br-4xl": index === 1,
+                    })}
+                    sizes="280px"
+                    priority={false}
+                  />
+                ))}
               </div>
             </div>
           </div>
