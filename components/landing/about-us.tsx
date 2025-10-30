@@ -23,12 +23,12 @@ export function AboutUs() {
     <MotionSection className="py-16 lg:py-24 border-t border-border">
       <div className="container">
         <div className="grid lg:grid-cols-12 gap-20">
-          <div className="col-span-full lg:col-span-8 my-auto">
+          <div className="col-span-full lg:col-span-8 my-auto flex flex-col gap-3">
             <p className="px-2 border border-primary/30 rounded-full bg-primary/10 text-xs font-medium leading-6 text-primary mb-2 w-fit mx-auto lg:mx-0">
               Why choose us?
             </p>
 
-            <h2 className="font-serif text-4xl text-foreground font-bold mb-5 text-center lg:text-start">
+            <h2 className="font-serif text-4xl text-foreground font-bold text-center lg:text-start">
               At Homemade Brownies, every batch is crafted with care and
               attention
             </h2>
@@ -40,7 +40,7 @@ export function AboutUs() {
               are made to bring joy to every occasion.
             </p>
 
-            <div className="mt-8 w-full">
+            <div className="w-full">
               <Button asChild size="lg" className="group w-full lg:w-max">
                 <Link href="/contact" className="flex items-center gap-2">
                   Order Now
