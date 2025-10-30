@@ -33,9 +33,9 @@ export function Stats() {
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-14">
           {/* Text Content */}
           <div className="flex flex-col gap-3">
-            <h3 className="text-base font-normal leading-6 text-primary mb-2 text-center xl:text-start">
-              Why Choose Us
-            </h3>
+            <p className="px-2 border border-primary/30 rounded-full bg-primary/10 text-xs font-medium leading-6 text-primary mb-2 w-fit mx-auto xl:mx-0">
+              Our Promise
+            </p>
             <h2 className="text-4xl font-bold text-foreground font-serif text-center xl:text-start">
               Sweet Deals & Premium Service
             </h2>
@@ -54,7 +54,7 @@ export function Stats() {
                   key={index}
                   className="hover:-translate-y-1 transition-all duration-300"
                 >
-                  <CardContent className="flex flex-col gap-6 p-5">
+                  <CardContent className="flex flex-col gap-6 p-5 items-center lg:items-start">
                     <div className="flex justify-start">
                       <IconComponent
                         className="h-10 w-10 text-primary"
