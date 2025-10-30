@@ -42,8 +42,8 @@ export function AboutUs() {
 
             <div className="w-full">
               <Button asChild size="lg" className="group w-full lg:w-max">
-                <Link href="/contact" className="flex items-center gap-2">
-                  Order Now
+                <Link href="/about" className="flex items-center gap-2">
+                  About Us
                   <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
                 </Link>
               </Button>

@@ -1,11 +1,12 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "motion/react";
 import { ChevronDown, ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Logo } from "@/components/ui/logo";
 import { MobileNav } from "./mobile-nav";
 import { navigationItems } from "@/constants/navigation";
@@ -223,10 +224,13 @@ export function Navbar() {
             <div className="flex lg:items-center w-full justify-start flex-col lg:flex-row gap-4 lg:w-max max-lg:gap-4 lg:ml-14 lg:justify-end">
               <Link
                 href="/cart"
-                className="text-muted-foreground hover:text-primary transition-colors"
+                className="text-muted-foreground hover:text-primary transition-colors relative"
               >
                 <ShoppingCart className="w-6 h-6 shrink-0" />
-                <span className="sr-only">Shopping Cart</span>
+                <Badge className="absolute -top-2 -right-2 h-5 w-5 p-0 text-xs bg-primary text-primary-foreground">
+                  3
+                </Badge>
+                <span className="sr-only">Shopping Cart (3 items)</span>
               </Link>
               <Button asChild>
                 <Link href="/contact" prefetch={false}>

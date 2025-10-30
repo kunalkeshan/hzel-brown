@@ -33,6 +33,25 @@ export const SITE_CONFIG_QUERY = defineQuery(`
       url,
       label
     },
+    featuredMenuItems[]-> {
+      _id,
+      name,
+      slug,
+      description,
+      price,
+      isAvailable,
+      categories[]-> {
+        _id,
+        title,
+        slug
+      },
+      image {
+        asset->,
+        alt,
+        hotspot,
+        crop
+      }
+    },
     heroImages[] {
       asset->,
       alt,

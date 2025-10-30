@@ -4,6 +4,7 @@ import React, { useRef } from "react";
 import Link from "next/link";
 import { motion } from "motion/react";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import {
   Sheet,
   SheetClose,
@@ -42,9 +43,15 @@ export function MobileNav() {
 
   return (
     <div className="flex items-center gap-2 lg:hidden">
-      <Link href="/cart" className="text-muted-foreground hover:text-primary transition-colors p-2">
+      <Link
+        href="/cart"
+        className="text-muted-foreground hover:text-primary transition-colors p-2 relative"
+      >
         <ShoppingCart className="w-6 h-6" />
-        <span className="sr-only">Shopping Cart</span>
+        <Badge className="absolute -top-1 -right-1 h-5 w-5 p-0 text-xs bg-primary text-primary-foreground">
+          3
+        </Badge>
+        <span className="sr-only">Shopping Cart (3 items)</span>
       </Link>
       <Sheet>
         <SheetTrigger asChild>
