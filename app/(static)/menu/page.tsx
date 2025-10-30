@@ -52,7 +52,7 @@ export default async function MenuItemsPage() {
 
 function MenuPageSkeleton() {
   return (
-    <div className="pt-12 lg:grid lg:grid-cols-3 lg:gap-x-8 xl:grid-cols-4">
+    <div className="pt-12 lg:grid lg:grid-cols-3 lg:gap-x-8 xl:grid-cols-4 container">
       <aside className="space-y-8">
         <div className="space-y-4">
           <Skeleton className="h-4 w-24" />
