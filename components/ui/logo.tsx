@@ -19,7 +19,7 @@ export function Logo({
   imageClassName,
   href = "/",
   width = 165,
-  height = 33,
+  height = 165,
   priority = false,
   alt = "Logo",
 }: LogoProps) {
@@ -35,7 +35,7 @@ export function Logo({
         width={width}
         height={height}
         priority={priority}
-        className={cn("h-8 w-auto", imageClassName)}
+        className={cn("w-12 h-12", imageClassName)}
       />
     </Link>
   );

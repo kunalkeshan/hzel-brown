@@ -22,6 +22,10 @@ export const siteConfigType = defineType({
       name: "content",
       title: "Content Management",
     },
+    {
+      name: "hero",
+      title: "Hero Section",
+    },
   ],
   fields: [
     {
@@ -258,6 +262,30 @@ export const siteConfigType = defineType({
       ],
       description:
         "Select and order legal documents to be displayed in the footer links. Only legal documents added in this list will appear in the footer.",
+    },
+    {
+      name: "heroImages",
+      title: "Hero Section Images",
+      type: "array",
+      group: "hero",
+      of: [
+        {
+          type: "image",
+          options: { hotspot: true },
+          fields: [
+            {
+              name: "alt",
+              title: "Alt text",
+              type: "string",
+              description: "Short description for accessibility and SEO",
+              validation: (Rule) => Rule.required(),
+            },
+          ],
+        },
+      ],
+      validation: (Rule) => Rule.max(4).min(1),
+      description:
+        "Images displayed in the hero section (maximum 4 images). Order matters.",
     },
   ],
   preview: {

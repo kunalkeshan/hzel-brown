@@ -32,6 +32,12 @@ export const SITE_CONFIG_QUERY = defineQuery(`
       platform,
       url,
       label
+    },
+    heroImages[] {
+      asset->,
+      alt,
+      hotspot,
+      crop
     }
   }
 `);

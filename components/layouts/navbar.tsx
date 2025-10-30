@@ -99,7 +99,7 @@ export function Navbar() {
       <div className="container">
         <div className="w-full flex flex-col lg:flex-row">
           <div className="flex justify-between lg:flex-row">
-            <Logo priority alt="Company Logo" imageClassName="lg:h-10" />
+            <Logo priority alt="Hezl Brown" />
             <MobileNav />
           </div>
 

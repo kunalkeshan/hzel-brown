@@ -70,6 +70,20 @@ export type SiteConfig = {
     label?: string;
     _key: string;
   }>;
+  menuCategories?: Array<{
+    _ref: string;
+    _type: "reference";
+    _weak?: boolean;
+    _key: string;
+    [internalGroqTypeReferenceTo]?: "menuCategory";
+  }>;
+  featuredMenuItems?: Array<{
+    _ref: string;
+    _type: "reference";
+    _weak?: boolean;
+    _key: string;
+    [internalGroqTypeReferenceTo]?: "menuItem";
+  }>;
   footerLegalLinks?: Array<{
     _ref: string;
     _type: "reference";
@@ -77,6 +91,64 @@ export type SiteConfig = {
     _key: string;
     [internalGroqTypeReferenceTo]?: "legal";
   }>;
+  heroImages?: Array<{
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    _type: "image";
+    _key: string;
+  }>;
+};
+
+export type MenuItem = {
+  _id: string;
+  _type: "menuItem";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  name?: string;
+  slug?: Slug;
+  description?: string;
+  categories?: Array<{
+    _ref: string;
+    _type: "reference";
+    _weak?: boolean;
+    _key: string;
+    [internalGroqTypeReferenceTo]?: "menuCategory";
+  }>;
+  price?: number;
+  ingredients?: Array<string>;
+  allergens?: Array<string>;
+  isAvailable?: boolean;
+  isCombo?: boolean;
+  comboItems?: Array<{
+    _ref: string;
+    _type: "reference";
+    _weak?: boolean;
+    _key: string;
+    [internalGroqTypeReferenceTo]?: "menuItem";
+  }>;
+  comboDescription?: string;
+  image?: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    _type: "image";
+  };
 };
 
 export type MenuCategory = {
@@ -101,6 +173,13 @@ export type MenuCategory = {
     alt?: string;
     _type: "image";
   };
+  featuredItems?: Array<{
+    _ref: string;
+    _type: "reference";
+    _weak?: boolean;
+    _key: string;
+    [internalGroqTypeReferenceTo]?: "menuItem";
+  }>;
 };
 
 export type Legal = {
@@ -309,7 +388,7 @@ export type SanityAssetSourceData = {
   url?: string;
 };
 
-export type AllSanitySchemaTypes = SiteConfig | MenuCategory | Legal | Faqs | BlockContent | SanityImagePaletteSwatch | SanityImagePalette | SanityImageDimensions | SanityImageHotspot | SanityImageCrop | SanityFileAsset | SanityImageAsset | SanityImageMetadata | Geopoint | Slug | SanityAssetSourceData;
+export type AllSanitySchemaTypes = SiteConfig | MenuItem | MenuCategory | Legal | Faqs | BlockContent | SanityImagePaletteSwatch | SanityImagePalette | SanityImageDimensions | SanityImageHotspot | SanityImageCrop | SanityFileAsset | SanityImageAsset | SanityImageMetadata | Geopoint | Slug | SanityAssetSourceData;
 export declare const internalGroqTypeReferenceTo: unique symbol;
 // Source: sanity/queries/legal.ts
 // Variable: LEGAL_DOCUMENTS_QUERY
@@ -366,7 +445,7 @@ export type LEGAL_DOCUMENT_BY_SLUG_QUERYResult = {
 
 // Source: sanity/queries/site-config.ts
 // Variable: SITE_CONFIG_QUERY
-// Query: *[_type == "siteConfig"][0] {    _id,    title,    description,    ogImage {      asset->,      alt    },    twitterImage {      asset->,      alt    },    phoneNumbers[] {      number,      label    },    emails[] {      email,      label    },    address {      street,      city,      state,      postalCode,      country    },    socialMedia[] {      platform,      url,      label    }  }
+// Query: *[_type == "siteConfig"][0] {    _id,    title,    description,    ogImage {      asset->,      alt    },    twitterImage {      asset->,      alt    },    phoneNumbers[] {      number,      label    },    emails[] {      email,      label    },    address {      street,      city,      state,      postalCode,      country    },    socialMedia[] {      platform,      url,      label    },    heroImages[] {      asset->,      alt,      hotspot,      crop    }  }
 export type SITE_CONFIG_QUERYResult = {
   _id: string;
   title: string | null;
@@ -441,6 +520,33 @@ export type SITE_CONFIG_QUERYResult = {
     url: string | null;
     label: string | null;
   }> | null;
+  heroImages: Array<{
+    asset: {
+      _id: string;
+      _type: "sanity.imageAsset";
+      _createdAt: string;
+      _updatedAt: string;
+      _rev: string;
+      originalFilename?: string;
+      label?: string;
+      title?: string;
+      description?: string;
+      altText?: string;
+      sha1hash?: string;
+      extension?: string;
+      mimeType?: string;
+      size?: number;
+      assetId?: string;
+      uploadId?: string;
+      path?: string;
+      url?: string;
+      metadata?: SanityImageMetadata;
+      source?: SanityAssetSourceData;
+    } | null;
+    alt: string | null;
+    hotspot: SanityImageHotspot | null;
+    crop: SanityImageCrop | null;
+  }> | null;
 } | null;
 // Variable: FOOTER_LEGAL_LINKS_QUERY
 // Query: *[_type == "siteConfig"][0].footerLegalLinks[]-> {    _id,    title,    slug,    description,    _updatedAt  }
@@ -458,7 +564,7 @@ declare module "@sanity/client" {
   interface SanityQueries {
     "\n  *[_type == \"legal\"] | order(_updatedAt desc) {\n    _id,\n    title,\n    slug,\n    description,\n    _createdAt,\n    _updatedAt\n  }\n": LEGAL_DOCUMENTS_QUERYResult;
     "\n  *[_type == \"legal\" && slug.current == $slug][0] {\n    _id,\n    title,\n    slug,\n    description,\n    content,\n    _createdAt,\n    _updatedAt\n  }\n": LEGAL_DOCUMENT_BY_SLUG_QUERYResult;
-    "\n  *[_type == \"siteConfig\"][0] {\n    _id,\n    title,\n    description,\n    ogImage {\n      asset->,\n      alt\n    },\n    twitterImage {\n      asset->,\n      alt\n    },\n    phoneNumbers[] {\n      number,\n      label\n    },\n    emails[] {\n      email,\n      label\n    },\n    address {\n      street,\n      city,\n      state,\n      postalCode,\n      country\n    },\n    socialMedia[] {\n      platform,\n      url,\n      label\n    }\n  }\n": SITE_CONFIG_QUERYResult;
+    "\n  *[_type == \"siteConfig\"][0] {\n    _id,\n    title,\n    description,\n    ogImage {\n      asset->,\n      alt\n    },\n    twitterImage {\n      asset->,\n      alt\n    },\n    phoneNumbers[] {\n      number,\n      label\n    },\n    emails[] {\n      email,\n      label\n    },\n    address {\n      street,\n      city,\n      state,\n      postalCode,\n      country\n    },\n    socialMedia[] {\n      platform,\n      url,\n      label\n    },\n    heroImages[] {\n      asset->,\n      alt,\n      hotspot,\n      crop\n    }\n  }\n": SITE_CONFIG_QUERYResult;
     "\n  *[_type == \"siteConfig\"][0].footerLegalLinks[]-> {\n    _id,\n    title,\n    slug,\n    description,\n    _updatedAt\n  }\n": FOOTER_LEGAL_LINKS_QUERYResult;
   }
 }
