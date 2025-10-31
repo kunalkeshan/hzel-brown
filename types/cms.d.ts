@@ -390,6 +390,23 @@ export type SanityAssetSourceData = {
 
 export type AllSanitySchemaTypes = SiteConfig | MenuItem | MenuCategory | Legal | Faqs | BlockContent | SanityImagePaletteSwatch | SanityImagePalette | SanityImageDimensions | SanityImageHotspot | SanityImageCrop | SanityFileAsset | SanityImageAsset | SanityImageMetadata | Geopoint | Slug | SanityAssetSourceData;
 export declare const internalGroqTypeReferenceTo: unique symbol;
+// Source: sanity/queries/faqs.ts
+// Variable: FAQS_QUERY
+// Query: *[_type == "faqs"][0] {    ...,    faqItems[]{ ... }  }
+export type FAQS_QUERYResult = {
+  _id: string;
+  _type: "faqs";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  title?: string;
+  faqItems: Array<{
+    question?: string;
+    answer?: string;
+    _key: string;
+  }> | null;
+} | null;
+
 // Source: sanity/queries/legal.ts
 // Variable: LEGAL_DOCUMENTS_QUERY
 // Query: *[_type == "legal"] | order(_updatedAt desc) {    _id,    title,    slug,    description,    _createdAt,    _updatedAt  }
@@ -718,6 +735,7 @@ export type FOOTER_LEGAL_LINKS_QUERYResult = Array<{
 import "@sanity/client";
 declare module "@sanity/client" {
   interface SanityQueries {
+    "\n  *[_type == \"faqs\"][0] {\n    ...,\n    faqItems[]{ ... }\n  }\n": FAQS_QUERYResult;
     "\n  *[_type == \"legal\"] | order(_updatedAt desc) {\n    _id,\n    title,\n    slug,\n    description,\n    _createdAt,\n    _updatedAt\n  }\n": LEGAL_DOCUMENTS_QUERYResult;
     "\n  *[_type == \"legal\" && slug.current == $slug][0] {\n    _id,\n    title,\n    slug,\n    description,\n    content,\n    _createdAt,\n    _updatedAt\n  }\n": LEGAL_DOCUMENT_BY_SLUG_QUERYResult;
     "\n  *[_type == \"menuItem\" && isAvailable == true] | order(name asc) {\n    _id,\n    name,\n    slug,\n    description,\n    price,\n    ingredients,\n    allergens,\n    isAvailable,\n    isCombo,\n    comboDescription,\n    categories[]-> {\n      _id,\n      title,\n      slug\n    },\n    image {\n      asset->,\n      alt,\n      hotspot,\n      crop\n    }\n  }\n": MENU_ITEMS_QUERYResult;
