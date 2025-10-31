@@ -5,7 +5,6 @@ import {
   Flame,
   Thermometer,
   Package,
-  Sparkles,
 } from "lucide-react";
 import { MotionSection } from "../ui/motion-section";
 
