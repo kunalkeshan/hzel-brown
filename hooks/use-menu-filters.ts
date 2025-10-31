@@ -28,11 +28,28 @@ export function useMenuFilters({ menuItems, filterData }: UseMenuFiltersProps) {
 
   const [filters, setFilters] = useQueryStates({
     search: parseAsString.withDefault(""),
-    categories: parseAsArrayOf(parseAsString).withDefault([]),
+    categories: parseAsArrayOf(parseAsString).withDefault([]), // This will store slugs
     allergens: parseAsArrayOf(parseAsString).withDefault([]),
     minPrice: parseAsInteger.withDefault(defaultMinPrice),
     maxPrice: parseAsInteger.withDefault(defaultMaxPrice),
   });
+
+  // Helper function to convert category slugs to IDs for filtering
+  const getCategoryIdsFromSlugs = (slugs: string[]) => {
+    if (!filterData?.categories) return [];
+    return filterData.categories
+      .filter((category) => slugs.includes(category.slug?.current || ""))
+      .map((category) => category._id);
+  };
+
+  // Helper function to convert category IDs to slugs for URL
+  const getCategorySlugsFromIds = (ids: string[]) => {
+    if (!filterData?.categories) return [];
+    return filterData.categories
+      .filter((category) => ids.includes(category._id))
+      .map((category) => category.slug?.current || "")
+      .filter((slug) => slug !== "");
+  };
 
   const filteredItems = useMemo(() => {
     return menuItems.filter((item) => {
@@ -44,10 +61,11 @@ export function useMenuFilters({ menuItems, filterData }: UseMenuFiltersProps) {
         }
       }
 
-      // Category filter
+      // Category filter - convert slugs to IDs for filtering
       if (filters.categories.length > 0) {
+        const selectedCategoryIds = getCategoryIdsFromSlugs(filters.categories);
         const itemCategoryIds = item.categories?.map((cat) => cat._id) || [];
-        const hasMatchingCategory = filters.categories.some((categoryId) =>
+        const hasMatchingCategory = selectedCategoryIds.some((categoryId) =>
           itemCategoryIds.includes(categoryId)
         );
         if (!hasMatchingCategory) {
@@ -83,8 +101,10 @@ export function useMenuFilters({ menuItems, filterData }: UseMenuFiltersProps) {
     setFilters({ search });
   };
 
-  const updateCategories = (categories: string[]) => {
-    setFilters({ categories });
+  const updateCategories = (categoryIds: string[]) => {
+    // Convert category IDs to slugs for URL
+    const categorySlugs = getCategorySlugsFromIds(categoryIds);
+    setFilters({ categories: categorySlugs });
   };
 
   const updateAllergens = (allergens: string[]) => {
@@ -112,8 +132,14 @@ export function useMenuFilters({ menuItems, filterData }: UseMenuFiltersProps) {
     filters.minPrice !== defaultMinPrice ||
     filters.maxPrice !== defaultMaxPrice;
 
+  // Convert current URL slugs back to IDs for the filter components
+  const selectedCategoryIds = getCategoryIdsFromSlugs(filters.categories);
+
   return {
-    filters,
+    filters: {
+      ...filters,
+      categories: selectedCategoryIds, // Return IDs for filter components
+    },
     filteredItems,
     updateSearch,
     updateCategories,

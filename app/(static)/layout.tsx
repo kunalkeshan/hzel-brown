@@ -3,11 +3,68 @@ import { Toaster } from "@/components/ui/sonner";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import Navbar from "@/components/layouts/navbar";
 import Footer from "@/components/layouts/footer";
+import { sanityFetch } from "@/sanity/lib/sanity-fetch";
+import { SITE_CONFIG_QUERY } from "@/sanity/queries/site-config";
+import { SITE_CONFIG_QUERYResult } from "@/types/cms";
+import { urlFor } from "@/sanity/lib/image";
 
-export const metadata: Metadata = {
-  title: "Home",
-  description: "Home",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const siteConfig = await sanityFetch<SITE_CONFIG_QUERYResult>({
+    query: SITE_CONFIG_QUERY,
+    tags: ["siteConfig"],
+  });
+
+  const title = siteConfig?.title || "Hzel Brown";
+  const description =
+    siteConfig?.description ||
+    "Artisan dessert shop curating handcrafted brownies, brookies, cupcakes and cookies, freshly baked with love. Order now, delivery across Tamil Nadu.";
+
+  const ogImageUrl = siteConfig?.ogImage?.asset
+    ? urlFor(siteConfig.ogImage)
+        .width(1200)
+        .height(630)
+        .fit("crop")
+        .format("jpg")
+        .quality(85)
+        .url()
+    : undefined;
+  const twitterImageUrl = siteConfig?.twitterImage?.asset
+    ? urlFor(siteConfig.twitterImage)
+        .width(1200)
+        .height(600)
+        .fit("crop")
+        .format("jpg")
+        .quality(85)
+        .url()
+    : ogImageUrl;
+
+  return {
+    title: {
+      template: `%s | ${siteConfig?.title}`,
+      default: title,
+    },
+    description,
+    openGraph: {
+      type: "website",
+      title,
+      description,
+      images: ogImageUrl
+        ? [
+            {
+              url: ogImageUrl,
+              alt: siteConfig?.ogImage?.alt || title,
+            },
+          ]
+        : undefined,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: twitterImageUrl ? [twitterImageUrl] : undefined,
+    },
+  };
+}
 
 export default function RootLayout({
   children,
