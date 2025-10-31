@@ -28,7 +28,7 @@ export function MenuItemCard({ item, className }: MenuItemCardProps) {
     <Link
       href={`/menu/${primaryCategory?.slug?.current}/${item.slug?.current}`}
       className={cn(
-        "group cursor-pointer bg-white transition-all duration-500 block overflow-hidden group rounded-2xl relative w-full",
+        "group cursor-pointer bg-white transition-all duration-500 block overflow-hidden group rounded-lg relative w-full",
         className
       )}
       prefetch={false}
