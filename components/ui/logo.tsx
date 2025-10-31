@@ -26,7 +26,7 @@ export function Logo({
   return (
     <Link
       href={href}
-      className={cn("flex items-center", className)}
+      className={cn("flex items-center aspect-square", className)}
       prefetch={false}
     >
       <Image
@@ -35,7 +35,7 @@ export function Logo({
         width={width}
         height={height}
         priority={priority}
-        className={cn("w-12 h-12", imageClassName)}
+        className={cn("w-16 h-auto", imageClassName)}
       />
     </Link>
   );

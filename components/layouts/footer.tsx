@@ -37,7 +37,7 @@ export default function Footer({ siteConfig, legalLinks }: FooterProps) {
         <div className="grid grid-cols-6 gap-6 p-4">
           <div className="col-span-6 flex flex-col gap-4 pt-5 md:col-span-3">
             <div className="w-max">
-              <Logo className="h-5" />
+              <Logo />
             </div>
             <p className="max-w-sm text-balance font-mono text-muted-foreground text-sm">
               Handcrafted brownies, brookies, cupcakes & cookies. Fresh, made
