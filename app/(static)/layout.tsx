@@ -4,8 +4,14 @@ import { NuqsAdapter } from "nuqs/adapters/next/app";
 import Navbar from "@/components/layouts/navbar";
 import Footer from "@/components/layouts/footer";
 import { sanityFetch } from "@/sanity/lib/sanity-fetch";
-import { SITE_CONFIG_QUERY } from "@/sanity/queries/site-config";
-import { SITE_CONFIG_QUERYResult } from "@/types/cms";
+import {
+  SITE_CONFIG_QUERY,
+  FOOTER_LEGAL_LINKS_QUERY,
+} from "@/sanity/queries/site-config";
+import {
+  SITE_CONFIG_QUERYResult,
+  FOOTER_LEGAL_LINKS_QUERYResult,
+} from "@/types/cms";
 import { urlFor } from "@/sanity/lib/image";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -66,17 +72,27 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const [siteConfig, legalLinks] = await Promise.all([
+    sanityFetch<SITE_CONFIG_QUERYResult>({
+      query: SITE_CONFIG_QUERY,
+      tags: ["siteConfig"],
+    }),
+    sanityFetch<FOOTER_LEGAL_LINKS_QUERYResult>({
+      query: FOOTER_LEGAL_LINKS_QUERY,
+      tags: ["siteConfig"],
+    }),
+  ]);
   return (
     <>
       <NuqsAdapter>
         <Navbar />
         {children}
-        <Footer />
+        <Footer siteConfig={siteConfig} legalLinks={legalLinks} />
         <Toaster richColors />
       </NuqsAdapter>
     </>
