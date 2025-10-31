@@ -1,3 +1,9 @@
+import BakingProcess from "@/components/about/baking-process";
+
 export default function AboutPage() {
-  return <div></div>;
+  return (
+    <main>
+      <BakingProcess />
+    </main>
+  );
 }
