@@ -7,6 +7,7 @@ import { urlFor } from "@/sanity/lib/image";
 import { cn } from "@/lib/utils";
 import { formatCurrency } from "@/lib/numbers";
 import { Badge } from "@/components/ui/badge";
+import { MenuItemCardActions } from "@/components/menu/menu-item-card-actions";
 import type {
   ALL_MENU_ITEMS_QUERYResult,
   SITE_CONFIG_QUERYResult,
@@ -53,13 +54,11 @@ export function MenuItemCard({
       }}
       className="h-full"
     >
-      <Link
-        href={`/menu/${primaryCategory?.slug?.current}/${item.slug?.current}`}
+      <div
         className={cn(
-          "group cursor-pointer bg-white transition-all duration-500 overflow-hidden rounded-lg relative w-full h-full flex flex-col",
+          "group bg-white transition-all duration-500 overflow-hidden rounded-lg relative w-full h-full flex flex-col",
           className
         )}
-        prefetch={false}
       >
         <div className="w-full aspect-square overflow-hidden relative">
           {imageUrl ? (
@@ -85,21 +84,26 @@ export function MenuItemCard({
         </div>
 
         <div className="p-4 flex flex-col gap-2 flex-1">
-          <p className="font-semibold text-lg leading-7 text-black transition-all duration-500 group-hover:text-primary line-clamp-2 min-h-14">
+          <Link
+            href={`/menu/${primaryCategory?.slug?.current}/${item.slug?.current}`}
+            className="font-semibold text-lg leading-7 text-black transition-all duration-500 hover:text-primary hover:underline line-clamp-2"
+            prefetch={false}
+          >
             {item.name}
-          </p>
-          <div className="mt-auto">
+          </Link>
+          <div className="mt-auto flex flex-col gap-2">
             <p className="font-semibold text-base leading-6 text-primary">
               {formatCurrency(item.price || 0)}
             </p>
             {!item.isAvailable && (
-              <p className="font-medium text-sm text-red-500 mt-1">
+              <p className="font-medium text-sm text-red-500">
                 Currently unavailable
               </p>
             )}
+            <MenuItemCardActions item={item} />
           </div>
         </div>
-      </Link>
+      </div>
     </motion.div>
   );
 }

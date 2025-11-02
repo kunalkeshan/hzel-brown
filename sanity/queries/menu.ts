@@ -12,6 +12,24 @@ export const MENU_ITEMS_QUERY = defineQuery(`
     isAvailable,
     isCombo,
     comboDescription,
+    comboItems[]-> {
+      _id,
+      name,
+      slug,
+      price,
+      isAvailable,
+      categories[]-> {
+        _id,
+        title,
+        slug
+      },
+      image {
+        asset->,
+        alt,
+        hotspot,
+        crop
+      }
+    },
     categories[]-> {
       _id,
       title,
@@ -38,6 +56,24 @@ export const ALL_MENU_ITEMS_QUERY = defineQuery(`
     isAvailable,
     isCombo,
     comboDescription,
+    comboItems[]-> {
+      _id,
+      name,
+      slug,
+      price,
+      isAvailable,
+      categories[]-> {
+        _id,
+        title,
+        slug
+      },
+      image {
+        asset->,
+        alt,
+        hotspot,
+        crop
+      }
+    },
     categories[]-> {
       _id,
       title,
@@ -104,6 +140,24 @@ export const MENU_ITEM_BY_SLUGS_QUERY = defineQuery(`
       isAvailable,
       isCombo,
       comboDescription,
+      comboItems[]-> {
+        _id,
+        name,
+        slug,
+        price,
+        isAvailable,
+        categories[]-> {
+          _id,
+          title,
+          slug
+        },
+        image {
+          asset->,
+          alt,
+          hotspot,
+          crop
+        }
+      },
       categories[]-> {
         _id,
         title,
@@ -163,6 +217,24 @@ export const MENU_ITEMS_BY_CATEGORY_QUERY = defineQuery(`
     isAvailable,
     isCombo,
     comboDescription,
+    comboItems[]-> {
+      _id,
+      name,
+      slug,
+      price,
+      isAvailable,
+      categories[]-> {
+        _id,
+        title,
+        slug
+      },
+      image {
+        asset->,
+        alt,
+        hotspot,
+        crop
+      }
+    },
     categories[]-> {
       _id,
       title,

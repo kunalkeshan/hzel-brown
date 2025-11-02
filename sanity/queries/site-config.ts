@@ -39,7 +39,29 @@ export const SITE_CONFIG_QUERY = defineQuery(`
       slug,
       description,
       price,
+      ingredients,
+      allergens,
       isAvailable,
+      isCombo,
+      comboDescription,
+      comboItems[]-> {
+        _id,
+        name,
+        slug,
+        price,
+        isAvailable,
+        categories[]-> {
+          _id,
+          title,
+          slug
+        },
+        image {
+          asset->,
+          alt,
+          hotspot,
+          crop
+        }
+      },
       categories[]-> {
         _id,
         title,
