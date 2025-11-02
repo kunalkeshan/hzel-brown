@@ -13,11 +13,108 @@ import type {
 } from "@/types/cms";
 import { MenuPageContent } from "@/components/menu/menu-page-content";
 import { Skeleton } from "@/components/ui/skeleton";
+import type { Metadata } from "next";
+import { SITE_CONFIG_QUERY } from "@/sanity/queries/site-config";
+import type { SITE_CONFIG_QUERYResult } from "@/types/cms";
+import { urlFor } from "@/sanity/lib/image";
 
 interface PageProps {
   params: Promise<{
     category: string;
   }>;
+}
+
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
+  const { category } = await params;
+
+  const [categoryData, siteConfig] = await Promise.all([
+    sanityFetch<CATEGORY_BY_SLUG_QUERYResult>({
+      query: CATEGORY_BY_SLUG_QUERY,
+      params: { slug: category },
+    }),
+    sanityFetch<SITE_CONFIG_QUERYResult>({
+      query: SITE_CONFIG_QUERY,
+      tags: ["siteConfig"],
+    }),
+  ]);
+
+  if (!categoryData) {
+    return {
+      title: "Menu",
+      description: "Menu",
+    };
+  }
+
+  const title = categoryData.title || "What We Bake";
+  const description =
+    categoryData.description ||
+    "Discover our delicious selection of freshly baked goods, artisanal treats, and specialty items crafted with love and the finest ingredients.";
+
+  // Use category thumbnail if available, otherwise fall back to site config images
+  const ogImageUrl = categoryData.thumbnail?.asset
+    ? urlFor(categoryData.thumbnail)
+        .width(1200)
+        .height(630)
+        .fit("crop")
+        .format("jpg")
+        .quality(85)
+        .url()
+    : siteConfig?.ogImage?.asset
+    ? urlFor(siteConfig.ogImage)
+        .width(1200)
+        .height(630)
+        .fit("crop")
+        .format("jpg")
+        .quality(85)
+        .url()
+    : undefined;
+
+  const twitterImageUrl = categoryData.thumbnail?.asset
+    ? urlFor(categoryData.thumbnail)
+        .width(1200)
+        .height(600)
+        .fit("crop")
+        .format("jpg")
+        .quality(85)
+        .url()
+    : siteConfig?.twitterImage?.asset
+    ? urlFor(siteConfig.twitterImage)
+        .width(1200)
+        .height(600)
+        .fit("crop")
+        .format("jpg")
+        .quality(85)
+        .url()
+    : ogImageUrl;
+
+  return {
+    title,
+    description,
+    openGraph: {
+      type: "website",
+      title,
+      description,
+      images: ogImageUrl
+        ? [
+            {
+              url: ogImageUrl,
+              alt:
+                categoryData.thumbnail?.alt ||
+                siteConfig?.ogImage?.alt ||
+                title,
+            },
+          ]
+        : undefined,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: twitterImageUrl ? [twitterImageUrl] : undefined,
+    },
+  };
 }
 
 export default async function MenuItemsByCategoryPage({ params }: PageProps) {

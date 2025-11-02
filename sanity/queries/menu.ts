@@ -219,7 +219,11 @@ export const CATEGORY_BY_SLUG_QUERY = defineQuery(`
     _id,
     title,
     slug,
-    description
+    description,
+    thumbnail {
+      asset->,
+      alt
+    }
   }
 `);
 

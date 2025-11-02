@@ -6,12 +6,112 @@ import { MenuItemDisplay } from "@/components/menu/menu-item-display";
 import { MenuItemDetails } from "@/components/menu/menu-item-details";
 import { RelatedMenuItems } from "@/components/menu/related-menu-items";
 import { MotionSection } from "@/components/ui/motion-section";
+import type { Metadata } from "next";
+import { SITE_CONFIG_QUERY } from "@/sanity/queries/site-config";
+import type { SITE_CONFIG_QUERYResult } from "@/types/cms";
+import { urlFor } from "@/sanity/lib/image";
 
 interface PageProps {
   params: Promise<{
     category: string;
     item: string;
   }>;
+}
+
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
+  const { category, item } = await params;
+
+  const [data, siteConfig] = await Promise.all([
+    sanityFetch<MENU_ITEM_BY_SLUGS_QUERYResult>({
+      query: MENU_ITEM_BY_SLUGS_QUERY,
+      params: {
+        categorySlug: category,
+        itemSlug: item,
+      },
+    }),
+    sanityFetch<SITE_CONFIG_QUERYResult>({
+      query: SITE_CONFIG_QUERY,
+      tags: ["siteConfig"],
+    }),
+  ]);
+
+  if (!data?.item) {
+    return {
+      title: "Menu Item",
+      description: "Menu Item",
+    };
+  }
+
+  const title =
+    `${data.item.name} - ${data.item.categories
+      ?.map((c) => c.title)
+      .join(", ")}` || "Menu Item";
+  const description =
+    data.item.description ||
+    "Discover our delicious selection of freshly baked goods, artisanal treats, and specialty items crafted with love and the finest ingredients.";
+
+  // Use menu item image if available, otherwise fall back to site config images
+  const ogImageUrl = data.item.image?.asset
+    ? urlFor(data.item.image)
+        .width(1200)
+        .height(630)
+        .fit("crop")
+        .format("jpg")
+        .quality(85)
+        .url()
+    : siteConfig?.ogImage?.asset
+    ? urlFor(siteConfig.ogImage)
+        .width(1200)
+        .height(630)
+        .fit("crop")
+        .format("jpg")
+        .quality(85)
+        .url()
+    : undefined;
+
+  const twitterImageUrl = data.item.image?.asset
+    ? urlFor(data.item.image)
+        .width(1200)
+        .height(600)
+        .fit("crop")
+        .format("jpg")
+        .quality(85)
+        .url()
+    : siteConfig?.twitterImage?.asset
+    ? urlFor(siteConfig.twitterImage)
+        .width(1200)
+        .height(600)
+        .fit("crop")
+        .format("jpg")
+        .quality(85)
+        .url()
+    : ogImageUrl;
+
+  return {
+    title,
+    description,
+    openGraph: {
+      type: "website",
+      title,
+      description,
+      images: ogImageUrl
+        ? [
+            {
+              url: ogImageUrl,
+              alt: data.item.image?.alt || siteConfig?.ogImage?.alt || title,
+            },
+          ]
+        : undefined,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: twitterImageUrl ? [twitterImageUrl] : undefined,
+    },
+  };
 }
 
 export default async function IndividualMenuItemPage({ params }: PageProps) {

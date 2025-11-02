@@ -17,6 +17,13 @@ import {
 } from "@/components/ui/empty";
 import { urlFor } from "@/sanity/lib/image";
 import { MotionSection } from "@/components/ui/motion-section";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "What We Bake",
+  description:
+    "Explore our carefully curated menu categories, each featuring handcrafted desserts and treats made with the finest ingredients.",
+};
 
 export default async function CategoriesPage() {
   const categories = await sanityFetch<ALL_CATEGORIES_QUERYResult>({

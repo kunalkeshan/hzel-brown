@@ -10,6 +10,13 @@ import type {
 } from "@/types/cms";
 import { MenuPageContent } from "@/components/menu/menu-page-content";
 import { Skeleton } from "@/components/ui/skeleton";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Menu",
+  description:
+    "Discover our delicious selection of freshly baked goods, artisanal treats, and specialty items crafted with love and the finest ingredients.",
+};
 
 export default async function MenuItemsPage() {
   const [menuItems, filterData] = await Promise.all([
