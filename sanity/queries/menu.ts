@@ -75,3 +75,54 @@ export const MENU_FILTERS_DATA_QUERY = defineQuery(`
     }
   }
 `);
+
+export const MENU_ITEM_BY_SLUGS_QUERY = defineQuery(`
+  {
+    "item": *[_type == "menuItem" && slug.current == $itemSlug && $categorySlug in categories[]->slug.current][0] {
+      _id,
+      name,
+      slug,
+      description,
+      price,
+      ingredients,
+      allergens,
+      isAvailable,
+      isCombo,
+      comboDescription,
+      categories[]-> {
+        _id,
+        title,
+        slug
+      },
+      image {
+        asset->,
+        alt,
+        hotspot,
+        crop
+      }
+    },
+    "relatedItems": *[_type == "menuItem" && slug.current != $itemSlug && $categorySlug in categories[]->slug.current && isAvailable == true] | order(name asc) [0...4] {
+      _id,
+      name,
+      slug,
+      description,
+      price,
+      ingredients,
+      allergens,
+      isAvailable,
+      isCombo,
+      comboDescription,
+      categories[]-> {
+        _id,
+        title,
+        slug
+      },
+      image {
+        asset->,
+        alt,
+        hotspot,
+        crop
+      }
+    }
+  }
+`);
