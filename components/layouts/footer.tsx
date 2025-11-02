@@ -138,9 +138,21 @@ export default function Footer({ siteConfig, legalLinks }: FooterProps) {
           })}
         </div>
         <div className="absolute inset-x-0 h-px w-full bg-border" />
-        <div className="flex container flex-col justify-between gap-2 py-4">
-          <p className="text-center font-light text-muted-foreground text-sm">
+        <div className="flex container flex-col md:flex-row items-center justify-between gap-2 md:gap-4 py-4">
+          <p className="text-center md:text-left font-light text-muted-foreground text-sm">
             &copy; 2025 Hzel Brown, All rights reserved
+          </p>
+          <p className="text-center md:text-right font-light text-muted-foreground text-sm">
+            built by{" "}
+            <a
+              href="https://kunalkeshan.dev"
+              target="_blank"
+              rel="noreferrer"
+              className="hover:underline font-semibold"
+              style={{ color: "#ffa503" }}
+            >
+              Kunal Keshan
+            </a>
           </p>
         </div>
       </div>
