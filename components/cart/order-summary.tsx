@@ -10,16 +10,54 @@ import {
 } from "@/components/ui/tooltip";
 import { AnimatedNumber } from "@/components/ui/animated-number";
 import { formatCurrency } from "@/lib/numbers";
+import { toast } from "sonner";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { getSocialIcon } from "@/constants/navigation";
 
-export function OrderSummary() {
-  const { totalCost, formatPrice, validateAndCheckout } = useCart();
+type OrderSummaryProps = {
+  phoneNumber: string | null;
+};
+
+export function OrderSummary({ phoneNumber }: OrderSummaryProps) {
+  const { totalCost, formatPrice, validateAndCheckout, items } = useCart();
 
   const handleCheckout = () => {
     const validation = validateAndCheckout();
-    if (validation.isValid) {
-      // TODO: Navigate to checkout page or handle checkout
-      console.log("Proceeding to checkout with:", validation);
+    if (!validation.isValid) {
+      toast.error("Please check your cart items before checkout");
+      return;
     }
+
+    if (!phoneNumber) {
+      toast.error("Phone number not available. Please contact us directly.");
+      return;
+    }
+
+    // Clean phone number - remove non-numeric characters except +
+    const cleanPhoneNumber = phoneNumber.replace(/[^\d+]/g, "");
+
+    // Build WhatsApp message
+    let message = "Hi, I would like to place an order:\n\n";
+
+    // Add each cart item
+    items.forEach((item) => {
+      const itemPrice = (item.price || 0) * item.quantity;
+      message += `${item.name} x${item.quantity} - ${formatCurrency(
+        itemPrice
+      )}\n`;
+    });
+
+    // Add total
+    message += `\nTotal: ${formatCurrency(totalCost)}`;
+
+    // Encode message (encodeURIComponent handles %0a automatically for newlines)
+    const encodedMessage = encodeURIComponent(message);
+
+    // Create WhatsApp URL
+    const whatsappUrl = `https://wa.me/${cleanPhoneNumber}?text=${encodedMessage}`;
+
+    // Open WhatsApp
+    window.open(whatsappUrl, "_blank");
   };
 
   return (
@@ -105,6 +143,14 @@ export function OrderSummary() {
         >
           Checkout
         </Button>
+        <Alert className="mt-4">
+          {getSocialIcon("whatsapp")}
+          <AlertTitle>Checkout via WhatsApp</AlertTitle>
+          <AlertDescription className="text-xs">
+            Clicking checkout will open WhatsApp with your order details
+            prefilled. Simply review and send to complete your order.
+          </AlertDescription>
+        </Alert>
       </div>
     </section>
   );

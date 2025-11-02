@@ -5,7 +5,11 @@ import { EmptyState } from "./empty-state";
 import { ItemsList } from "./items-list";
 import { OrderSummary } from "./order-summary";
 
-export function Content() {
+type ContentProps = {
+  phoneNumber: string | null;
+};
+
+export function Content({ phoneNumber }: ContentProps) {
   const { isEmpty } = useCart();
 
   if (isEmpty) {
@@ -19,8 +23,7 @@ export function Content() {
   return (
     <form className="mt-12 lg:grid lg:grid-cols-12 lg:items-start lg:gap-x-12 xl:gap-x-16">
       <ItemsList />
-      <OrderSummary />
+      <OrderSummary phoneNumber={phoneNumber} />
     </form>
   );
 }
-
