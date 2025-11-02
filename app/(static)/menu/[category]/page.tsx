@@ -5,11 +5,13 @@ import {
   MENU_ITEMS_BY_CATEGORY_QUERY,
   CATEGORY_BY_SLUG_QUERY,
   MENU_FILTERS_DATA_QUERY,
+  MENU_CATEGORIES_QUERY,
 } from "@/sanity/queries/menu";
 import type {
   MENU_ITEMS_BY_CATEGORY_QUERYResult,
   CATEGORY_BY_SLUG_QUERYResult,
   MENU_FILTERS_DATA_QUERYResult,
+  MENU_CATEGORIES_QUERYResult,
 } from "@/types/cms";
 import { MenuPageContent } from "@/components/menu/menu-page-content";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -22,6 +24,19 @@ interface PageProps {
   params: Promise<{
     category: string;
   }>;
+}
+
+export async function generateStaticParams() {
+  const categories = await sanityFetch<MENU_CATEGORIES_QUERYResult>({
+    query: MENU_CATEGORIES_QUERY,
+    tags: ["menuCategories"],
+  });
+
+  return categories
+    .map((category) => ({
+      category: category.slug?.current || "",
+    }))
+    .filter((params) => params.category); // Filter out empty slugs
 }
 
 export async function generateMetadata({

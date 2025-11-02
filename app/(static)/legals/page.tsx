@@ -16,6 +16,13 @@ import {
   EmptyTitle,
 } from "@/components/ui/empty";
 import { MotionSection } from "@/components/ui/motion-section";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Legal Documents",
+  description:
+    "Browse through our legal documents, terms & conditions, privacy policies, and other important information.",
+};
 
 export default async function AllLegalItemsPage() {
   const legalDocuments = await sanityFetch<LEGAL_DOCUMENTS_QUERYResult>({

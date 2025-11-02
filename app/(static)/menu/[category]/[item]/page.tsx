@@ -1,7 +1,13 @@
 import { notFound } from "next/navigation";
 import { sanityFetch } from "@/sanity/lib/sanity-fetch";
-import { MENU_ITEM_BY_SLUGS_QUERY } from "@/sanity/queries/menu";
-import type { MENU_ITEM_BY_SLUGS_QUERYResult } from "@/types/cms";
+import {
+  MENU_ITEM_BY_SLUGS_QUERY,
+  ALL_MENU_ITEMS_QUERY,
+} from "@/sanity/queries/menu";
+import type {
+  MENU_ITEM_BY_SLUGS_QUERYResult,
+  ALL_MENU_ITEMS_QUERYResult,
+} from "@/types/cms";
 import { MenuItemDisplay } from "@/components/menu/menu-item-display";
 import { MenuItemDetails } from "@/components/menu/menu-item-details";
 import { RelatedMenuItems } from "@/components/menu/related-menu-items";
@@ -16,6 +22,32 @@ interface PageProps {
     category: string;
     item: string;
   }>;
+}
+
+export async function generateStaticParams() {
+  const menuItems = await sanityFetch<ALL_MENU_ITEMS_QUERYResult>({
+    query: ALL_MENU_ITEMS_QUERY,
+    tags: ["menuItems"],
+  });
+
+  const params: Array<{ category: string; item: string }> = [];
+
+  menuItems.forEach((item) => {
+    const itemSlug = item.slug?.current;
+    if (!itemSlug) return;
+
+    item.categories?.forEach((category) => {
+      const categorySlug = category.slug?.current;
+      if (categorySlug) {
+        params.push({
+          category: categorySlug,
+          item: itemSlug,
+        });
+      }
+    });
+  });
+
+  return params;
 }
 
 export async function generateMetadata({
