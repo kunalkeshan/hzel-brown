@@ -1,8 +1,11 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
 import { ChefHat, Users, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { MotionSection } from "@/components/ui/motion-section";
+import { AnimatedNumber } from "@/components/ui/animated-number";
 import { cn } from "@/lib/utils";
 
 const aboutStats = [
@@ -10,13 +13,18 @@ const aboutStats = [
     icon: ChefHat,
     number: "Handcrafted",
     label: "Batches",
+    animateNumber: false,
   },
   {
     icon: Users,
-    number: "1000+",
+    number: 1000,
+    numberSuffix: "+",
     label: "Happy Customers",
+    animateNumber: true,
   },
-];
+] as const;
+
+type AboutStatItem = (typeof aboutStats)[number];
 
 export function AboutUs() {
   return (
@@ -52,6 +60,10 @@ export function AboutUs() {
             <div className="border-t border-border pt-8 flex items-center gap-11 mt-8">
               {aboutStats.map((stat, index) => {
                 const IconComponent = stat.icon;
+                const statItem = stat as AboutStatItem & {
+                  numberSuffix?: string;
+                  animateNumber?: boolean;
+                };
                 return (
                   <div key={index} className="flex flex-col gap-0.5">
                     <div className="text-xl font-semibold leading-8 text-foreground flex items-center gap-2">
@@ -59,10 +71,18 @@ export function AboutUs() {
                         className="h-5 w-5 text-primary"
                         strokeWidth={1.5}
                       />
-                      {stat.number}
+                      {statItem.animateNumber &&
+                      typeof statItem.number === "number" ? (
+                        <>
+                          <AnimatedNumber value={statItem.number} />
+                          {statItem.numberSuffix}
+                        </>
+                      ) : (
+                        String(statItem.number)
+                      )}
                     </div>
                     <h3 className="text-lg font-normal leading-8 text-muted-foreground">
-                      {stat.label}
+                      {statItem.label}
                     </h3>
                   </div>
                 );

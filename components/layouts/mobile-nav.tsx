@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import Link from "next/link";
 import { motion } from "motion/react";
 import { Button } from "@/components/ui/button";
@@ -27,6 +27,12 @@ import { useCart } from "@/hooks/use-cart";
 export function MobileNav() {
   const sheetCloseRef = useRef<HTMLButtonElement>(null);
   const { totalItems } = useCart();
+  const [isMounted, setIsMounted] = useState(false);
+
+  // Fix hydration mismatch - only show cart count after client-side hydration
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const handleLinkClick = (href: string, e: React.MouseEvent) => {
     // Check if it's an anchor link (contains #)
@@ -50,12 +56,14 @@ export function MobileNav() {
         className="text-muted-foreground hover:text-primary transition-colors p-2 relative"
       >
         <ShoppingCart className="w-6 h-6" />
-        {totalItems > 0 && (
+        {isMounted && totalItems > 0 && (
           <Badge className="absolute -top-1 -right-1 h-5 w-5 p-0 text-xs bg-primary text-primary-foreground">
             {totalItems}
           </Badge>
         )}
-        <span className="sr-only">Shopping Cart ({totalItems} items)</span>
+        <span className="sr-only">
+          Shopping Cart ({isMounted ? totalItems : 0} items)
+        </span>
       </Link>
       <Sheet>
         <SheetTrigger asChild>

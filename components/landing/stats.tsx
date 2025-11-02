@@ -1,3 +1,5 @@
+"use client";
+
 import { Percent, Truck, Gift } from "lucide-react";
 import { MotionSection } from "@/components/ui/motion-section";
 import {
@@ -6,25 +8,32 @@ import {
   CardTitle,
   CardDescription,
 } from "@/components/ui/card";
+import { AnimatedNumber } from "@/components/ui/animated-number";
 import { cn } from "@/lib/utils";
 
 const statsData = [
   {
     icon: Percent,
-    number: "15% Off",
+    number: 15,
+    numberSuffix: "% Off",
     label: "Bulk Order",
+    animateNumber: true,
   },
   {
     icon: Truck,
     number: "Free Shipping",
     label: "Over ₹3,000",
+    animateNumber: false,
   },
   {
     icon: Gift,
     number: "Custom Boxes",
     label: "for Events",
+    animateNumber: false,
   },
-];
+] as const;
+
+type StatItem = (typeof statsData)[number];
 
 export function Stats() {
   return (
@@ -49,6 +58,10 @@ export function Stats() {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
             {statsData.map((stat, index) => {
               const IconComponent = stat.icon;
+              const statItem = stat as StatItem & {
+                numberSuffix?: string;
+                animateNumber?: boolean;
+              };
               return (
                 <Card
                   key={index}
@@ -63,10 +76,18 @@ export function Stats() {
                     </div>
                     <div className="flex flex-col gap-1.5">
                       <CardTitle className="text-xl font-bold text-foreground">
-                        {stat.number}
+                        {statItem.animateNumber &&
+                        typeof statItem.number === "number" ? (
+                          <>
+                            <AnimatedNumber value={statItem.number} />
+                            {statItem.numberSuffix}
+                          </>
+                        ) : (
+                          String(statItem.number)
+                        )}
                       </CardTitle>
                       <CardDescription className="text-lg font-normal leading-8">
-                        {stat.label}
+                        {statItem.label}
                       </CardDescription>
                     </div>
                   </CardContent>

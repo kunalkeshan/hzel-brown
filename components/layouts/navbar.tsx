@@ -22,6 +22,12 @@ export function Navbar() {
   const [dropdownState, setDropdownState] = useState<DropdownState>({});
   const dropdownRefs = useRef<{ [key: string]: HTMLLIElement | null }>({});
   const { totalItems } = useCart();
+  const [isMounted, setIsMounted] = useState(false);
+
+  // Fix hydration mismatch - only show cart count after client-side hydration
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   // Function to check if a navigation item is active
   const isActiveNavItem = (item: (typeof navigationItems)[0]): boolean => {
@@ -229,13 +235,13 @@ export function Navbar() {
                 className="text-muted-foreground hover:text-primary transition-colors relative"
               >
                 <ShoppingCart className="w-6 h-6 shrink-0" />
-                {totalItems > 0 && (
+                {isMounted && totalItems > 0 && (
                   <Badge className="absolute -top-2 -right-2 h-5 w-5 p-0 text-xs bg-primary text-primary-foreground">
                     {totalItems}
                   </Badge>
                 )}
                 <span className="sr-only">
-                  Shopping Cart ({totalItems} items)
+                  Shopping Cart ({isMounted ? totalItems : 0} items)
                 </span>
               </Link>
               <Button asChild>
