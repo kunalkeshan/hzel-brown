@@ -561,6 +561,41 @@ export type MENU_CATEGORIES_QUERYResult = Array<{
   slug: Slug | null;
   description: string | null;
 }>;
+// Variable: ALL_CATEGORIES_QUERY
+// Query: *[_type == "siteConfig"][0].menuCategories[]-> {    _id,    title,    slug,    description,    thumbnail {      asset->,      alt,      hotspot,      crop    }  }
+export type ALL_CATEGORIES_QUERYResult = Array<{
+  _id: string;
+  title: string | null;
+  slug: Slug | null;
+  description: string | null;
+  thumbnail: {
+    asset: {
+      _id: string;
+      _type: "sanity.imageAsset";
+      _createdAt: string;
+      _updatedAt: string;
+      _rev: string;
+      originalFilename?: string;
+      label?: string;
+      title?: string;
+      description?: string;
+      altText?: string;
+      sha1hash?: string;
+      extension?: string;
+      mimeType?: string;
+      size?: number;
+      assetId?: string;
+      uploadId?: string;
+      path?: string;
+      url?: string;
+      metadata?: SanityImageMetadata;
+      source?: SanityAssetSourceData;
+    } | null;
+    alt: string | null;
+    hotspot: SanityImageHotspot | null;
+    crop: SanityImageCrop | null;
+  } | null;
+}> | null;
 // Variable: MENU_FILTERS_DATA_QUERY
 // Query: {    "categories": *[_type == "menuCategory"] | order(title asc) {      _id,      title,      slug    },    "allergens": array::unique(*[_type == "menuItem" && defined(allergens)].allergens[]),    "priceRange": {      "min": math::min(*[_type == "menuItem" && defined(price)].price),      "max": math::max(*[_type == "menuItem" && defined(price)].price)    }  }
 export type MENU_FILTERS_DATA_QUERYResult = {
@@ -833,6 +868,7 @@ declare module "@sanity/client" {
     "\n  *[_type == \"menuItem\" && isAvailable == true] | order(name asc) {\n    _id,\n    name,\n    slug,\n    description,\n    price,\n    ingredients,\n    allergens,\n    isAvailable,\n    isCombo,\n    comboDescription,\n    categories[]-> {\n      _id,\n      title,\n      slug\n    },\n    image {\n      asset->,\n      alt,\n      hotspot,\n      crop\n    }\n  }\n": MENU_ITEMS_QUERYResult;
     "\n  *[_type == \"menuItem\"] | order(name asc) {\n    _id,\n    name,\n    slug,\n    description,\n    price,\n    ingredients,\n    allergens,\n    isAvailable,\n    isCombo,\n    comboDescription,\n    categories[]-> {\n      _id,\n      title,\n      slug\n    },\n    image {\n      asset->,\n      alt,\n      hotspot,\n      crop\n    }\n  }\n": ALL_MENU_ITEMS_QUERYResult;
     "\n  *[_type == \"menuCategory\"] | order(title asc) {\n    _id,\n    title,\n    slug,\n    description\n  }\n": MENU_CATEGORIES_QUERYResult;
+    "\n  *[_type == \"siteConfig\"][0].menuCategories[]-> {\n    _id,\n    title,\n    slug,\n    description,\n    thumbnail {\n      asset->,\n      alt,\n      hotspot,\n      crop\n    }\n  }\n": ALL_CATEGORIES_QUERYResult;
     "\n  {\n    \"categories\": *[_type == \"menuCategory\"] | order(title asc) {\n      _id,\n      title,\n      slug\n    },\n    \"allergens\": array::unique(*[_type == \"menuItem\" && defined(allergens)].allergens[]),\n    \"priceRange\": {\n      \"min\": math::min(*[_type == \"menuItem\" && defined(price)].price),\n      \"max\": math::max(*[_type == \"menuItem\" && defined(price)].price)\n    }\n  }\n": MENU_FILTERS_DATA_QUERYResult;
     "\n  {\n    \"item\": *[_type == \"menuItem\" && slug.current == $itemSlug && $categorySlug in categories[]->slug.current][0] {\n      _id,\n      name,\n      slug,\n      description,\n      price,\n      ingredients,\n      allergens,\n      isAvailable,\n      isCombo,\n      comboDescription,\n      categories[]-> {\n        _id,\n        title,\n        slug\n      },\n      image {\n        asset->,\n        alt,\n        hotspot,\n        crop\n      }\n    },\n    \"relatedItems\": *[_type == \"menuItem\" && slug.current != $itemSlug && $categorySlug in categories[]->slug.current && isAvailable == true] | order(name asc) [0...4] {\n      _id,\n      name,\n      slug,\n      description,\n      price,\n      ingredients,\n      allergens,\n      isAvailable,\n      isCombo,\n      comboDescription,\n      categories[]-> {\n        _id,\n        title,\n        slug\n      },\n      image {\n        asset->,\n        alt,\n        hotspot,\n        crop\n      }\n    }\n  }\n": MENU_ITEM_BY_SLUGS_QUERYResult;
     "\n  *[_type == \"siteConfig\"][0] {\n    _id,\n    title,\n    description,\n    ogImage {\n      asset->,\n      alt\n    },\n    twitterImage {\n      asset->,\n      alt\n    },\n    phoneNumbers[] {\n      number,\n      label\n    },\n    emails[] {\n      email,\n      label\n    },\n    address {\n      street,\n      city,\n      state,\n      postalCode,\n      country\n    },\n    socialMedia[] {\n      platform,\n      url,\n      label\n    },\n    featuredMenuItems[]-> {\n      _id,\n      name,\n      slug,\n      description,\n      price,\n      isAvailable,\n      categories[]-> {\n        _id,\n        title,\n        slug\n      },\n      image {\n        asset->,\n        alt,\n        hotspot,\n        crop\n      }\n    },\n    heroImages[] {\n      asset->,\n      alt,\n      hotspot,\n      crop\n    }\n  }\n": SITE_CONFIG_QUERYResult;

@@ -61,6 +61,21 @@ export const MENU_CATEGORIES_QUERY = defineQuery(`
   }
 `);
 
+export const ALL_CATEGORIES_QUERY = defineQuery(`
+  *[_type == "siteConfig"][0].menuCategories[]-> {
+    _id,
+    title,
+    slug,
+    description,
+    thumbnail {
+      asset->,
+      alt,
+      hotspot,
+      crop
+    }
+  }
+`);
+
 export const MENU_FILTERS_DATA_QUERY = defineQuery(`
   {
     "categories": *[_type == "menuCategory"] | order(title asc) {
