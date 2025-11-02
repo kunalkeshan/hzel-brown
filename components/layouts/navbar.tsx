@@ -11,6 +11,7 @@ import { Logo } from "@/components/ui/logo";
 import { MobileNav } from "./mobile-nav";
 import { navigationItems } from "@/constants/navigation";
 import { cn } from "@/lib/utils";
+import { useCart } from "@/hooks/use-cart";
 
 interface DropdownState {
   [key: string]: boolean;
@@ -20,6 +21,7 @@ export function Navbar() {
   const pathname = usePathname();
   const [dropdownState, setDropdownState] = useState<DropdownState>({});
   const dropdownRefs = useRef<{ [key: string]: HTMLLIElement | null }>({});
+  const { totalItems } = useCart();
 
   // Function to check if a navigation item is active
   const isActiveNavItem = (item: (typeof navigationItems)[0]): boolean => {
@@ -227,10 +229,14 @@ export function Navbar() {
                 className="text-muted-foreground hover:text-primary transition-colors relative"
               >
                 <ShoppingCart className="w-6 h-6 shrink-0" />
-                <Badge className="absolute -top-2 -right-2 h-5 w-5 p-0 text-xs bg-primary text-primary-foreground">
-                  3
-                </Badge>
-                <span className="sr-only">Shopping Cart (3 items)</span>
+                {totalItems > 0 && (
+                  <Badge className="absolute -top-2 -right-2 h-5 w-5 p-0 text-xs bg-primary text-primary-foreground">
+                    {totalItems}
+                  </Badge>
+                )}
+                <span className="sr-only">
+                  Shopping Cart ({totalItems} items)
+                </span>
               </Link>
               <Button asChild>
                 <Link href="/contact" prefetch={false}>

@@ -5,6 +5,7 @@ import Image from "next/image";
 import { motion } from "motion/react";
 import { urlFor } from "@/sanity/lib/image";
 import { cn } from "@/lib/utils";
+import { formatCurrency } from "@/lib/numbers";
 import { Badge } from "@/components/ui/badge";
 import type {
   ALL_MENU_ITEMS_QUERYResult,
@@ -89,7 +90,7 @@ export function MenuItemCard({
           </p>
           <div className="mt-auto">
             <p className="font-semibold text-base leading-6 text-primary">
-              ₹{item.price}
+              {formatCurrency(item.price || 0)}
             </p>
             {!item.isAvailable && (
               <p className="font-medium text-sm text-red-500 mt-1">
