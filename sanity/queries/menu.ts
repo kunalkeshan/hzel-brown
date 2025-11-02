@@ -56,6 +56,8 @@ export const ALL_MENU_ITEMS_QUERY = defineQuery(`
     isAvailable,
     isCombo,
     comboDescription,
+    _createdAt,
+    _updatedAt,
     comboItems[]-> {
       _id,
       name,
@@ -93,7 +95,9 @@ export const MENU_CATEGORIES_QUERY = defineQuery(`
     _id,
     title,
     slug,
-    description
+    description,
+    _createdAt,
+    _updatedAt
   }
 `);
 
