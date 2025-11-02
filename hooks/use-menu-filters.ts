@@ -23,8 +23,8 @@ interface UseMenuFiltersProps {
 export function useMenuFilters({ menuItems, filterData }: UseMenuFiltersProps) {
   // Ensure we have valid price range values
   const defaultMinPrice = filterData?.priceRange?.min ?? 100;
-  // const defaultMaxPrice = filterData?.priceRange?.max ?? 5000;
-  const defaultMaxPrice = 5000;
+  const defaultMaxPrice = filterData?.priceRange?.max ?? 5000;
+  // const defaultMaxPrice = 5000;
 
   const [filters, setFilters] = useQueryStates({
     search: parseAsString.withDefault(""),

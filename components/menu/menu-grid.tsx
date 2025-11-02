@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/empty";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { AnimatePresence, motion } from "motion/react";
 import type { ALL_MENU_ITEMS_QUERYResult } from "@/types/cms";
 
 type MenuItem = NonNullable<ALL_MENU_ITEMS_QUERYResult>[number];
@@ -71,10 +72,20 @@ export function MenuGrid({
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-      {items.map((item) => (
-        <MenuItemCard key={item._id} item={item} className="mx-auto sm:mx-0" />
-      ))}
-    </div>
+    <motion.div
+      layout
+      className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+    >
+      <AnimatePresence mode="popLayout">
+        {items.map((item, index) => (
+          <MenuItemCard
+            key={item._id}
+            item={item}
+            className="mx-auto sm:mx-0"
+            index={index}
+          />
+        ))}
+      </AnimatePresence>
+    </motion.div>
   );
 }

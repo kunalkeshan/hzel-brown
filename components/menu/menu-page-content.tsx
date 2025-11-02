@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import { useMenuFilters } from "@/hooks/use-menu-filters";
 import { MenuFilters } from "./menu-filters";
 import { MobileMenuFilters } from "./mobile-menu-filters";
@@ -34,6 +35,55 @@ export function MenuPageContent({
     filterData,
   });
 
+  const gridContainerRef = useRef<HTMLDivElement>(null);
+  const previousScrollY = useRef<number>(0);
+  const previousItemsCount = useRef<number>(filteredItems.length);
+  const previousContainerHeight = useRef<number>(0);
+
+  // Preserve scroll position when items change
+  useEffect(() => {
+    // Only adjust scroll if items count decreased
+    if (
+      filteredItems.length < previousItemsCount.current &&
+      gridContainerRef.current
+    ) {
+      const currentScrollY = window.scrollY || window.pageYOffset;
+      const containerHeight = gridContainerRef.current.scrollHeight;
+      const previousHeight = previousContainerHeight.current;
+
+      // Only adjust if we're scrolled down and content height decreased
+      if (previousHeight > 0 && containerHeight < previousHeight) {
+        const heightDifference = previousHeight - containerHeight;
+
+        // If we're scrolled past where the content now ends, adjust smoothly
+        const documentHeight = document.documentElement.scrollHeight;
+        const viewportHeight = window.innerHeight;
+        const maxScrollY = documentHeight - viewportHeight;
+
+        if (currentScrollY > 0 && currentScrollY > maxScrollY - heightDifference) {
+          // Smoothly scroll to maintain visual context
+          const targetScroll = Math.max(0, currentScrollY - heightDifference * 0.5);
+          
+          window.scrollTo({
+            top: targetScroll,
+            behavior: "smooth",
+          });
+        }
+      }
+    }
+
+    // Update refs after a brief delay to let layout settle
+    const timeoutId = setTimeout(() => {
+      previousScrollY.current = window.scrollY || window.pageYOffset;
+      previousItemsCount.current = filteredItems.length;
+      if (gridContainerRef.current) {
+        previousContainerHeight.current = gridContainerRef.current.scrollHeight;
+      }
+    }, 100);
+
+    return () => clearTimeout(timeoutId);
+  }, [filteredItems.length]);
+
   const filterProps = {
     filterData,
     filters,
@@ -62,7 +112,10 @@ export function MenuPageContent({
       </aside>
 
       {/* Product grid */}
-      <div className="mt-6 lg:col-span-2 lg:mt-0 xl:col-span-3">
+      <div
+        ref={gridContainerRef}
+        className="mt-6 lg:col-span-2 lg:mt-0 xl:col-span-3"
+      >
         <MenuGrid
           items={filteredItems}
           hasActiveFilters={hasActiveFilters}
