@@ -30,6 +30,7 @@ interface MobileMenuFiltersProps {
   hasActiveFilters: boolean;
   filteredCount: number;
   totalCount: number;
+  lockedCategorySlug?: string;
 }
 
 export function MobileMenuFilters(props: MobileMenuFiltersProps) {

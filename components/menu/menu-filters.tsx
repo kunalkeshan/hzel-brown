@@ -38,6 +38,7 @@ interface MenuFiltersProps {
   hasActiveFilters: boolean;
   filteredCount: number;
   totalCount: number;
+  lockedCategorySlug?: string;
 }
 
 export function MenuFilters({
@@ -51,6 +52,7 @@ export function MenuFilters({
   hasActiveFilters,
   filteredCount,
   totalCount,
+  lockedCategorySlug,
 }: MenuFiltersProps) {
   const handleCategoryChange = (categoryId: string, checked: boolean) => {
     if (checked) {
@@ -74,6 +76,13 @@ export function MenuFilters({
 
   const minPrice = filterData?.priceRange?.min ?? 100;
   const maxPrice = filterData?.priceRange?.max ?? 5000;
+
+  // Get categories to display - only locked category if provided, otherwise all
+  const categoriesToShow = lockedCategorySlug
+    ? filterData?.categories?.filter(
+        (category) => category.slug?.current === lockedCategorySlug
+      ) || []
+    : filterData?.categories || [];
 
   return (
     <div className="space-y-8">
@@ -116,29 +125,49 @@ export function MenuFilters({
       </div>
 
       {/* Categories */}
-      {filterData?.categories && filterData.categories.length > 0 && (
+      {categoriesToShow.length > 0 && (
         <div className="space-y-4">
           <Label className="text-sm font-medium text-gray-900">
             Categories
           </Label>
           <div className="space-y-3">
-            {filterData.categories.map((category) => (
-              <div key={category._id} className="flex items-center space-x-3">
-                <Checkbox
-                  id={`category-${category._id}`}
-                  checked={filters.categories.includes(category._id)}
-                  onCheckedChange={(checked) =>
-                    handleCategoryChange(category._id, checked as boolean)
-                  }
-                />
-                <Label
-                  htmlFor={`category-${category._id}`}
-                  className="text-sm text-gray-600 cursor-pointer"
-                >
-                  {category.title}
-                </Label>
-              </div>
-            ))}
+            {categoriesToShow.map((category) => {
+              const isLocked = lockedCategorySlug === category.slug?.current;
+              return (
+                <div key={category._id} className="flex items-center space-x-3">
+                  <Checkbox
+                    id={`category-${category._id}`}
+                    checked={filters.categories.includes(category._id)}
+                    onCheckedChange={
+                      isLocked
+                        ? undefined
+                        : (checked) =>
+                            handleCategoryChange(
+                              category._id,
+                              checked as boolean
+                            )
+                    }
+                    disabled={isLocked}
+                    className={isLocked ? "opacity-60 cursor-not-allowed" : ""}
+                  />
+                  <Label
+                    htmlFor={`category-${category._id}`}
+                    className={`text-sm ${
+                      isLocked
+                        ? "text-gray-500 cursor-not-allowed"
+                        : "text-gray-600 cursor-pointer"
+                    }`}
+                  >
+                    {category.title}
+                    {isLocked && (
+                      <span className="ml-2 text-xs text-gray-400">
+                        (locked)
+                      </span>
+                    )}
+                  </Label>
+                </div>
+              );
+            })}
           </div>
         </div>
       )}

@@ -130,6 +130,7 @@ export const footerSections: FooterSection[] = [
       { label: "Home", href: "/" },
       { label: "About Us", href: "/about" },
       { label: "Menu", href: "/menu" },
+      { label: "Categories", href: "/menu/categories" },
       { label: "Contact", href: "/contact" },
     ],
   },

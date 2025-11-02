@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useEffect } from "react";
 import {
   parseAsArrayOf,
   parseAsInteger,
@@ -18,21 +18,39 @@ type FilterData = MENU_FILTERS_DATA_QUERYResult;
 interface UseMenuFiltersProps {
   menuItems: MenuItem[];
   filterData: FilterData;
+  lockedCategorySlug?: string;
 }
 
-export function useMenuFilters({ menuItems, filterData }: UseMenuFiltersProps) {
+export function useMenuFilters({
+  menuItems,
+  filterData,
+  lockedCategorySlug,
+}: UseMenuFiltersProps) {
   // Ensure we have valid price range values
   const defaultMinPrice = filterData?.priceRange?.min ?? 100;
   const defaultMaxPrice = filterData?.priceRange?.max ?? 5000;
   // const defaultMaxPrice = 5000;
 
+  // Initialize with locked category if provided
+  const defaultCategories = lockedCategorySlug ? [lockedCategorySlug] : [];
+
   const [filters, setFilters] = useQueryStates({
     search: parseAsString.withDefault(""),
-    categories: parseAsArrayOf(parseAsString).withDefault([]), // This will store slugs
+    categories: parseAsArrayOf(parseAsString).withDefault(defaultCategories), // This will store slugs
     allergens: parseAsArrayOf(parseAsString).withDefault([]),
     minPrice: parseAsInteger.withDefault(defaultMinPrice),
     maxPrice: parseAsInteger.withDefault(defaultMaxPrice),
   });
+
+  // Ensure locked category is always in the categories array
+  useEffect(() => {
+    if (
+      lockedCategorySlug &&
+      !filters.categories.includes(lockedCategorySlug)
+    ) {
+      setFilters({ categories: [lockedCategorySlug, ...filters.categories] });
+    }
+  }, [lockedCategorySlug, filters.categories, setFilters]);
 
   // Helper function to convert category slugs to IDs for filtering
   const getCategoryIdsFromSlugs = (slugs: string[]) => {
@@ -103,7 +121,13 @@ export function useMenuFilters({ menuItems, filterData }: UseMenuFiltersProps) {
 
   const updateCategories = (categoryIds: string[]) => {
     // Convert category IDs to slugs for URL
-    const categorySlugs = getCategorySlugsFromIds(categoryIds);
+    let categorySlugs = getCategorySlugsFromIds(categoryIds);
+
+    // Ensure locked category is always included if provided
+    if (lockedCategorySlug && !categorySlugs.includes(lockedCategorySlug)) {
+      categorySlugs = [lockedCategorySlug, ...categorySlugs];
+    }
+
     setFilters({ categories: categorySlugs });
   };
 
@@ -118,7 +142,7 @@ export function useMenuFilters({ menuItems, filterData }: UseMenuFiltersProps) {
   const clearFilters = () => {
     setFilters({
       search: "",
-      categories: [],
+      categories: lockedCategorySlug ? [lockedCategorySlug] : [],
       allergens: [],
       minPrice: defaultMinPrice,
       maxPrice: defaultMaxPrice,
@@ -149,5 +173,6 @@ export function useMenuFilters({ menuItems, filterData }: UseMenuFiltersProps) {
     hasActiveFilters,
     totalItems: menuItems.length,
     filteredCount: filteredItems.length,
+    lockedCategorySlug,
   };
 }

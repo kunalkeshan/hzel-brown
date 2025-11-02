@@ -141,3 +141,38 @@ export const MENU_ITEM_BY_SLUGS_QUERY = defineQuery(`
     }
   }
 `);
+
+export const CATEGORY_BY_SLUG_QUERY = defineQuery(`
+  *[_type == "menuCategory" && slug.current == $slug][0] {
+    _id,
+    title,
+    slug,
+    description
+  }
+`);
+
+export const MENU_ITEMS_BY_CATEGORY_QUERY = defineQuery(`
+  *[_type == "menuItem" && $categorySlug in categories[]->slug.current] | order(name asc) {
+    _id,
+    name,
+    slug,
+    description,
+    price,
+    ingredients,
+    allergens,
+    isAvailable,
+    isCombo,
+    comboDescription,
+    categories[]-> {
+      _id,
+      title,
+      slug
+    },
+    image {
+      asset->,
+      alt,
+      hotspot,
+      crop
+    }
+  }
+`);

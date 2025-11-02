@@ -13,11 +13,13 @@ import type {
 interface MenuPageContentProps {
   menuItems: NonNullable<ALL_MENU_ITEMS_QUERYResult>;
   filterData: NonNullable<MENU_FILTERS_DATA_QUERYResult>;
+  lockedCategorySlug?: string;
 }
 
 export function MenuPageContent({
   menuItems,
   filterData,
+  lockedCategorySlug,
 }: MenuPageContentProps) {
   const {
     filters,
@@ -30,9 +32,11 @@ export function MenuPageContent({
     hasActiveFilters,
     totalItems,
     filteredCount,
+    lockedCategorySlug: hookLockedCategorySlug,
   } = useMenuFilters({
     menuItems: menuItems || [],
     filterData,
+    lockedCategorySlug,
   });
 
   const gridContainerRef = useRef<HTMLDivElement>(null);
@@ -95,6 +99,7 @@ export function MenuPageContent({
     hasActiveFilters,
     filteredCount,
     totalCount: totalItems,
+    lockedCategorySlug: hookLockedCategorySlug,
   };
 
   return (
