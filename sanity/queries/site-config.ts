@@ -44,6 +44,8 @@ export const SITE_CONFIG_QUERY = defineQuery(`
       isAvailable,
       isCombo,
       comboDescription,
+      _createdAt,
+      _updatedAt,
       comboItems[]-> {
         _id,
         name,

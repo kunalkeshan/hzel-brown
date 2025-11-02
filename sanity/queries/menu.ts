@@ -12,6 +12,8 @@ export const MENU_ITEMS_QUERY = defineQuery(`
     isAvailable,
     isCombo,
     comboDescription,
+    _createdAt,
+    _updatedAt,
     comboItems[]-> {
       _id,
       name,
@@ -144,6 +146,8 @@ export const MENU_ITEM_BY_SLUGS_QUERY = defineQuery(`
       isAvailable,
       isCombo,
       comboDescription,
+      _createdAt,
+      _updatedAt,
       comboItems[]-> {
         _id,
         name,
@@ -185,6 +189,8 @@ export const MENU_ITEM_BY_SLUGS_QUERY = defineQuery(`
       isAvailable,
       isCombo,
       comboDescription,
+      _createdAt,
+      _updatedAt,
       comboItems[]-> {
         _id,
         name,
@@ -243,6 +249,8 @@ export const MENU_ITEMS_BY_CATEGORY_QUERY = defineQuery(`
     isAvailable,
     isCombo,
     comboDescription,
+    _createdAt,
+    _updatedAt,
     comboItems[]-> {
       _id,
       name,
