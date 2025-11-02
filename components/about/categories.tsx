@@ -18,30 +18,30 @@ import {
 import { urlFor } from "@/sanity/lib/image";
 import { MotionSection } from "@/components/ui/motion-section";
 
-export default async function CategoriesPage() {
+export async function Categories() {
   const categories = await sanityFetch<ALL_CATEGORIES_QUERYResult>({
     query: ALL_CATEGORIES_QUERY,
   });
 
   return (
-    <main className="py-16 lg:pt-40">
+    <MotionSection className="py-16 lg:py-20">
       <div className="container">
-        <div className="mx-auto max-w-2xl lg:max-w-7xl">
-          {/* Header Section */}
-          <MotionSection className="border-b border-border pb-10 mb-10">
-            <h1 className="text-pretty text-5xl font-semibold tracking-tight text-foreground sm:text-7xl">
-              What We Bake
-            </h1>
-            <p className="mt-8 text-pretty text-lg font-medium text-muted-foreground sm:max-w-md sm:text-xl/8 lg:max-w-none">
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-14">
+          {/* Text Content */}
+          <div className="flex flex-col gap-3 h-fit lg:sticky lg:top-32">
+            <h2 className="text-4xl font-bold text-foreground font-serif text-center xl:text-start">
+              Our Homemade Selection
+            </h2>
+            <p className="text-xl font-normal leading-8 text-muted-foreground text-center xl:text-start">
               Explore our carefully curated menu categories, each featuring
               handcrafted desserts and treats made with the finest ingredients.
             </p>
-          </MotionSection>
+          </div>
 
           {/* Categories Grid */}
-          {categories && categories.length > 0 ? (
-            <MotionSection className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-              {categories.map((category) => {
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-2">
+            {categories && categories.length > 0 ? (
+              categories.map((category) => {
                 const imageUrl = category.thumbnail?.asset
                   ? urlFor(category.thumbnail.asset)
                       .format("webp")
@@ -95,10 +95,8 @@ export default async function CategoriesPage() {
                     </Card>
                   </Link>
                 );
-              })}
-            </MotionSection>
-          ) : (
-            <MotionSection>
+              })
+            ) : (
               <Empty>
                 <EmptyHeader>
                   <EmptyTitle>No categories available</EmptyTitle>
@@ -107,10 +105,10 @@ export default async function CategoriesPage() {
                   </EmptyDescription>
                 </EmptyHeader>
               </Empty>
-            </MotionSection>
-          )}
+            )}
+          </div>
         </div>
       </div>
-    </main>
+    </MotionSection>
   );
 }
