@@ -6,9 +6,9 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { formatCurrency } from "@/lib/numbers";
 import { COMMON_MENU_ACCORDIONS } from "@/constants/menu-accordions";
+import { getAllergenIcon } from "@/constants/allergen-icons";
 import type { MENU_ITEM_BY_SLUGS_QUERYResult } from "@/types/cms";
 import { MenuItemDisplayActions } from "./menu-item-display-actions";
 
@@ -68,7 +68,10 @@ export function MenuItemDetails({ item }: MenuItemDetailsProps) {
       {primaryCategory && (
         <div className="mt-3">
           <Link href={`/menu/${primaryCategory.slug?.current}`}>
-            <Badge variant="outline" className="bg-primary/10 text-primary hover:bg-primary/20">
+            <Badge
+              variant="outline"
+              className="bg-primary/10 text-primary hover:bg-primary/20"
+            >
               {primaryCategory.title}
             </Badge>
           </Link>
@@ -107,6 +110,41 @@ export function MenuItemDetails({ item }: MenuItemDetailsProps) {
                       <p className="text-sm leading-6 text-muted-foreground">
                         {detail.items[0]}
                       </p>
+                    ) : detail.name === "Allergens" ? (
+                      <div className="flex flex-wrap gap-4 py-2">
+                        {detail.items.map((allergen, index) => {
+                          const allergenInfo = getAllergenIcon(allergen);
+                          if (!allergenInfo) {
+                            // Fallback for unrecognized allergens
+                            return (
+                              <div
+                                key={index}
+                                className="flex flex-col items-center gap-2"
+                              >
+                                <span className="text-xs font-medium text-muted-foreground">
+                                  {allergen}
+                                </span>
+                              </div>
+                            );
+                          }
+                          const IconComponent = allergenInfo.icon;
+                          return (
+                            <div
+                              key={index}
+                              className="flex flex-col items-center gap-2"
+                            >
+                              <IconComponent
+                                className="h-5 w-5 text-muted-foreground"
+                                strokeWidth={1.5}
+                                aria-hidden="true"
+                              />
+                              <span className="text-xs font-medium text-muted-foreground text-center whitespace-nowrap">
+                                {allergenInfo.label}
+                              </span>
+                            </div>
+                          );
+                        })}
+                      </div>
                     ) : (
                       <ul
                         role="list"
