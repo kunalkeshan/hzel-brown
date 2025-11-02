@@ -63,7 +63,7 @@ export function OrderSummary({ phoneNumber }: OrderSummaryProps) {
   return (
     <section
       aria-labelledby="summary-heading"
-      className="mt-16 rounded-lg bg-muted px-4 py-6 sm:p-6 lg:col-span-5 lg:mt-0 lg:p-8"
+      className="mt-16 rounded-lg bg-muted px-4 py-6 sm:p-6 lg:col-span-5 lg:mt-0 lg:p-8 h-fit lg:sticky lg:top-32"
     >
       <h2 id="summary-heading" className="text-lg font-medium text-foreground">
         Order summary
