@@ -45,47 +45,59 @@ export function MenuGrid({
     );
   }
 
-  if (items.length === 0) {
-    return (
-      <Empty className="border border-dashed border-border py-16">
-        <EmptyHeader>
-          <EmptyTitle>
-            {hasActiveFilters
-              ? "No items match your filters"
-              : "No menu items available"}
-          </EmptyTitle>
-          <EmptyDescription>
-            {hasActiveFilters
-              ? "Try adjusting your search criteria or clearing some filters to see more results."
-              : "We're currently updating our menu. Please check back soon for delicious options."}
-          </EmptyDescription>
-        </EmptyHeader>
-        {hasActiveFilters && (
-          <EmptyContent>
-            <Button onClick={onClearFilters} variant="outline">
-              Clear all filters
-            </Button>
-          </EmptyContent>
-        )}
-      </Empty>
-    );
-  }
-
   return (
-    <motion.div
-      layout
-      className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
-    >
-      <AnimatePresence mode="popLayout">
-        {items.map((item, index) => (
-          <MenuItemCard
-            key={item._id}
-            item={item}
-            className="mx-auto sm:mx-0"
-            index={index}
-          />
-        ))}
-      </AnimatePresence>
-    </motion.div>
+    <AnimatePresence mode="wait">
+      {items.length === 0 ? (
+        <motion.div
+          key="empty"
+          initial={{ opacity: 0, scale: 0.98 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.98 }}
+          transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+        >
+          <Empty className="border border-dashed border-border py-16">
+            <EmptyHeader>
+              <EmptyTitle>
+                {hasActiveFilters
+                  ? "No items match your filters"
+                  : "No menu items available"}
+              </EmptyTitle>
+              <EmptyDescription>
+                {hasActiveFilters
+                  ? "Try adjusting your search criteria or clearing some filters to see more results."
+                  : "We're currently updating our menu. Please check back soon for delicious options."}
+              </EmptyDescription>
+            </EmptyHeader>
+            {hasActiveFilters && (
+              <EmptyContent>
+                <Button onClick={onClearFilters} variant="outline">
+                  Clear all filters
+                </Button>
+              </EmptyContent>
+            )}
+          </Empty>
+        </motion.div>
+      ) : (
+        <motion.div
+          key="grid"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+        >
+          <AnimatePresence mode="popLayout">
+            {items.map((item, index) => (
+              <MenuItemCard
+                key={item._id}
+                item={item}
+                className="mx-auto sm:mx-0"
+                index={index}
+              />
+            ))}
+          </AnimatePresence>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }
