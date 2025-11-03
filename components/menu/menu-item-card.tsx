@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { motion } from "motion/react";
@@ -30,14 +31,19 @@ export function MenuItemCard({
   className,
   index = 0,
 }: MenuItemCardProps) {
-  const imageUrl = item.image?.asset
-    ? urlFor(item.image.asset)
-        .format("webp")
-        .quality(80)
-        .width(400)
-        .height(400)
-        .url()
-    : null;
+  // Memoize image URL generation to avoid recalculation
+  const imageUrl = useMemo(
+    () =>
+      item.image?.asset
+        ? urlFor(item.image.asset)
+            .format("webp")
+            .quality(80)
+            .width(400)
+            .height(400)
+            .url()
+        : null,
+    [item.image]
+  );
 
   const primaryCategory = item.categories?.[0];
 
@@ -48,8 +54,8 @@ export function MenuItemCard({
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.95 }}
       transition={{
-        duration: 0.3,
-        delay: index * 0.05,
+        duration: 0.2,
+        delay: Math.min(index * 0.02, 0.3), // Cap maximum delay at 0.3s
         ease: [0.4, 0, 0.2, 1],
       }}
       className="h-full"

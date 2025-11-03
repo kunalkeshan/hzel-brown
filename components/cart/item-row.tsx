@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { motion } from "motion/react";
@@ -17,14 +18,19 @@ export function ItemRow({ item }: ItemRowProps) {
   const { incrementQuantity, decrementQuantity, removeItem, formatPrice } =
     useCart();
 
-  const imageUrl = item.image?.asset
-    ? urlFor(item.image.asset)
-        .format("webp")
-        .quality(80)
-        .width(400)
-        .height(400)
-        .url()
-    : null;
+  // Memoize image URL generation to avoid recalculation
+  const imageUrl = useMemo(
+    () =>
+      item.image?.asset
+        ? urlFor(item.image.asset)
+            .format("webp")
+            .quality(80)
+            .width(400)
+            .height(400)
+            .url()
+        : null,
+    [item.image]
+  );
 
   const primaryCategory = item.categories?.[0];
   const categorySlug = primaryCategory?.slug?.current;

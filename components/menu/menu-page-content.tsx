@@ -40,52 +40,28 @@ export function MenuPageContent({
   });
 
   const gridContainerRef = useRef<HTMLDivElement>(null);
-  const previousScrollY = useRef<number>(0);
   const previousItemsCount = useRef<number>(filteredItems.length);
-  const previousContainerHeight = useRef<number>(0);
 
-  // Preserve scroll position when items change
+  // Simplified scroll position preservation - only when items significantly decrease
   useEffect(() => {
-    // Only adjust scroll if items count decreased
-    if (
-      filteredItems.length < previousItemsCount.current &&
-      gridContainerRef.current
-    ) {
+    const itemsDecreased = filteredItems.length < previousItemsCount.current * 0.5;
+    
+    if (itemsDecreased) {
+      // Only adjust if content significantly decreased
       const currentScrollY = window.scrollY || window.pageYOffset;
-      const containerHeight = gridContainerRef.current.scrollHeight;
-      const previousHeight = previousContainerHeight.current;
+      const documentHeight = document.documentElement.scrollHeight;
+      const viewportHeight = window.innerHeight;
+      const maxScrollY = documentHeight - viewportHeight;
 
-      // Only adjust if we're scrolled down and content height decreased
-      if (previousHeight > 0 && containerHeight < previousHeight) {
-        const heightDifference = previousHeight - containerHeight;
-
-        // If we're scrolled past where the content now ends, adjust smoothly
-        const documentHeight = document.documentElement.scrollHeight;
-        const viewportHeight = window.innerHeight;
-        const maxScrollY = documentHeight - viewportHeight;
-
-        if (currentScrollY > 0 && currentScrollY > maxScrollY - heightDifference) {
-          // Smoothly scroll to maintain visual context
-          const targetScroll = Math.max(0, currentScrollY - heightDifference * 0.5);
-          
-          window.scrollTo({
-            top: targetScroll,
-            behavior: "smooth",
-          });
-        }
+      if (currentScrollY > maxScrollY) {
+        window.scrollTo({
+          top: Math.max(0, maxScrollY),
+          behavior: "smooth",
+        });
       }
     }
 
-    // Update refs after a brief delay to let layout settle
-    const timeoutId = setTimeout(() => {
-      previousScrollY.current = window.scrollY || window.pageYOffset;
-      previousItemsCount.current = filteredItems.length;
-      if (gridContainerRef.current) {
-        previousContainerHeight.current = gridContainerRef.current.scrollHeight;
-      }
-    }, 100);
-
-    return () => clearTimeout(timeoutId);
+    previousItemsCount.current = filteredItems.length;
   }, [filteredItems.length]);
 
   const filterProps = {

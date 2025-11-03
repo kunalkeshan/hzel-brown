@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useEffect } from "react";
+import { useMemo, useEffect, useCallback } from "react";
 import {
   parseAsArrayOf,
   parseAsInteger,
@@ -52,22 +52,40 @@ export function useMenuFilters({
     }
   }, [lockedCategorySlug, filters.categories, setFilters]);
 
+  // Memoize category mapping for better performance
+  const categorySlugToIdMap = useMemo(() => {
+    if (!filterData?.categories) return new Map<string, string>();
+    return new Map(
+      filterData.categories.map((cat) => [cat.slug?.current || "", cat._id])
+    );
+  }, [filterData?.categories]);
+
+  const categoryIdToSlugMap = useMemo(() => {
+    if (!filterData?.categories) return new Map<string, string>();
+    return new Map(
+      filterData.categories.map((cat) => [cat._id, cat.slug?.current || ""])
+    );
+  }, [filterData?.categories]);
+
   // Helper function to convert category slugs to IDs for filtering
-  const getCategoryIdsFromSlugs = (slugs: string[]) => {
-    if (!filterData?.categories) return [];
-    return filterData.categories
-      .filter((category) => slugs.includes(category.slug?.current || ""))
-      .map((category) => category._id);
-  };
+  const getCategoryIdsFromSlugs = useCallback(
+    (slugs: string[]) => {
+      return slugs
+        .map((slug) => categorySlugToIdMap.get(slug))
+        .filter((id): id is string => !!id);
+    },
+    [categorySlugToIdMap]
+  );
 
   // Helper function to convert category IDs to slugs for URL
-  const getCategorySlugsFromIds = (ids: string[]) => {
-    if (!filterData?.categories) return [];
-    return filterData.categories
-      .filter((category) => ids.includes(category._id))
-      .map((category) => category.slug?.current || "")
-      .filter((slug) => slug !== "");
-  };
+  const getCategorySlugsFromIds = useCallback(
+    (ids: string[]) => {
+      return ids
+        .map((id) => categoryIdToSlugMap.get(id))
+        .filter((slug): slug is string => !!slug);
+    },
+    [categoryIdToSlugMap]
+  );
 
   const filteredItems = useMemo(() => {
     return menuItems.filter((item) => {
@@ -113,7 +131,7 @@ export function useMenuFilters({
 
       return true;
     });
-  }, [menuItems, filters]);
+  }, [menuItems, filters, getCategoryIdsFromSlugs]);
 
   const updateSearch = (search: string) => {
     setFilters({ search });

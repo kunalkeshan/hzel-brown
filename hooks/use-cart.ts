@@ -13,15 +13,21 @@ import { formatCurrency } from "@/lib/numbers";
 export function useCart() {
   // Get all store methods and state
   const store = useCartStore();
+  
+  // Use Zustand selectors for better performance
+  const items = useCartStore((state) => state.items);
+  const totalItems = useCartStore((state) => state.getTotalItems());
+  const totalCost = useCartStore((state) => state.getTotalCost());
+  const isEmpty = items.length === 0;
 
   return {
     // State
-    items: store.items,
+    items,
 
     // Computed values
-    totalItems: store.getTotalItems(),
-    totalCost: store.getTotalCost(),
-    isEmpty: store.items.length === 0,
+    totalItems,
+    totalCost,
+    isEmpty,
 
     // Core operations
     addItem: store.addItem,
@@ -41,10 +47,10 @@ export function useCart() {
 
     // Helper methods for UI
     getCartSummary: () => ({
-      totalItems: store.getTotalItems(),
-      totalCost: store.getTotalCost(),
-      itemCount: store.items.length,
-      isEmpty: store.items.length === 0,
+      totalItems,
+      totalCost,
+      itemCount: items.length,
+      isEmpty,
     }),
 
     // Format currency for display
@@ -54,8 +60,7 @@ export function useCart() {
 
     // Get formatted total cost
     getFormattedTotal: (): string => {
-      const total = store.getTotalCost();
-      return formatCurrency(total);
+      return formatCurrency(totalCost);
     },
   };
 }
