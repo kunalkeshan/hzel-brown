@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { motion } from "motion/react";
 import { Trash2, Check, Clock, Plus, Minus } from "lucide-react";
 import { useCart } from "@/hooks/use-cart";
 import { urlFor } from "@/sanity/lib/image";
@@ -34,7 +35,17 @@ export function ItemRow({ item }: ItemRowProps) {
       : null;
 
   return (
-    <li className="flex py-6 sm:py-10">
+    <motion.li
+      layout
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.95 }}
+      transition={{
+        duration: 0.3,
+        ease: [0.4, 0, 0.2, 1],
+      }}
+      className="flex py-6 sm:py-10"
+    >
       <div className="shrink-0">
         {itemLink ? (
           <Link href={itemLink}>
@@ -164,6 +175,6 @@ export function ItemRow({ item }: ItemRowProps) {
           )}
         </p>
       </div>
-    </li>
+    </motion.li>
   );
 }

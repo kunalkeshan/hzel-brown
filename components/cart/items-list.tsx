@@ -1,5 +1,6 @@
 "use client";
 
+import { AnimatePresence } from "motion/react";
 import { useCart } from "@/hooks/use-cart";
 import { ItemRow } from "./item-row";
 
@@ -15,9 +16,11 @@ export function ItemsList() {
         role="list"
         className="divide-y divide-border border-t border-b border-border"
       >
-        {items.map((item) => (
-          <ItemRow key={item._id} item={item} />
-        ))}
+        <AnimatePresence mode="popLayout">
+          {items.map((item) => (
+            <ItemRow key={item._id} item={item} />
+          ))}
+        </AnimatePresence>
       </ul>
     </section>
   );
