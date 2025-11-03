@@ -1,5 +1,6 @@
 "use client";
 
+import { motion } from "motion/react";
 import { Percent, Truck, Gift } from "lucide-react";
 import { MotionSection } from "@/components/ui/motion-section";
 import {
@@ -63,35 +64,41 @@ export function Stats() {
                 animateNumber?: boolean;
               };
               return (
-                <Card
+                <motion.div
                   key={index}
-                  className="hover:-translate-y-1 transition-all duration-300"
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6, delay: index * 0.1 }}
+                  className="h-full"
                 >
-                  <CardContent className="flex flex-col gap-6 p-5 items-center lg:items-start">
-                    <div className="flex justify-start">
-                      <IconComponent
-                        className="h-10 w-10 text-primary"
-                        strokeWidth={1.5}
-                      />
-                    </div>
-                    <div className="flex flex-col gap-1.5">
-                      <CardTitle className="text-xl font-bold text-foreground">
-                        {statItem.animateNumber &&
-                        typeof statItem.number === "number" ? (
-                          <>
-                            <AnimatedNumber value={statItem.number} />
-                            {statItem.numberSuffix}
-                          </>
-                        ) : (
-                          String(statItem.number)
-                        )}
-                      </CardTitle>
-                      <CardDescription className="text-lg font-normal leading-8">
-                        {statItem.label}
-                      </CardDescription>
-                    </div>
-                  </CardContent>
-                </Card>
+                  <Card className="h-full hover:-translate-y-1 transition-all duration-300">
+                    <CardContent className="flex flex-col gap-6 p-5 items-center lg:items-start">
+                      <div className="flex justify-start">
+                        <IconComponent
+                          className="h-10 w-10 text-primary"
+                          strokeWidth={1.5}
+                        />
+                      </div>
+                      <div className="flex flex-col gap-1.5">
+                        <CardTitle className="text-xl font-bold text-foreground">
+                          {statItem.animateNumber &&
+                          typeof statItem.number === "number" ? (
+                            <>
+                              <AnimatedNumber value={statItem.number} />
+                              {statItem.numberSuffix}
+                            </>
+                          ) : (
+                            String(statItem.number)
+                          )}
+                        </CardTitle>
+                        <CardDescription className="text-lg font-normal leading-8">
+                          {statItem.label}
+                        </CardDescription>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </motion.div>
               );
             })}
           </div>

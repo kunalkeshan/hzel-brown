@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { Plus, Minus, ShoppingCart, Trash2 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { useCart } from "@/hooks/use-cart";
@@ -20,6 +21,7 @@ interface MenuItemCardActionsProps {
 }
 
 export function MenuItemCardActions({ item }: MenuItemCardActionsProps) {
+  const [mounted, setMounted] = useState(false);
   const {
     isItemInCart,
     getItemQuantity,
@@ -29,8 +31,12 @@ export function MenuItemCardActions({ item }: MenuItemCardActionsProps) {
     removeItem,
   } = useCart();
 
-  const isInCart = isItemInCart(item._id);
-  const quantity = getItemQuantity(item._id);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const isInCart = mounted ? isItemInCart(item._id) : false;
+  const quantity = mounted ? getItemQuantity(item._id) : 0;
 
   const handleAddToCart = () => {
     addItem(item);
