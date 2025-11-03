@@ -1,7 +1,11 @@
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Logo } from "../ui/logo";
-import { footerSections, getSocialIcon } from "@/constants/navigation";
+import {
+  footerSections,
+  getSocialIcon,
+  getSocialName,
+} from "@/constants/navigation";
 import type {
   SITE_CONFIG_QUERYResult,
   FOOTER_LEGAL_LINKS_QUERYResult,
@@ -18,6 +22,7 @@ export default function Footer({ siteConfig, legalLinks }: FooterProps) {
     .map((s) => ({
       icon: getSocialIcon(String(s.platform)),
       link: String(s.url),
+      platform: String(s.platform),
     }))
     .filter((s) => Boolean(s.icon));
   const contactSection = footerSections.find((s) => s.type === "contact");
@@ -53,6 +58,9 @@ export default function Footer({ siteConfig, legalLinks }: FooterProps) {
                 >
                   <a href={item.link} target="_blank" rel="noreferrer">
                     {item.icon}
+                    <span className="sr-only">
+                      {getSocialName(item.platform)}
+                    </span>
                   </a>
                 </Button>
               ))}
