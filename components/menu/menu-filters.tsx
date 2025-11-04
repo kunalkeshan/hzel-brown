@@ -1,7 +1,7 @@
 "use client";
 
 import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
+import Selectable from "@/components/ui/selectable";
 import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -130,42 +130,31 @@ export function MenuFilters({
           <Label className="text-sm font-medium text-gray-900">
             Categories
           </Label>
-          <div className="space-y-3">
+          <div className="flex flex-wrap gap-2">
             {categoriesToShow.map((category) => {
               const isLocked = lockedCategorySlug === category.slug?.current;
+              const checked = filters.categories.includes(category._id);
               return (
-                <div key={category._id} className="flex items-center space-x-3">
-                  <Checkbox
-                    id={`category-${category._id}`}
-                    checked={filters.categories.includes(category._id)}
-                    onCheckedChange={
-                      isLocked
-                        ? undefined
-                        : (checked) =>
-                            handleCategoryChange(
-                              category._id,
-                              checked as boolean
-                            )
-                    }
-                    disabled={isLocked}
-                    className={isLocked ? "opacity-60 cursor-not-allowed" : ""}
-                  />
-                  <Label
-                    htmlFor={`category-${category._id}`}
-                    className={`text-sm ${
-                      isLocked
-                        ? "text-gray-500 cursor-not-allowed"
-                        : "text-gray-600 cursor-pointer"
-                    }`}
-                  >
-                    {category.title}
-                    {isLocked && (
-                      <span className="ml-2 text-xs text-gray-400">
-                        (locked)
-                      </span>
-                    )}
-                  </Label>
-                </div>
+                <Selectable
+                  key={category._id}
+                  id={`category-${category._id}`}
+                  label={
+                    <span>
+                      {category.title}
+                      {isLocked && (
+                        <span className="ml-2 text-xs text-gray-300">(locked)</span>
+                      )}
+                    </span>
+                  }
+                  checked={checked}
+                  onCheckedChange={
+                    isLocked
+                      ? undefined
+                      : (c) => handleCategoryChange(category._id, c)
+                  }
+                  disabled={isLocked}
+                  size="sm"
+                />
               );
             })}
           </div>
@@ -178,25 +167,18 @@ export function MenuFilters({
           <Label className="text-sm font-medium text-gray-900">
             Exclude Allergens
           </Label>
-          <div className="space-y-3">
+          <div className="flex flex-wrap gap-2">
             {filterData.allergens
               .filter((allergen): allergen is string => allergen !== null)
               .map((allergen) => (
-                <div key={allergen} className="flex items-center space-x-3">
-                  <Checkbox
-                    id={`allergen-${allergen}`}
-                    checked={filters.allergens.includes(allergen)}
-                    onCheckedChange={(checked) =>
-                      handleAllergenChange(allergen, checked as boolean)
-                    }
-                  />
-                  <Label
-                    htmlFor={`allergen-${allergen}`}
-                    className="text-sm text-gray-600 cursor-pointer"
-                  >
-                    {getAllergenLabel(allergen)}
-                  </Label>
-                </div>
+                <Selectable
+                  key={allergen}
+                  id={`allergen-${allergen}`}
+                  label={<span>{getAllergenLabel(allergen)}</span>}
+                  checked={filters.allergens.includes(allergen)}
+                  onCheckedChange={(c) => handleAllergenChange(allergen, c)}
+                  size="sm"
+                />
               ))}
           </div>
         </div>

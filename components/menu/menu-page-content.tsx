@@ -64,10 +64,16 @@ export function MenuPageContent({
         const viewportHeight = window.innerHeight;
         const maxScrollY = documentHeight - viewportHeight;
 
-        if (currentScrollY > 0 && currentScrollY > maxScrollY - heightDifference) {
+        if (
+          currentScrollY > 0 &&
+          currentScrollY > maxScrollY - heightDifference
+        ) {
           // Smoothly scroll to maintain visual context
-          const targetScroll = Math.max(0, currentScrollY - heightDifference * 0.5);
-          
+          const targetScroll = Math.max(
+            0,
+            currentScrollY - heightDifference * 0.5
+          );
+
           window.scrollTo({
             top: targetScroll,
             behavior: "smooth",
