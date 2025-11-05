@@ -11,6 +11,8 @@ import {
 } from "@/components/ui/card";
 import { AnimatedNumber } from "@/components/ui/animated-number";
 import { cn } from "@/lib/utils";
+import { FREE_SHIPPING_THRESHOLD } from "@/constants/shipping";
+import { formatCurrency } from "@/lib/numbers";
 
 const statsData = [
   {
@@ -23,7 +25,7 @@ const statsData = [
   {
     icon: Truck,
     number: "Free Shipping",
-    label: "Over ₹3,000",
+    label: `Over ${formatCurrency(FREE_SHIPPING_THRESHOLD)}`,
     animateNumber: false,
   },
   {

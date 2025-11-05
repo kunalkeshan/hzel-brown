@@ -1,6 +1,6 @@
 "use client";
 
-import { HelpCircle } from "lucide-react";
+import { HelpCircle, Truck } from "lucide-react";
 import { useCart } from "@/hooks/use-cart";
 import { Button } from "@/components/ui/button";
 import {
@@ -13,6 +13,8 @@ import { formatCurrency } from "@/lib/numbers";
 import { toast } from "sonner";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { getSocialIcon } from "@/constants/navigation";
+import { FREE_SHIPPING_THRESHOLD } from "@/constants/shipping";
+import { AnimatePresence, motion } from "motion/react";
 
 type OrderSummaryProps = {
   phoneNumber: string | null;
@@ -20,6 +22,10 @@ type OrderSummaryProps = {
 
 export function OrderSummary({ phoneNumber }: OrderSummaryProps) {
   const { totalCost, formatPrice, validateAndCheckout, items } = useCart();
+
+  // Calculate free shipping eligibility
+  const qualifiesForFreeShipping = totalCost >= FREE_SHIPPING_THRESHOLD;
+  const remainingForFreeShipping = FREE_SHIPPING_THRESHOLD - totalCost;
 
   const handleCheckout = () => {
     const validation = validateAndCheckout();
@@ -143,6 +149,34 @@ export function OrderSummary({ phoneNumber }: OrderSummaryProps) {
         >
           Checkout
         </Button>
+
+        {/* Free Shipping Alert */}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={qualifiesForFreeShipping ? "qualified" : "not-qualified"}
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.3 }}
+            className="mt-4"
+          >
+            <Alert>
+              <Truck className="h-4 w-4" />
+              <AlertTitle>
+                {qualifiesForFreeShipping
+                  ? "Free Delivery"
+                  : "Free Shipping Available"}
+              </AlertTitle>
+              <AlertDescription className="text-xs">
+                {qualifiesForFreeShipping
+                  ? "Your order qualifies for free delivery!"
+                  : `Add ${formatCurrency(remainingForFreeShipping)} more to qualify for free delivery`}
+              </AlertDescription>
+            </Alert>
+          </motion.div>
+        </AnimatePresence>
+
+        {/* WhatsApp Checkout Alert */}
         <Alert className="mt-4">
           {getSocialIcon("whatsapp")}
           <AlertTitle>Checkout via WhatsApp</AlertTitle>
