@@ -77,6 +77,12 @@ export function MenuFilters({
   const minPrice = filterData?.priceRange?.min ?? 100;
   const maxPrice = filterData?.priceRange?.max ?? 5000;
 
+  const formatPrice = (price: number) => {
+    return price === maxPrice
+      ? `$${price.toLocaleString()}+`
+      : `$${price.toLocaleString()}`;
+  };
+
   // Get categories to display - only locked category if provided, otherwise all
   const categoriesToShow = lockedCategorySlug
     ? filterData?.categories?.filter(
@@ -185,22 +191,19 @@ export function MenuFilters({
       )}
 
       {/* Price Range */}
-      <div className="space-y-4">
+      <div className="space-y-3">
         <Label className="text-sm font-medium text-gray-900">Price Range</Label>
-        <div className="space-y-4">
-          <Slider
-            value={[filters.minPrice, filters.maxPrice]}
-            onValueChange={handlePriceChange}
-            min={minPrice}
-            max={maxPrice}
-            step={50}
-            className="w-full"
-          />
-          <div className="flex items-center justify-between text-sm text-gray-600">
-            <span>₹{filters.minPrice}</span>
-            <span>₹{filters.maxPrice}</span>
-          </div>
-        </div>
+        <Label className="text-sm tabular-nums text-gray-600">
+          From {formatPrice(filters.minPrice)} to {formatPrice(filters.maxPrice)}
+        </Label>
+        <Slider
+          value={[filters.minPrice, filters.maxPrice]}
+          onValueChange={handlePriceChange}
+          min={minPrice}
+          max={maxPrice}
+          aria-label="Price range slider"
+          className="w-full"
+        />
       </div>
     </div>
   );
