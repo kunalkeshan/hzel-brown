@@ -171,14 +171,14 @@ export function OrderSummary({ phoneNumber }: OrderSummaryProps) {
                 {qualifiesForFreeShipping ? (
                   "Your order qualifies for free delivery!"
                 ) : (
-                  <>
+                  <span className="inline">
                     Add{" "}
                     <AnimatedNumber
                       value={remainingForFreeShipping}
                       formatValue={formatCurrency}
                     />{" "}
                     more to qualify for free delivery
-                  </>
+                  </span>
                 )}
               </AlertDescription>
             </Alert>
