@@ -3,6 +3,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import Navbar from "@/components/layouts/navbar";
 import Footer from "@/components/layouts/footer";
+import { CartHydration } from "@/components/providers/cart-hydration";
 import { sanityFetch } from "@/sanity/lib/sanity-fetch";
 import {
   SITE_CONFIG_QUERY,
@@ -91,6 +92,7 @@ export default async function RootLayout({
   ]);
   return (
     <>
+      <CartHydration />
       <NuqsAdapter>
         <Navbar />
         {children}

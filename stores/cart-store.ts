@@ -210,31 +210,7 @@ export const useCartStore = create<CartState>()(
     }),
     {
       name: "hzel-brown-cart", // Unique name for sessionStorage key
-      storage: {
-        getItem: (name) => {
-          // Check if we're in a browser environment
-          if (typeof window === "undefined") {
-            return null;
-          }
-          const str = sessionStorage.getItem(name);
-          if (!str) return null;
-          return JSON.parse(str);
-        },
-        setItem: (name, value) => {
-          // Check if we're in a browser environment
-          if (typeof window === "undefined") {
-            return;
-          }
-          sessionStorage.setItem(name, JSON.stringify(value));
-        },
-        removeItem: (name) => {
-          // Check if we're in a browser environment
-          if (typeof window === "undefined") {
-            return;
-          }
-          sessionStorage.removeItem(name);
-        },
-      },
+      skipHydration: true, // Prevent automatic hydration during SSR
     }
   )
 );
