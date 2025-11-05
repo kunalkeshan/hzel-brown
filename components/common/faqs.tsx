@@ -17,7 +17,7 @@ export function Faqs({ faqs }: FaqsProps) {
   return (
     <MotionSection className="grid w-full container grid-cols-1 md:grid-cols-2 lg:border-x py-16 lg:py-20 gap-8">
       <div>
-        <div className="space-y-5">
+        <div className="space-y-5 h-fit lg:sticky lg:top-32">
           <h2 className="text-4xl font-bold text-foreground font-serif text-center xl:text-start">
             {faqs?.title || "Frequently Asked Questions"}
           </h2>
