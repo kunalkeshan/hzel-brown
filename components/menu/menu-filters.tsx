@@ -79,8 +79,8 @@ export function MenuFilters({
 
   const formatPrice = (price: number) => {
     return price === maxPrice
-      ? `$${price.toLocaleString()}+`
-      : `$${price.toLocaleString()}`;
+      ? `₹${price.toLocaleString()}+`
+      : `₹${price.toLocaleString()}`;
   };
 
   // Get categories to display - only locked category if provided, otherwise all
