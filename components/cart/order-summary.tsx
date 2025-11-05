@@ -13,7 +13,7 @@ import { formatCurrency } from "@/lib/numbers";
 import { toast } from "sonner";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { getSocialIcon } from "@/constants/navigation";
-import { FREE_SHIPPING_THRESHOLD } from "@/constants/shipping";
+import { FREE_SHIPPING_THRESHOLD, SHIPPING_COST } from "@/constants/shipping";
 import { AnimatePresence, motion } from "motion/react";
 
 type OrderSummaryProps = {
@@ -26,6 +26,15 @@ export function OrderSummary({ phoneNumber }: OrderSummaryProps) {
   // Calculate free shipping eligibility
   const qualifiesForFreeShipping = totalCost >= FREE_SHIPPING_THRESHOLD;
   const remainingForFreeShipping = FREE_SHIPPING_THRESHOLD - totalCost;
+
+  // Calculate shipping charge
+  // If order qualifies for free shipping (>= 3000), shipping is 0
+  // Otherwise, use the base SHIPPING_COST from constants
+  const shippingCharge = qualifiesForFreeShipping ? 0 : SHIPPING_COST;
+
+  // Calculate order total
+  // Only add shipping to total if shipping charge is greater than 0
+  const orderTotal = shippingCharge > 0 ? totalCost + shippingCharge : totalCost;
 
   const handleCheckout = () => {
     const validation = validateAndCheckout();
@@ -53,8 +62,16 @@ export function OrderSummary({ phoneNumber }: OrderSummaryProps) {
       )}\n`;
     });
 
+    // Add subtotal
+    message += `\nSubtotal: ${formatCurrency(totalCost)}`;
+
+    // Add shipping charge only if below threshold and shipping cost is greater than 0
+    if (!qualifiesForFreeShipping && shippingCharge > 0) {
+      message += `\nShipping: ${formatCurrency(shippingCharge)}`;
+    }
+
     // Add total
-    message += `\nTotal: ${formatCurrency(totalCost)}`;
+    message += `\nTotal: ${formatCurrency(orderTotal)}`;
 
     // Encode message (encodeURIComponent handles %0a automatically for newlines)
     const encodedMessage = encodeURIComponent(message);
@@ -102,7 +119,18 @@ export function OrderSummary({ phoneNumber }: OrderSummaryProps) {
               </TooltipContent>
             </Tooltip>
           </dt>
-          <dd className="text-sm font-medium text-foreground">TBD</dd>
+          <dd className="text-sm font-medium text-foreground">
+            {SHIPPING_COST === 0 ? (
+              "TBD"
+            ) : shippingCharge === 0 ? (
+              <span className="text-green-600">Free</span>
+            ) : (
+              <AnimatedNumber
+                value={shippingCharge}
+                formatValue={formatCurrency}
+              />
+            )}
+          </dd>
         </div>
 
         {/* Tax Estimate - Commented out but kept for future use */}
@@ -135,7 +163,7 @@ export function OrderSummary({ phoneNumber }: OrderSummaryProps) {
         <div className="flex items-center justify-between border-t border-border pt-4">
           <dt className="text-base font-medium text-foreground">Order total</dt>
           <dd className="text-base font-medium text-foreground">
-            <AnimatedNumber value={totalCost} formatValue={formatCurrency} />
+            <AnimatedNumber value={orderTotal} formatValue={formatCurrency} />
           </dd>
         </div>
       </dl>
