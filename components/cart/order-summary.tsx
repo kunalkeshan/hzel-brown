@@ -168,9 +168,18 @@ export function OrderSummary({ phoneNumber }: OrderSummaryProps) {
                   : "Free Shipping Available"}
               </AlertTitle>
               <AlertDescription className="text-xs">
-                {qualifiesForFreeShipping
-                  ? "Your order qualifies for free delivery!"
-                  : `Add ${formatCurrency(remainingForFreeShipping)} more to qualify for free delivery`}
+                {qualifiesForFreeShipping ? (
+                  "Your order qualifies for free delivery!"
+                ) : (
+                  <>
+                    Add{" "}
+                    <AnimatedNumber
+                      value={remainingForFreeShipping}
+                      formatValue={formatCurrency}
+                    />{" "}
+                    more to qualify for free delivery
+                  </>
+                )}
               </AlertDescription>
             </Alert>
           </motion.div>
