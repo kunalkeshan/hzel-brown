@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import {
   Accordion,
   AccordionContent,
@@ -6,9 +7,15 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
+import {
+  HoverCard,
+  HoverCardTrigger,
+  HoverCardContent,
+} from "@/components/ui/hover-card";
 import { formatCurrency } from "@/lib/numbers";
 import { COMMON_MENU_ACCORDIONS } from "@/constants/menu-accordions";
 import { getAllergenIcon } from "@/constants/allergen-icons";
+import { urlFor } from "@/sanity/lib/image";
 import type { MENU_ITEM_BY_SLUGS_QUERYResult } from "@/types/cms";
 import { MenuItemDisplayActions } from "./menu-item-display-actions";
 
@@ -41,13 +48,8 @@ export function MenuItemDetails({ item }: MenuItemDetailsProps) {
     });
   }
 
-  if (item.isCombo && item.comboDescription) {
-    accordionItems.push({
-      name: "Combo Details",
-      items: [item.comboDescription],
-      isText: true,
-    });
-  }
+  // Don't add combo details to accordionItems array anymore
+  // We'll handle it separately in the render section
 
   // Add common accordions (Shipping and Returns) to all items
   accordionItems.push(...COMMON_MENU_ACCORDIONS);
@@ -93,13 +95,108 @@ export function MenuItemDetails({ item }: MenuItemDetailsProps) {
       </div>
 
       {/* Accordion Details */}
-      {accordionItems.length > 0 && (
+      {(accordionItems.length > 0 || (item.isCombo && (item.comboDescription || (item.comboItems && item.comboItems.length > 0)))) && (
         <section aria-labelledby="details-heading" className="mt-12">
           <h2 id="details-heading" className="sr-only">
             Additional details
           </h2>
           <div className="divide-y divide-border border-t border-border">
             <Accordion type="single" collapsible className="w-full">
+              {/* Combo Details - rendered first if exists */}
+              {item.isCombo && (item.comboDescription || (item.comboItems && item.comboItems.length > 0)) && (
+                <AccordionItem value="combo-details">
+                  <AccordionTrigger className="text-sm font-medium text-foreground hover:text-primary">
+                    Combo Details
+                  </AccordionTrigger>
+                  <AccordionContent>
+                    <div className="space-y-4">
+                      {item.comboDescription && (
+                        <p className="text-sm leading-6 text-muted-foreground">
+                          {item.comboDescription}
+                        </p>
+                      )}
+                      {item.comboItems && item.comboItems.length > 0 && (
+                        <div className="space-y-2">
+                          <h4 className="text-sm font-medium text-foreground">
+                            Includes:
+                          </h4>
+                          <ul className="space-y-2">
+                            {item.comboItems.map((comboItem) => {
+                              const primaryCategory = comboItem.categories?.[0];
+                              const imageUrl = comboItem.image?.asset
+                                ? urlFor(comboItem.image.asset)
+                                    .width(200)
+                                    .height(200)
+                                    .quality(75)
+                                    .url()
+                                : null;
+
+                              return (
+                                <li key={comboItem._id}>
+                                  <HoverCard openDelay={200} closeDelay={100}>
+                                    <HoverCardTrigger asChild>
+                                      <Link
+                                        href={`/menu/${primaryCategory?.slug?.current}/${comboItem.slug?.current}`}
+                                        prefetch={false}
+                                        className="text-sm text-primary hover:underline inline-flex items-center gap-1"
+                                      >
+                                        {comboItem.name}
+                                      </Link>
+                                    </HoverCardTrigger>
+                                    <HoverCardContent
+                                      className="w-80"
+                                      align="start"
+                                    >
+                                      <div className="flex gap-4">
+                                        {imageUrl && (
+                                          <div className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-md">
+                                            <Image
+                                              src={imageUrl}
+                                              alt={comboItem.image?.alt || comboItem.name || ""}
+                                              fill
+                                              className="object-cover"
+                                              sizes="80px"
+                                            />
+                                          </div>
+                                        )}
+                                        <div className="flex-1 space-y-1">
+                                          <h4 className="text-sm font-semibold text-foreground">
+                                            {comboItem.name}
+                                          </h4>
+                                          {comboItem.price !== null && comboItem.price !== undefined && (
+                                            <p className="text-sm text-muted-foreground">
+                                              {formatCurrency(comboItem.price)}
+                                            </p>
+                                          )}
+                                          {primaryCategory && (
+                                            <Badge
+                                              variant="outline"
+                                              className="bg-primary/10 text-primary text-xs"
+                                            >
+                                              {primaryCategory.title}
+                                            </Badge>
+                                          )}
+                                          {comboItem.isAvailable === false && (
+                                            <p className="text-xs text-destructive">
+                                              Currently unavailable
+                                            </p>
+                                          )}
+                                        </div>
+                                      </div>
+                                    </HoverCardContent>
+                                  </HoverCard>
+                                </li>
+                              );
+                            })}
+                          </ul>
+                        </div>
+                      )}
+                    </div>
+                  </AccordionContent>
+                </AccordionItem>
+              )}
+
+              {/* Other accordion items */}
               {accordionItems.map((detail) => (
                 <AccordionItem key={detail.name} value={detail.name}>
                   <AccordionTrigger className="text-sm font-medium text-foreground hover:text-primary">
