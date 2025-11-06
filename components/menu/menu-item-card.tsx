@@ -71,9 +71,7 @@ export function MenuItemCard({
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
             />
           ) : (
-            <div className="w-full aspect-square rounded-2xl bg-muted flex items-center justify-center">
-              <span className="text-muted-foreground text-sm">No image</span>
-            </div>
+            <div className="w-full aspect-square bg-primary" />
           )}
 
           {primaryCategory && (
