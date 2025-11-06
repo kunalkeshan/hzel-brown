@@ -24,8 +24,8 @@ export function MenuItemDisplay({ item }: MenuItemDisplayProps) {
   return (
     <div className="relative">
       {/* Image */}
-      <div className="aspect-square w-full overflow-hidden rounded-lg bg-muted sm:rounded-lg">
-        {imageUrl ? (
+      <div className="aspect-square w-full overflow-hidden rounded-lg bg-primary sm:rounded-lg">
+        {imageUrl && (
           <Image
             src={imageUrl}
             alt={item.image?.alt || item.name || ""}
@@ -35,10 +35,6 @@ export function MenuItemDisplay({ item }: MenuItemDisplayProps) {
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 800px"
             priority
           />
-        ) : (
-          <div className="flex h-full items-center justify-center">
-            <span className="text-muted-foreground text-sm">No image</span>
-          </div>
         )}
       </div>
 
