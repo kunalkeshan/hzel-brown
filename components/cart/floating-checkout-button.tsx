@@ -25,7 +25,7 @@ export function FloatingCheckoutButton() {
 				>
 					<Link
 						href="/cart"
-						className="flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-medium text-primary-foreground shadow-lg transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+						className="flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-medium text-primary-foreground shadow-lg transition-all hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
 					>
 						<ShoppingCart className="h-4 w-4" />
 						<span>Checkout ({totalItems})</span>
