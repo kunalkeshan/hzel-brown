@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { motion, AnimatePresence } from "motion/react";
+import { motion } from "motion/react";
 import { Trash2, Check, Clock, Plus, Minus, ChevronDown } from "lucide-react";
 import { useCart } from "@/hooks/use-cart";
 import { urlFor } from "@/sanity/lib/image";
@@ -48,7 +48,7 @@ export function ItemRow({ item }: ItemRowProps) {
         type="button"
       >
         <ChevronDown
-          className={`h-4 w-4 transition-transform ${
+          className={`h-4 w-4 transition-transform duration-200 ${
             showComboItems ? "rotate-180" : ""
           }`}
         />
@@ -57,68 +57,58 @@ export function ItemRow({ item }: ItemRowProps) {
         </span>
       </button>
 
-      <AnimatePresence>
-        {showComboItems && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className="overflow-hidden"
-          >
-            <ul className="mt-3 space-y-2 pl-6">
-              {item.comboItems?.map((comboItem) => {
-                const comboItemCategory = comboItem.categories?.[0];
-                const comboItemSlug = comboItem.slug?.current;
-                const comboItemCategorySlug =
-                  comboItemCategory?.slug?.current;
-                const comboItemLink =
-                  comboItemCategorySlug && comboItemSlug
-                    ? (`/menu/${comboItemCategorySlug}/${comboItemSlug}` as const)
-                    : null;
+      {showComboItems && (
+        <ul className="mt-3 space-y-2 pl-6">
+          {item.comboItems?.map((comboItem) => {
+            const comboItemCategory = comboItem.categories?.[0];
+            const comboItemSlug = comboItem.slug?.current;
+            const comboItemCategorySlug =
+              comboItemCategory?.slug?.current;
+            const comboItemLink =
+              comboItemCategorySlug && comboItemSlug
+                ? (`/menu/${comboItemCategorySlug}/${comboItemSlug}` as const)
+                : null;
 
-                return (
-                  <li
-                    key={comboItem._id}
-                    className="flex items-start gap-2 text-sm"
-                  >
-                    <span className="text-muted-foreground mt-0.5">•</span>
-                    <div className="flex-1">
-                      {comboItemLink ? (
-                        <Link
-                          href={comboItemLink}
-                          prefetch={false}
-                          className="text-foreground hover:text-primary transition-colors"
-                        >
-                          {comboItem.name}
-                        </Link>
-                      ) : (
-                        <span className="text-foreground">
-                          {comboItem.name}
-                        </span>
-                      )}
-                      {comboItem.price !== null &&
-                        comboItem.price !== undefined && (
-                          <span className="ml-2 text-muted-foreground">
-                            ({formatPrice(comboItem.price)})
-                          </span>
-                        )}
-                      {comboItem.isAvailable === false && (
-                        <Badge
-                          variant="destructive"
-                          className="ml-2 text-xs"
-                        >
-                          Unavailable
-                        </Badge>
-                      )}
-                    </div>
-                  </li>
-                );
-              })}
-            </ul>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            return (
+              <li
+                key={comboItem._id}
+                className="flex items-start gap-2 text-sm"
+              >
+                <span className="text-muted-foreground mt-0.5">•</span>
+                <div className="flex-1">
+                  {comboItemLink ? (
+                    <Link
+                      href={comboItemLink}
+                      prefetch={false}
+                      className="text-foreground hover:text-primary transition-colors"
+                    >
+                      {comboItem.name}
+                    </Link>
+                  ) : (
+                    <span className="text-foreground">
+                      {comboItem.name}
+                    </span>
+                  )}
+                  {comboItem.price !== null &&
+                    comboItem.price !== undefined && (
+                      <span className="ml-2 text-muted-foreground">
+                        ({formatPrice(comboItem.price)})
+                      </span>
+                    )}
+                  {comboItem.isAvailable === false && (
+                    <Badge
+                      variant="destructive"
+                      className="ml-2 text-xs"
+                    >
+                      Unavailable
+                    </Badge>
+                  )}
+                </div>
+              </li>
+            );
+          })}
+        </ul>
+      )}
     </div>
   );
 
