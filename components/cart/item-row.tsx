@@ -57,58 +57,65 @@ export function ItemRow({ item }: ItemRowProps) {
         </span>
       </button>
 
-      {showComboItems && (
-        <ul className="mt-3 space-y-2 pl-6">
-          {item.comboItems?.map((comboItem) => {
-            const comboItemCategory = comboItem.categories?.[0];
-            const comboItemSlug = comboItem.slug?.current;
-            const comboItemCategorySlug =
-              comboItemCategory?.slug?.current;
-            const comboItemLink =
-              comboItemCategorySlug && comboItemSlug
-                ? (`/menu/${comboItemCategorySlug}/${comboItemSlug}` as const)
-                : null;
+      {/* Grid-based smooth animation */}
+      <div
+        className={`grid transition-all duration-200 ease-out ${
+          showComboItems ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
+        }`}
+      >
+        <div className="overflow-hidden">
+          <ul className="mt-3 space-y-2 pl-6">
+            {item.comboItems?.map((comboItem) => {
+              const comboItemCategory = comboItem.categories?.[0];
+              const comboItemSlug = comboItem.slug?.current;
+              const comboItemCategorySlug =
+                comboItemCategory?.slug?.current;
+              const comboItemLink =
+                comboItemCategorySlug && comboItemSlug
+                  ? (`/menu/${comboItemCategorySlug}/${comboItemSlug}` as const)
+                  : null;
 
-            return (
-              <li
-                key={comboItem._id}
-                className="flex items-start gap-2 text-sm"
-              >
-                <span className="text-muted-foreground mt-0.5">•</span>
-                <div className="flex-1">
-                  {comboItemLink ? (
-                    <Link
-                      href={comboItemLink}
-                      prefetch={false}
-                      className="text-foreground hover:text-primary transition-colors"
-                    >
-                      {comboItem.name}
-                    </Link>
-                  ) : (
-                    <span className="text-foreground">
-                      {comboItem.name}
-                    </span>
-                  )}
-                  {comboItem.price !== null &&
-                    comboItem.price !== undefined && (
-                      <span className="ml-2 text-muted-foreground">
-                        ({formatPrice(comboItem.price)})
+              return (
+                <li
+                  key={comboItem._id}
+                  className="flex items-start gap-2 text-sm"
+                >
+                  <span className="text-muted-foreground mt-0.5">•</span>
+                  <div className="flex-1">
+                    {comboItemLink ? (
+                      <Link
+                        href={comboItemLink}
+                        prefetch={false}
+                        className="text-foreground hover:text-primary transition-colors"
+                      >
+                        {comboItem.name}
+                      </Link>
+                    ) : (
+                      <span className="text-foreground">
+                        {comboItem.name}
                       </span>
                     )}
-                  {comboItem.isAvailable === false && (
-                    <Badge
-                      variant="destructive"
-                      className="ml-2 text-xs"
-                    >
-                      Unavailable
-                    </Badge>
-                  )}
-                </div>
-              </li>
-            );
-          })}
-        </ul>
-      )}
+                    {comboItem.price !== null &&
+                      comboItem.price !== undefined && (
+                        <span className="ml-2 text-muted-foreground">
+                          ({formatPrice(comboItem.price)})
+                        </span>
+                      )}
+                    {comboItem.isAvailable === false && (
+                      <Badge
+                        variant="destructive"
+                        className="ml-2 text-xs"
+                      >
+                        Unavailable
+                      </Badge>
+                    )}
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      </div>
     </div>
   );
 
@@ -267,7 +274,7 @@ export function ItemRow({ item }: ItemRowProps) {
 
       {/* Combo Items Display - MOBILE ONLY (below sm breakpoint) */}
       {hasComboItems && (
-        <div className="sm:hidden border-t border-border bg-muted/20 px-4 py-3 -mt-6">
+        <div className="sm:hidden border-t border-border bg-muted/20 px-4 py-4 mt-3">
           <ComboItemsSection />
         </div>
       )}
