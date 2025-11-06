@@ -39,6 +39,89 @@ export function ItemRow({ item }: ItemRowProps) {
 
   const hasComboItems = item.isCombo && item.comboItems && item.comboItems.length > 0;
 
+  // Reusable combo items UI component
+  const ComboItemsSection = () => (
+    <div>
+      <button
+        onClick={() => setShowComboItems(!showComboItems)}
+        className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+        type="button"
+      >
+        <ChevronDown
+          className={`h-4 w-4 transition-transform ${
+            showComboItems ? "rotate-180" : ""
+          }`}
+        />
+        <span className="font-medium">
+          Combo includes {item.comboItems?.length || 0} items
+        </span>
+      </button>
+
+      <AnimatePresence>
+        {showComboItems && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="overflow-hidden"
+          >
+            <ul className="mt-3 space-y-2 pl-6">
+              {item.comboItems?.map((comboItem) => {
+                const comboItemCategory = comboItem.categories?.[0];
+                const comboItemSlug = comboItem.slug?.current;
+                const comboItemCategorySlug =
+                  comboItemCategory?.slug?.current;
+                const comboItemLink =
+                  comboItemCategorySlug && comboItemSlug
+                    ? (`/menu/${comboItemCategorySlug}/${comboItemSlug}` as const)
+                    : null;
+
+                return (
+                  <li
+                    key={comboItem._id}
+                    className="flex items-start gap-2 text-sm"
+                  >
+                    <span className="text-muted-foreground mt-0.5">•</span>
+                    <div className="flex-1">
+                      {comboItemLink ? (
+                        <Link
+                          href={comboItemLink}
+                          prefetch={false}
+                          className="text-foreground hover:text-primary transition-colors"
+                        >
+                          {comboItem.name}
+                        </Link>
+                      ) : (
+                        <span className="text-foreground">
+                          {comboItem.name}
+                        </span>
+                      )}
+                      {comboItem.price !== null &&
+                        comboItem.price !== undefined && (
+                          <span className="ml-2 text-muted-foreground">
+                            ({formatPrice(comboItem.price)})
+                          </span>
+                        )}
+                      {comboItem.isAvailable === false && (
+                        <Badge
+                          variant="destructive"
+                          className="ml-2 text-xs"
+                        >
+                          Unavailable
+                        </Badge>
+                      )}
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+
   return (
     <motion.li
       layout
@@ -49,9 +132,10 @@ export function ItemRow({ item }: ItemRowProps) {
         duration: 0.3,
         ease: [0.4, 0, 0.2, 1],
       }}
-      className="flex py-6 sm:py-10"
     >
-      <div className="shrink-0">
+      {/* Main content container - flex on mobile, grid on desktop */}
+      <div className="flex py-6 sm:py-10">
+        <div className="shrink-0">
         {itemLink ? (
           <Link href={itemLink}>
             {imageUrl ? (
@@ -181,90 +265,22 @@ export function ItemRow({ item }: ItemRowProps) {
             )}
           </div>
 
-          {/* Combo Items Display */}
+          {/* Combo Items Display - DESKTOP ONLY (sm and above) */}
           {hasComboItems && (
-            <div className="mt-3 border-t border-border pt-3">
-              <button
-                onClick={() => setShowComboItems(!showComboItems)}
-                className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
-                type="button"
-              >
-                <ChevronDown
-                  className={`h-4 w-4 transition-transform ${
-                    showComboItems ? "rotate-180" : ""
-                  }`}
-                />
-                <span className="font-medium">
-                  Combo includes {item.comboItems?.length || 0} items
-                </span>
-              </button>
-
-              <AnimatePresence>
-                {showComboItems && (
-                  <motion.div
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: "auto", opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    transition={{ duration: 0.2 }}
-                    className="overflow-hidden"
-                  >
-                    <ul className="mt-3 space-y-2 pl-6">
-                      {item.comboItems?.map((comboItem) => {
-                        const comboItemCategory = comboItem.categories?.[0];
-                        const comboItemSlug = comboItem.slug?.current;
-                        const comboItemCategorySlug =
-                          comboItemCategory?.slug?.current;
-                        const comboItemLink =
-                          comboItemCategorySlug && comboItemSlug
-                            ? (`/menu/${comboItemCategorySlug}/${comboItemSlug}` as const)
-                            : null;
-
-                        return (
-                          <li
-                            key={comboItem._id}
-                            className="flex items-start gap-2 text-sm"
-                          >
-                            <span className="text-muted-foreground mt-0.5">•</span>
-                            <div className="flex-1">
-                              {comboItemLink ? (
-                                <Link
-                                  href={comboItemLink}
-                                  prefetch={false}
-                                  className="text-foreground hover:text-primary transition-colors"
-                                >
-                                  {comboItem.name}
-                                </Link>
-                              ) : (
-                                <span className="text-foreground">
-                                  {comboItem.name}
-                                </span>
-                              )}
-                              {comboItem.price !== null &&
-                                comboItem.price !== undefined && (
-                                  <span className="ml-2 text-muted-foreground">
-                                    ({formatPrice(comboItem.price)})
-                                  </span>
-                                )}
-                              {comboItem.isAvailable === false && (
-                                <Badge
-                                  variant="destructive"
-                                  className="ml-2 text-xs"
-                                >
-                                  Unavailable
-                                </Badge>
-                              )}
-                            </div>
-                          </li>
-                        );
-                      })}
-                    </ul>
-                  </motion.div>
-                )}
-              </AnimatePresence>
+            <div className="hidden sm:block mt-3 border-t border-border pt-3">
+              <ComboItemsSection />
             </div>
           )}
         </div>
       </div>
+      </div>
+
+      {/* Combo Items Display - MOBILE ONLY (below sm breakpoint) */}
+      {hasComboItems && (
+        <div className="sm:hidden border-t border-border bg-muted/20 px-4 py-3 -mt-6">
+          <ComboItemsSection />
+        </div>
+      )}
     </motion.li>
   );
 }
