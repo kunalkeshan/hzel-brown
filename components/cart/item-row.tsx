@@ -1,12 +1,14 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { motion } from "motion/react";
-import { Trash2, Check, Clock, Plus, Minus } from "lucide-react";
+import { motion, AnimatePresence } from "motion/react";
+import { Trash2, Check, Clock, Plus, Minus, ChevronDown } from "lucide-react";
 import { useCart } from "@/hooks/use-cart";
 import { urlFor } from "@/sanity/lib/image";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import type { CartItem } from "@/types/cart";
 
 interface ItemRowProps {
@@ -16,6 +18,7 @@ interface ItemRowProps {
 export function ItemRow({ item }: ItemRowProps) {
   const { incrementQuantity, decrementQuantity, removeItem, formatPrice } =
     useCart();
+  const [showComboItems, setShowComboItems] = useState(false);
 
   const imageUrl = item.image?.asset
     ? urlFor(item.image.asset)
@@ -33,6 +36,8 @@ export function ItemRow({ item }: ItemRowProps) {
     categorySlug && itemSlug
       ? (`/menu/${categorySlug}/${itemSlug}` as const)
       : null;
+
+  const hasComboItems = item.isCombo && item.comboItems && item.comboItems.length > 0;
 
   return (
     <motion.li
@@ -155,25 +160,110 @@ export function ItemRow({ item }: ItemRowProps) {
         </div>
 
         {/* Stock Availability */}
-        <p className="mt-4 flex items-center gap-2 text-sm text-muted-foreground">
-          {item.isAvailable ? (
-            <>
-              <Check
-                aria-hidden="true"
-                className="size-5 shrink-0 text-green-600"
-              />
-              <span>In stock</span>
-            </>
-          ) : (
-            <>
-              <Clock
-                aria-hidden="true"
-                className="size-5 shrink-0 text-muted-foreground"
-              />
-              <span>Currently unavailable</span>
-            </>
+        <div className="mt-4">
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            {item.isAvailable ? (
+              <>
+                <Check
+                  aria-hidden="true"
+                  className="size-5 shrink-0 text-green-600"
+                />
+                <span>In stock</span>
+              </>
+            ) : (
+              <>
+                <Clock
+                  aria-hidden="true"
+                  className="size-5 shrink-0 text-muted-foreground"
+                />
+                <span>Currently unavailable</span>
+              </>
+            )}
+          </div>
+
+          {/* Combo Items Display */}
+          {hasComboItems && (
+            <div className="mt-3 border-t border-border pt-3">
+              <button
+                onClick={() => setShowComboItems(!showComboItems)}
+                className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+                type="button"
+              >
+                <ChevronDown
+                  className={`h-4 w-4 transition-transform ${
+                    showComboItems ? "rotate-180" : ""
+                  }`}
+                />
+                <span className="font-medium">
+                  Combo includes {item.comboItems?.length || 0} items
+                </span>
+              </button>
+
+              <AnimatePresence>
+                {showComboItems && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                    className="overflow-hidden"
+                  >
+                    <ul className="mt-3 space-y-2 pl-6">
+                      {item.comboItems?.map((comboItem) => {
+                        const comboItemCategory = comboItem.categories?.[0];
+                        const comboItemSlug = comboItem.slug?.current;
+                        const comboItemCategorySlug =
+                          comboItemCategory?.slug?.current;
+                        const comboItemLink =
+                          comboItemCategorySlug && comboItemSlug
+                            ? (`/menu/${comboItemCategorySlug}/${comboItemSlug}` as const)
+                            : null;
+
+                        return (
+                          <li
+                            key={comboItem._id}
+                            className="flex items-start gap-2 text-sm"
+                          >
+                            <span className="text-muted-foreground mt-0.5">•</span>
+                            <div className="flex-1">
+                              {comboItemLink ? (
+                                <Link
+                                  href={comboItemLink}
+                                  prefetch={false}
+                                  className="text-foreground hover:text-primary transition-colors"
+                                >
+                                  {comboItem.name}
+                                </Link>
+                              ) : (
+                                <span className="text-foreground">
+                                  {comboItem.name}
+                                </span>
+                              )}
+                              {comboItem.price !== null &&
+                                comboItem.price !== undefined && (
+                                  <span className="ml-2 text-muted-foreground">
+                                    ({formatPrice(comboItem.price)})
+                                  </span>
+                                )}
+                              {comboItem.isAvailable === false && (
+                                <Badge
+                                  variant="destructive"
+                                  className="ml-2 text-xs"
+                                >
+                                  Unavailable
+                                </Badge>
+                              )}
+                            </div>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
           )}
-        </p>
+        </div>
       </div>
     </motion.li>
   );
