@@ -124,7 +124,13 @@ export type MenuItem = {
     [internalGroqTypeReferenceTo]?: "menuCategory";
   }>;
   price?: number;
-  ingredients?: Array<string>;
+  ingredients?: Array<{
+    _ref: string;
+    _type: "reference";
+    _weak?: boolean;
+    _key: string;
+    [internalGroqTypeReferenceTo]?: "ingredient";
+  }>;
   allergens?: Array<string>;
   isAvailable?: boolean;
   isCombo?: boolean;
@@ -180,6 +186,17 @@ export type MenuCategory = {
     _key: string;
     [internalGroqTypeReferenceTo]?: "menuItem";
   }>;
+};
+
+export type Ingredient = {
+  _id: string;
+  _type: "ingredient";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  name?: string;
+  slug?: Slug;
+  description?: string;
 };
 
 export type Legal = {
@@ -388,7 +405,7 @@ export type SanityAssetSourceData = {
   url?: string;
 };
 
-export type AllSanitySchemaTypes = SiteConfig | MenuItem | MenuCategory | Legal | Faqs | BlockContent | SanityImagePaletteSwatch | SanityImagePalette | SanityImageDimensions | SanityImageHotspot | SanityImageCrop | SanityFileAsset | SanityImageAsset | SanityImageMetadata | Geopoint | Slug | SanityAssetSourceData;
+export type AllSanitySchemaTypes = SiteConfig | MenuItem | MenuCategory | Ingredient | Legal | Faqs | BlockContent | SanityImagePaletteSwatch | SanityImagePalette | SanityImageDimensions | SanityImageHotspot | SanityImageCrop | SanityFileAsset | SanityImageAsset | SanityImageMetadata | Geopoint | Slug | SanityAssetSourceData;
 export declare const internalGroqTypeReferenceTo: unique symbol;
 // Source: sanity/queries/faqs.ts
 // Variable: FAQS_QUERY
@@ -469,7 +486,11 @@ export type MENU_ITEMS_QUERYResult = Array<{
   slug: Slug | null;
   description: string | null;
   price: number | null;
-  ingredients: Array<string> | null;
+  ingredients: Array<{
+    _id: string;
+    name: string | null;
+    slug: Slug | null;
+  }> | null;
   allergens: Array<string> | null;
   isAvailable: boolean | null;
   isCombo: boolean | null;
@@ -556,7 +577,11 @@ export type ALL_MENU_ITEMS_QUERYResult = Array<{
   slug: Slug | null;
   description: string | null;
   price: number | null;
-  ingredients: Array<string> | null;
+  ingredients: Array<{
+    _id: string;
+    name: string | null;
+    slug: Slug | null;
+  }> | null;
   allergens: Array<string> | null;
   isAvailable: boolean | null;
   isCombo: boolean | null;
@@ -703,7 +728,11 @@ export type MENU_ITEM_BY_SLUGS_QUERYResult = {
     slug: Slug | null;
     description: string | null;
     price: number | null;
-    ingredients: Array<string> | null;
+    ingredients: Array<{
+      _id: string;
+      name: string | null;
+      slug: Slug | null;
+    }> | null;
     allergens: Array<string> | null;
     isAvailable: boolean | null;
     isCombo: boolean | null;
@@ -788,7 +817,11 @@ export type MENU_ITEM_BY_SLUGS_QUERYResult = {
     slug: Slug | null;
     description: string | null;
     price: number | null;
-    ingredients: Array<string> | null;
+    ingredients: Array<{
+      _id: string;
+      name: string | null;
+      slug: Slug | null;
+    }> | null;
     allergens: Array<string> | null;
     isAvailable: boolean | null;
     isCombo: boolean | null;
@@ -909,7 +942,11 @@ export type MENU_ITEMS_BY_CATEGORY_QUERYResult = Array<{
   slug: Slug | null;
   description: string | null;
   price: number | null;
-  ingredients: Array<string> | null;
+  ingredients: Array<{
+    _id: string;
+    name: string | null;
+    slug: Slug | null;
+  }> | null;
   allergens: Array<string> | null;
   isAvailable: boolean | null;
   isCombo: boolean | null;
@@ -1072,7 +1109,11 @@ export type SITE_CONFIG_QUERYResult = {
     slug: Slug | null;
     description: string | null;
     price: number | null;
-    ingredients: Array<string> | null;
+    ingredients: Array<{
+      _id: string;
+      name: string | null;
+      slug: Slug | null;
+    }> | null;
     allergens: Array<string> | null;
     isAvailable: boolean | null;
     isCombo: boolean | null;

@@ -7,7 +7,11 @@ export const MENU_ITEMS_QUERY = defineQuery(`
     slug,
     description,
     price,
-    ingredients,
+    ingredients[]-> {
+      _id,
+      name,
+      slug
+    },
     allergens,
     isAvailable,
     isCombo,
@@ -53,7 +57,11 @@ export const ALL_MENU_ITEMS_QUERY = defineQuery(`
     slug,
     description,
     price,
-    ingredients,
+    ingredients[]-> {
+      _id,
+      name,
+      slug
+    },
     allergens,
     isAvailable,
     isCombo,
@@ -141,7 +149,11 @@ export const MENU_ITEM_BY_SLUGS_QUERY = defineQuery(`
       slug,
       description,
       price,
-      ingredients,
+      ingredients[]-> {
+        _id,
+        name,
+        slug
+      },
       allergens,
       isAvailable,
       isCombo,
@@ -184,7 +196,11 @@ export const MENU_ITEM_BY_SLUGS_QUERY = defineQuery(`
       slug,
       description,
       price,
-      ingredients,
+      ingredients[]-> {
+        _id,
+        name,
+        slug
+      },
       allergens,
       isAvailable,
       isCombo,
@@ -244,7 +260,11 @@ export const MENU_ITEMS_BY_CATEGORY_QUERY = defineQuery(`
     slug,
     description,
     price,
-    ingredients,
+    ingredients[]-> {
+      _id,
+      name,
+      slug
+    },
     allergens,
     isAvailable,
     isCombo,
