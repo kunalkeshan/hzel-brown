@@ -110,6 +110,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "monthly" as const,
       priority: 0.5,
     },
+    {
+      url: `${SITE_CONFIG.URL}/cart`,
+      lastModified: new Date(),
+      changeFrequency: "daily" as const,
+      priority: 0.8,
+    },
     // Dynamic pages
     ...categoryEntries,
     ...itemEntries,
