@@ -157,7 +157,7 @@ export default function Footer({ siteConfig, legalLinks }: FooterProps) {
               target="_blank"
               rel="noreferrer"
               className="hover:underline font-semibold"
-              style={{ color: "#ffa503" }}
+              style={{ color: "#1c92ff" }}
             >
               Kunal Keshan
             </a>
