@@ -3,6 +3,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import Navbar from "@/components/layouts/navbar";
 import Footer from "@/components/layouts/footer";
+import { FloatingCheckoutButton } from "@/components/cart/floating-checkout-button";
 import { sanityFetch } from "@/sanity/lib/sanity-fetch";
 import {
   SITE_CONFIG_QUERY,
@@ -96,6 +97,7 @@ export default async function RootLayout({
         {children}
         <Footer siteConfig={siteConfig} legalLinks={legalLinks} />
         <Toaster richColors />
+        <FloatingCheckoutButton />
       </NuqsAdapter>
     </>
   );
