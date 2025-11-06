@@ -75,8 +75,13 @@ export const menuItemType = defineType({
       title: "Ingredients",
       type: "array",
       group: "details",
-      of: [{ type: "string" }],
-      description: "List of ingredients used in this item",
+      of: [
+        {
+          type: "reference",
+          to: [{ type: "ingredient" }],
+        },
+      ],
+      description: "Select ingredients used in this item",
     }),
     defineField({
       name: "allergens",

@@ -2,6 +2,7 @@ import { type SchemaTypeDefinition } from "sanity";
 
 import { blockContentType } from "./blockContentType";
 import { faqsType } from "./faqsType";
+import { ingredientType } from "./ingredientType";
 import { legalType } from "./legalType";
 import { menuCategoryType } from "./menuCategoryType";
 import { menuItemType } from "./menuItemType";
@@ -11,6 +12,7 @@ export const schema: { types: SchemaTypeDefinition[] } = {
   types: [
     blockContentType,
     faqsType,
+    ingredientType,
     legalType,
     menuCategoryType,
     menuItemType,

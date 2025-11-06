@@ -19,6 +19,7 @@ export const structure: StructureResolver = (S) =>
             .title("Menu Management")
             .items([
               S.documentTypeListItem("menuCategory").title("Categories"),
+              S.documentTypeListItem("ingredient").title("Ingredients"),
               S.listItem()
                 .title("Items by Category")
                 .child(
@@ -40,8 +41,13 @@ export const structure: StructureResolver = (S) =>
       ...S.documentTypeListItems().filter(
         (item) =>
           item.getId() &&
-          !["faqs", "siteConfig", "legal", "menuCategory", "menuItem"].includes(
-            item.getId()!
-          )
+          ![
+            "faqs",
+            "siteConfig",
+            "legal",
+            "menuCategory",
+            "menuItem",
+            "ingredient",
+          ].includes(item.getId()!)
       ),
     ]);

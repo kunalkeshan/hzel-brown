@@ -30,7 +30,7 @@ export function MenuItemDetails({ item }: MenuItemDetailsProps) {
   if (item.ingredients && item.ingredients.length > 0) {
     accordionItems.push({
       name: "Ingredients",
-      items: item.ingredients,
+      items: item.ingredients.map((ingredient) => ingredient?.name || "").filter(Boolean),
     });
   }
 
