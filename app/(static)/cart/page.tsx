@@ -2,6 +2,12 @@ import { Content } from "@/components/cart/content";
 import { sanityFetch } from "@/sanity/lib/sanity-fetch";
 import { SITE_CONFIG_QUERY } from "@/sanity/queries/site-config";
 import type { SITE_CONFIG_QUERYResult } from "@/types/cms";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Cart",
+  description: "Your shopping cart",
+};
 
 export default async function CartPage() {
   const siteConfig = await sanityFetch<SITE_CONFIG_QUERYResult>({
