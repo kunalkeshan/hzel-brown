@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import { useMenuFilters } from "@/hooks/use-menu-filters";
 import { MenuFilters } from "./menu-filters";
 import { MobileMenuFilters } from "./mobile-menu-filters";
-import { MenuGrid } from "./menu-grid";
+import { MenuList } from "./menu-list";
 import type {
   ALL_MENU_ITEMS_QUERYResult,
   MENU_FILTERS_DATA_QUERYResult,
@@ -122,12 +122,12 @@ export function MenuPageContent({
         </div>
       </aside>
 
-      {/* Product grid */}
+      {/* Menu list */}
       <div
         ref={gridContainerRef}
         className="mt-6 lg:col-span-2 lg:mt-0 xl:col-span-3"
       >
-        <MenuGrid
+        <MenuList
           items={filteredItems}
           hasActiveFilters={hasActiveFilters}
           onClearFilters={clearFilters}
