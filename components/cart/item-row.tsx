@@ -1,14 +1,19 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { motion } from "motion/react";
-import { Trash2, Check, Clock, Plus, Minus, ChevronDown } from "lucide-react";
+import { Trash2, Check, Clock, Plus, Minus } from "lucide-react";
 import { useCart } from "@/hooks/use-cart";
 import { urlFor } from "@/sanity/lib/image";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import type { CartItem } from "@/types/cart";
 
 interface ItemRowProps {
@@ -18,7 +23,6 @@ interface ItemRowProps {
 export function ItemRow({ item }: ItemRowProps) {
   const { incrementQuantity, decrementQuantity, removeItem, formatPrice } =
     useCart();
-  const [showComboItems, setShowComboItems] = useState(false);
 
   const imageUrl = item.image?.asset
     ? urlFor(item.image.asset)
@@ -39,32 +43,17 @@ export function ItemRow({ item }: ItemRowProps) {
 
   const hasComboItems = item.isCombo && item.comboItems && item.comboItems.length > 0;
 
-  // Reusable combo items UI component
+  // Reusable combo items UI component using proper Accordion
   const ComboItemsSection = () => (
-    <div>
-      <button
-        onClick={() => setShowComboItems(!showComboItems)}
-        className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
-        type="button"
-      >
-        <ChevronDown
-          className={`h-4 w-4 transition-transform duration-200 ${
-            showComboItems ? "rotate-180" : ""
-          }`}
-        />
-        <span className="font-medium">
-          Combo includes {item.comboItems?.length || 0} items
-        </span>
-      </button>
-
-      {/* Grid-based smooth animation */}
-      <div
-        className={`grid transition-all duration-200 ease-out ${
-          showComboItems ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
-        }`}
-      >
-        <div className="overflow-hidden">
-          <ul className="mt-3 space-y-2 pl-6">
+    <Accordion type="single" collapsible>
+      <AccordionItem value="combo-items" className="border-none">
+        <AccordionTrigger className="py-0 text-sm text-muted-foreground hover:text-foreground hover:no-underline">
+          <span className="font-medium">
+            Combo includes {item.comboItems?.length || 0} items
+          </span>
+        </AccordionTrigger>
+        <AccordionContent className="pb-0">
+          <ul className="mt-2 space-y-2 pl-6">
             {item.comboItems?.map((comboItem) => {
               const comboItemCategory = comboItem.categories?.[0];
               const comboItemSlug = comboItem.slug?.current;
@@ -114,9 +103,9 @@ export function ItemRow({ item }: ItemRowProps) {
               );
             })}
           </ul>
-        </div>
-      </div>
-    </div>
+        </AccordionContent>
+      </AccordionItem>
+    </Accordion>
   );
 
   return (
