@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import { useMenuFilters } from "@/hooks/use-menu-filters";
 import { MenuFilters } from "./menu-filters";
 import { MobileMenuFilters } from "./mobile-menu-filters";
+import { MenuList } from "./menu-list";
 import { MenuGrid } from "./menu-grid";
 import type {
   ALL_MENU_ITEMS_QUERYResult,
@@ -14,12 +15,14 @@ interface MenuPageContentProps {
   menuItems: NonNullable<ALL_MENU_ITEMS_QUERYResult>;
   filterData: NonNullable<MENU_FILTERS_DATA_QUERYResult>;
   lockedCategorySlug?: string;
+  useGridLayout?: boolean;
 }
 
 export function MenuPageContent({
   menuItems,
   filterData,
   lockedCategorySlug,
+  useGridLayout = true,
 }: MenuPageContentProps) {
   const {
     filters,
@@ -122,16 +125,24 @@ export function MenuPageContent({
         </div>
       </aside>
 
-      {/* Product grid */}
+      {/* Menu display */}
       <div
         ref={gridContainerRef}
         className="mt-6 lg:col-span-2 lg:mt-0 xl:col-span-3"
       >
-        <MenuGrid
-          items={filteredItems}
-          hasActiveFilters={hasActiveFilters}
-          onClearFilters={clearFilters}
-        />
+        {useGridLayout ? (
+          <MenuGrid
+            items={filteredItems}
+            hasActiveFilters={hasActiveFilters}
+            onClearFilters={clearFilters}
+          />
+        ) : (
+          <MenuList
+            items={filteredItems}
+            hasActiveFilters={hasActiveFilters}
+            onClearFilters={clearFilters}
+          />
+        )}
       </div>
     </div>
   );

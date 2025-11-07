@@ -135,7 +135,7 @@ export async function generateMetadata({
 export default async function MenuItemsByCategoryPage({ params }: PageProps) {
   const { category } = await params;
 
-  const [categoryData, menuItems, filterData] = await Promise.all([
+  const [categoryData, menuItems, filterData, siteConfig] = await Promise.all([
     sanityFetch<CATEGORY_BY_SLUG_QUERYResult>({
       query: CATEGORY_BY_SLUG_QUERY,
       params: { slug: category },
@@ -146,6 +146,10 @@ export default async function MenuItemsByCategoryPage({ params }: PageProps) {
     }),
     sanityFetch<MENU_FILTERS_DATA_QUERYResult>({
       query: MENU_FILTERS_DATA_QUERY,
+    }),
+    sanityFetch<SITE_CONFIG_QUERYResult>({
+      query: SITE_CONFIG_QUERY,
+      tags: ["siteConfig"],
     }),
   ]);
 
@@ -177,6 +181,7 @@ export default async function MenuItemsByCategoryPage({ params }: PageProps) {
             }
           }
           lockedCategorySlug={category}
+          useGridLayout={siteConfig?.enableMenuPageGridView ?? true}
         />
       </Suspense>
     </main>
@@ -204,14 +209,23 @@ function MenuPageSkeleton() {
         </div>
       </aside>
       <div className="mt-6 lg:col-span-2 lg:mt-0 xl:col-span-3">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="space-y-6">
           {Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="space-y-4">
-              <Skeleton className="aspect-square w-full rounded-lg" />
-              <div className="space-y-2">
-                <Skeleton className="h-4 w-3/4" />
-                <Skeleton className="h-4 w-1/2" />
-                <Skeleton className="h-6 w-1/4" />
+            <div key={i} className="flex gap-4 md:gap-6 py-6 border-b border-gray-200">
+              {/* Image skeleton */}
+              <Skeleton className="w-16 h-16 md:w-20 md:h-20 rounded-lg flex-shrink-0" />
+
+              {/* Content skeleton */}
+              <div className="flex-1 flex flex-col md:flex-row md:justify-between gap-2 md:gap-6">
+                <div className="flex-1 space-y-2">
+                  <Skeleton className="h-5 w-3/4" />
+                  <Skeleton className="h-4 w-1/4" />
+                  <Skeleton className="h-4 w-full hidden md:block" />
+                </div>
+                <div className="flex items-center md:flex-col gap-2 md:items-end">
+                  <Skeleton className="h-6 w-20" />
+                  <Skeleton className="h-9 w-32" />
+                </div>
               </div>
             </div>
           ))}

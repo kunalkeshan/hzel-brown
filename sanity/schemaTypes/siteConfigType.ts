@@ -222,6 +222,15 @@ export const siteConfigType = defineType({
         "Add your social media profiles. Only platforms with URLs will be displayed.",
     },
     {
+      name: "enableMenuPageGridView",
+      title: "Enable Grid View for Menu Pages",
+      type: "boolean",
+      group: "content",
+      initialValue: true,
+      description:
+        "Toggle between grid and list layout for menu category pages. When enabled, menu items are displayed in a responsive grid (2-3 columns). When disabled, items are shown in a traditional linear menu format with images on the left. This setting applies to /menu and /menu/[category] pages only.",
+    },
+    {
       name: "menuCategories",
       title: "Menu Categories",
       type: "array",
