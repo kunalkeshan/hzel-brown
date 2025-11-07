@@ -37,7 +37,7 @@ export function SocialShare({
   const shareLinks = {
     whatsapp: `https://wa.me/?text=${encodedUrl}`,
     twitter: `https://twitter.com/intent/tweet?url=${encodedUrl}`,
-    linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`,
+    linkedin: `https://www.linkedin.com/shareArticle?mini=true&url=${encodedUrl}`,
     reddit: `https://reddit.com/submit?url=${encodedUrl}&title=${encodedTitle}`,
     telegram: `https://telegram.me/share/url?url=${encodedUrl}&text=${encodedTitle}`,
   };
@@ -57,7 +57,7 @@ export function SocialShare({
   };
 
   return (
-    <div className={cn("flex items-center gap-2", className)}>
+    <div className={cn("flex flex-wrap items-center gap-2", className)}>
       <TooltipProvider delayDuration={0}>
         {/* WhatsApp */}
         <Tooltip>
