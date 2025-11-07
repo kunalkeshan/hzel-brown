@@ -18,6 +18,7 @@ import { getAllergenIcon } from "@/constants/allergen-icons";
 import { urlFor } from "@/sanity/lib/image";
 import type { MENU_ITEM_BY_SLUGS_QUERYResult } from "@/types/cms";
 import { MenuItemDisplayActions } from "./menu-item-display-actions";
+import { MenuItemSocialShare } from "./menu-item-social-share";
 
 type MenuItemType = NonNullable<MENU_ITEM_BY_SLUGS_QUERYResult["item"]>;
 
@@ -79,6 +80,9 @@ export function MenuItemDetails({ item }: MenuItemDetailsProps) {
           </Link>
         </div>
       )}
+
+      {/* Social Share */}
+      <MenuItemSocialShare item={item} />
 
       {item.description && (
         <div className="mt-6">
