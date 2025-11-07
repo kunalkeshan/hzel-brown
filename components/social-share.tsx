@@ -37,7 +37,7 @@ export function SocialShare({
   const shareLinks = {
     whatsapp: `https://wa.me/?text=${encodedUrl}`,
     twitter: `https://twitter.com/intent/tweet?url=${encodedUrl}`,
-    linkedin: `https://www.linkedin.com/shareArticle?url=${encodedUrl}&title=${encodedTitle}`,
+    linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`,
     reddit: `https://reddit.com/submit?url=${encodedUrl}&title=${encodedTitle}`,
     telegram: `https://telegram.me/share/url?url=${encodedUrl}&text=${encodedTitle}`,
   };
