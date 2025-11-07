@@ -4,9 +4,11 @@ import {
   ALL_MENU_ITEMS_QUERY,
   MENU_FILTERS_DATA_QUERY,
 } from "@/sanity/queries/menu";
+import { SITE_CONFIG_QUERY } from "@/sanity/queries/site-config";
 import type {
   ALL_MENU_ITEMS_QUERYResult,
   MENU_FILTERS_DATA_QUERYResult,
+  SITE_CONFIG_QUERYResult,
 } from "@/types/cms";
 import { MenuPageContent } from "@/components/menu/menu-page-content";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -19,12 +21,16 @@ export const metadata: Metadata = {
 };
 
 export default async function MenuItemsPage() {
-  const [menuItems, filterData] = await Promise.all([
+  const [menuItems, filterData, siteConfig] = await Promise.all([
     sanityFetch<ALL_MENU_ITEMS_QUERYResult>({
       query: ALL_MENU_ITEMS_QUERY,
     }),
     sanityFetch<MENU_FILTERS_DATA_QUERYResult>({
       query: MENU_FILTERS_DATA_QUERY,
+    }),
+    sanityFetch<SITE_CONFIG_QUERYResult>({
+      query: SITE_CONFIG_QUERY,
+      tags: ["siteConfig"],
     }),
   ]);
 
@@ -51,6 +57,7 @@ export default async function MenuItemsPage() {
               priceRange: { min: 100, max: 5000 },
             }
           }
+          useGridLayout={siteConfig?.enableMenuPageGridView ?? true}
         />
       </Suspense>
     </main>

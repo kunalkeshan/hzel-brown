@@ -135,7 +135,7 @@ export async function generateMetadata({
 export default async function MenuItemsByCategoryPage({ params }: PageProps) {
   const { category } = await params;
 
-  const [categoryData, menuItems, filterData] = await Promise.all([
+  const [categoryData, menuItems, filterData, siteConfig] = await Promise.all([
     sanityFetch<CATEGORY_BY_SLUG_QUERYResult>({
       query: CATEGORY_BY_SLUG_QUERY,
       params: { slug: category },
@@ -146,6 +146,10 @@ export default async function MenuItemsByCategoryPage({ params }: PageProps) {
     }),
     sanityFetch<MENU_FILTERS_DATA_QUERYResult>({
       query: MENU_FILTERS_DATA_QUERY,
+    }),
+    sanityFetch<SITE_CONFIG_QUERYResult>({
+      query: SITE_CONFIG_QUERY,
+      tags: ["siteConfig"],
     }),
   ]);
 
@@ -177,6 +181,7 @@ export default async function MenuItemsByCategoryPage({ params }: PageProps) {
             }
           }
           lockedCategorySlug={category}
+          useGridLayout={siteConfig?.enableMenuPageGridView ?? true}
         />
       </Suspense>
     </main>

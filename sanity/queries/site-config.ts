@@ -33,6 +33,7 @@ export const SITE_CONFIG_QUERY = defineQuery(`
       url,
       label
     },
+    enableMenuPageGridView,
     featuredMenuItems[]-> {
       _id,
       name,

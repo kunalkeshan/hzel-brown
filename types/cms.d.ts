@@ -70,6 +70,7 @@ export type SiteConfig = {
     label?: string;
     _key: string;
   }>;
+  enableMenuPageGridView?: boolean;
   menuCategories?: Array<{
     _ref: string;
     _type: "reference";
