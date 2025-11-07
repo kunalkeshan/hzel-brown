@@ -1,3 +1,5 @@
+"use client";
+
 // import { AtSignIcon } from "lucide-react";
 // import {
 //   InputGroup,
@@ -6,12 +8,56 @@
 // } from "@/components/ui/input-group";
 // import AppleIcon from "@/components/icons/apple-icon";
 // import GithubIcon from "@/components/icons/github-icon";
+import { useState } from "react";
+import {
+  GoogleAuthProvider,
+  signInWithPopup,
+  type AuthError,
+} from "firebase/auth";
+import { auth } from "@/firebase/app";
+import { useUserStore } from "@/stores/user-store";
 import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/ui/logo";
 import GoogleIcon from "@/components/icons/google-icon";
 import Link from "next/link";
+import { toast } from "sonner";
 
 const LoginForm = () => {
+  const [isLoading, setIsLoading] = useState(false);
+  const setUser = useUserStore((state) => state.setUser);
+
+  const handleGoogleSignIn = async () => {
+    try {
+      setIsLoading(true);
+      const provider = new GoogleAuthProvider();
+      provider.addScope("email");
+
+      const result = await signInWithPopup(auth, provider);
+      setUser(result.user);
+      setIsLoading(false);
+      toast.success("Successfully signed in with Google");
+    } catch (error) {
+      setIsLoading(false);
+      const authError = error as AuthError;
+
+      let errorMessage = "Failed to sign in with Google. Please try again.";
+
+      if (authError.code === "auth/popup-blocked") {
+        errorMessage =
+          "Popup was blocked. Please allow popups for this site and try again.";
+      } else if (authError.code === "auth/popup-closed-by-user") {
+        errorMessage = "Sign-in was cancelled.";
+      } else if (authError.code === "auth/network-request-failed") {
+        errorMessage =
+          "Network error. Please check your connection and try again.";
+      } else if (authError.message) {
+        errorMessage = authError.message;
+      }
+
+      toast.error(errorMessage);
+    }
+  };
+
   return (
     <div className="mx-auto space-y-4 sm:w-sm ">
       <Logo className="lg:hidden w-16 h-auto" />
@@ -24,9 +70,15 @@ const LoginForm = () => {
         </p>
       </div>
       <div className="space-y-2">
-        <Button className="w-full" size="lg" type="button">
+        <Button
+          className="w-full"
+          size="lg"
+          type="button"
+          onClick={handleGoogleSignIn}
+          disabled={isLoading}
+        >
           <GoogleIcon />
-          Continue with Google
+          {isLoading ? "Signing in..." : "Continue with Google"}
         </Button>
         {/* <Button className="w-full" size="lg" type="button">
           <AppleIcon />
