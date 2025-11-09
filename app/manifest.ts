@@ -8,8 +8,8 @@ export default function manifest(): MetadataRoute.Manifest {
       "We use only the finest ingredients — rich chocolates and fresh butter — to create brownies that melt in your mouth. Whether you're treating yourself or sharing with loved ones, our brownies are made to bring joy to every occasion.",
     start_url: "/",
     display: "standalone",
-    background_color: "#ffffff",
-    theme_color: "#8B4513",
+    background_color: "#f5f1e6", // Light theme background from globals.css
+    theme_color: "#a67c52", // Light theme primary from globals.css
     icons: [
       {
         src: "/icon-192x192.png",

@@ -12,17 +12,17 @@ const sizes = [
 ];
 
 async function generateIcons() {
-  const inputPath = join(rootDir, "app", "icon.png");
+  const inputPath = join(rootDir, "public", "assets", "logo-text.png");
   const outputDir = join(rootDir, "public");
 
-  console.log("Generating PWA icons...");
+  console.log("Generating PWA icons from logo-text.png...");
 
   for (const { size, filename } of sizes) {
     const outputPath = join(outputDir, filename);
     await sharp(inputPath)
       .resize(size, size, {
         fit: "contain",
-        background: { r: 255, g: 255, b: 255, alpha: 0 },
+        background: { r: 245, g: 241, b: 230, alpha: 1 }, // #f5f1e6
       })
       .png()
       .toFile(outputPath);
