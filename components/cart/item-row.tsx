@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { motion } from "motion/react";
@@ -23,6 +24,7 @@ interface ItemRowProps {
 export function ItemRow({ item }: ItemRowProps) {
   const { incrementQuantity, decrementQuantity, removeItem, formatPrice } =
     useCart();
+  const [accordionValue, setAccordionValue] = useState<string | undefined>(undefined);
 
   const imageUrl = item.image?.asset
     ? urlFor(item.image.asset)
@@ -45,7 +47,7 @@ export function ItemRow({ item }: ItemRowProps) {
 
   // Reusable combo items UI component using proper Accordion
   const ComboItemsSection = () => (
-    <Accordion type="single" collapsible>
+    <Accordion type="single" collapsible value={accordionValue} onValueChange={setAccordionValue}>
       <AccordionItem value="combo-items" className="border-none">
         <AccordionTrigger className="py-0 text-sm text-muted-foreground hover:text-foreground hover:no-underline">
           <span className="font-medium">
