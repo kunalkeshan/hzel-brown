@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Libre_Baskerville, Lora, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
 import { SITE_CONFIG } from "@/config/site";
+import { PWAInstallPrompt } from "@/components/pwa/pwa-install-prompt";
 
 const sans = Libre_Baskerville({
   variable: "--font-sans",
@@ -39,6 +40,7 @@ export default function RootLayout({
         className={`${sans.variable} ${serif.variable} ${mono.variable} antialiased`}
       >
         {children}
+        <PWAInstallPrompt />
       </body>
     </html>
   );
