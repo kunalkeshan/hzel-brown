@@ -53,7 +53,7 @@ export function MenuItemListCard({
       }}
       className={cn("border-b border-gray-200 last:border-0", className)}
     >
-      <div className="group py-6 flex gap-4 md:gap-6 items-start hover:bg-gray-50/50 transition-colors duration-300 px-2 md:px-4 -mx-2 md:-mx-4 rounded-lg">
+      <div className="group py-6 flex gap-4 md:gap-6 items-start hover:bg-gray-50/50 transition-colors duration-300 px-2 md:px-4 -mx-2 md:-mx-4 rounded-lg cursor-pointer">
         {/* Image */}
         <Link
           href={`/menu/${primaryCategory?.slug?.current}/${item.slug?.current}`}
