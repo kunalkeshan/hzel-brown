@@ -42,7 +42,7 @@ export function Stats() {
   return (
     <MotionSection className="py-16 lg:py-20">
       <div className="container">
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-14">
+        <div className="grid grid-cols-1 xl:grid-cols-[3fr_7fr] gap-14">
           {/* Text Content */}
           <div className="flex flex-col gap-3">
             <p className="px-2 border border-primary/30 rounded-full bg-primary/10 text-xs font-medium leading-6 text-primary mb-2 w-fit mx-auto xl:mx-0">
