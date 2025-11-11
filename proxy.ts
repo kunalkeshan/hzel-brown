@@ -51,7 +51,7 @@ setInterval(() => {
   });
 }, RATE_LIMIT_WINDOW);
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Apply rate limiting to all routes except static assets
