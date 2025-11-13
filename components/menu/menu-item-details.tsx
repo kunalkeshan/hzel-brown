@@ -28,6 +28,7 @@ interface MenuItemDetailsProps {
 
 export function MenuItemDetails({ item }: MenuItemDetailsProps) {
   const primaryCategory = item.categories?.[0];
+  const itemSlug = item.slug?.current;
 
   const accordionItems: Array<{
     name: string;
@@ -57,7 +58,14 @@ export function MenuItemDetails({ item }: MenuItemDetailsProps) {
 
   return (
     <>
-      <h1 className="text-3xl font-bold tracking-tight text-foreground">
+      <h1
+        className="text-3xl font-bold tracking-tight text-foreground"
+        style={
+          itemSlug
+            ? ({ viewTransitionName: `menu-item-title-${itemSlug}` } as React.CSSProperties)
+            : undefined
+        }
+      >
         {item.name}
       </h1>
 
