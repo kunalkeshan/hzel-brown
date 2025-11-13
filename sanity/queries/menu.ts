@@ -302,3 +302,10 @@ export const MENU_ITEMS_BY_CATEGORY_QUERY = defineQuery(`
     }
   }
 `);
+
+export const MENU_ITEMS_BY_INGREDIENT_QUERY = defineQuery(`
+  *[_type == "menuItem" && references($ingredientId)] {
+    _id,
+    "slug": slug.current
+  }
+`);

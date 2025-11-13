@@ -7,6 +7,9 @@ import {
   createCollectionTag,
   createDocumentTag,
 } from "@/sanity/lib/cache-tags";
+import { client } from "@/sanity/lib/client";
+import { MENU_ITEMS_BY_INGREDIENT_QUERY } from "@/sanity/queries/menu";
+import type { MENU_ITEMS_BY_INGREDIENT_QUERYResult } from "@/types/cms";
 
 // Webhook payload type
 type WebhookPayload = {
@@ -78,6 +81,30 @@ export async function POST(req: NextRequest) {
       case "faqs":
         // Revalidate FAQs
         tags.push(createCollectionTag("faqs"));
+        break;
+
+      case "ingredient":
+        // Revalidate all menu items that use this ingredient
+        tags.push(createCollectionTag("menuItem"));
+
+        // Query Sanity to find which specific menu items reference this ingredient
+        const affectedMenuItems =
+          await client.fetch<MENU_ITEMS_BY_INGREDIENT_QUERYResult>(
+            MENU_ITEMS_BY_INGREDIENT_QUERY,
+            { ingredientId: body._id }
+          );
+
+        // Invalidate each affected menu item's cache
+        affectedMenuItems.forEach((item) => {
+          if (item.slug) {
+            tags.push(createDocumentTag("menuItem", item.slug));
+          }
+        });
+
+        // Future-proofing: When ingredients get their own pages, uncomment this:
+        // if (body.slug) {
+        //   tags.push(createDocumentTag("ingredient", body.slug));
+        // }
         break;
 
       default:
