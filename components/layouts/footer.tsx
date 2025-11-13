@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Logo } from "../ui/logo";
@@ -102,13 +103,13 @@ export default function Footer({ siteConfig, legalLinks }: FooterProps) {
                   </span>
                   <div className="mt-2 flex flex-col gap-2">
                     {items.map((l) => (
-                      <a
+                      <Link
                         className="w-max text-sm hover:underline"
                         href={l.href ?? "#"}
                         key={`${l.label}-${l.href}`}
                       >
                         {l.label}
-                      </a>
+                      </Link>
                     ))}
                   </div>
                 </div>
@@ -126,7 +127,7 @@ export default function Footer({ siteConfig, legalLinks }: FooterProps) {
                   </span>
                   <div className="mt-2 flex flex-col gap-2">
                     {items.map((doc) => (
-                      <a
+                      <Link
                         className="w-max text-sm hover:underline"
                         href={
                           doc.slug?.current
@@ -136,7 +137,7 @@ export default function Footer({ siteConfig, legalLinks }: FooterProps) {
                         key={doc._id}
                       >
                         {doc.title}
-                      </a>
+                      </Link>
                     ))}
                   </div>
                 </div>

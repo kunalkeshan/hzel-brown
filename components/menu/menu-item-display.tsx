@@ -20,6 +20,7 @@ export function MenuItemDisplay({ item }: MenuItemDisplayProps) {
     : null;
 
   const primaryCategory = item.categories?.[0];
+  const itemSlug = item.slug?.current;
 
   return (
     <div className="relative">
@@ -34,6 +35,11 @@ export function MenuItemDisplay({ item }: MenuItemDisplayProps) {
             className="h-full w-full object-cover"
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 800px"
             priority
+            style={
+              itemSlug
+                ? ({ viewTransitionName: `menu-item-image-${itemSlug}` } as React.CSSProperties)
+                : undefined
+            }
           />
         )}
       </div>

@@ -39,6 +39,7 @@ export function MenuItemListCard({
     : null;
 
   const primaryCategory = item.categories?.[0];
+  const itemSlug = item.slug?.current;
 
   return (
     <motion.div
@@ -69,6 +70,11 @@ export function MenuItemListCard({
                 height={160}
                 className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                 sizes="(max-width: 768px) 64px, 80px"
+                style={
+                  itemSlug
+                    ? ({ viewTransitionName: `menu-item-image-${itemSlug}` } as React.CSSProperties)
+                    : undefined
+                }
               />
             ) : (
               <div className="w-full h-full bg-primary" />
@@ -85,6 +91,11 @@ export function MenuItemListCard({
                 href={`/menu/${primaryCategory?.slug?.current}/${item.slug?.current}`}
                 className="font-semibold text-base md:text-lg leading-tight text-black transition-colors duration-300 hover:text-primary line-clamp-2 flex-1"
                 prefetch={false}
+                style={
+                  itemSlug
+                    ? ({ viewTransitionName: `menu-item-title-${itemSlug}` } as React.CSSProperties)
+                    : undefined
+                }
               >
                 {item.name}
               </Link>

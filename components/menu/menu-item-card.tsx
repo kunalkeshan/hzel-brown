@@ -40,6 +40,7 @@ export function MenuItemCard({
     : null;
 
   const primaryCategory = item.categories?.[0];
+  const itemSlug = item.slug?.current;
 
   return (
     <motion.div
@@ -69,6 +70,11 @@ export function MenuItemCard({
               height={400}
               className="w-full h-auto object-cover transition-all duration-500 group-hover:scale-[1.02]"
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+              style={
+                itemSlug
+                  ? ({ viewTransitionName: `menu-item-image-${itemSlug}` } as React.CSSProperties)
+                  : undefined
+              }
             />
           ) : (
             <div className="w-full aspect-square bg-primary" />
@@ -86,6 +92,11 @@ export function MenuItemCard({
             href={`/menu/${primaryCategory?.slug?.current}/${item.slug?.current}`}
             className="font-semibold text-lg leading-7 text-black transition-all duration-500 hover:text-primary hover:underline line-clamp-2"
             prefetch={false}
+            style={
+              itemSlug
+                ? ({ viewTransitionName: `menu-item-title-${itemSlug}` } as React.CSSProperties)
+                : undefined
+            }
           >
             {item.name}
           </Link>
