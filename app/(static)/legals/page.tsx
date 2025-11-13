@@ -27,6 +27,7 @@ export const metadata: Metadata = {
 export default async function AllLegalItemsPage() {
   const legalDocuments = await sanityFetch<LEGAL_DOCUMENTS_QUERYResult>({
     query: LEGAL_DOCUMENTS_QUERY,
+    tags: ["legal"],
   });
 
   return (

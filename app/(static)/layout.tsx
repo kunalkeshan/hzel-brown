@@ -16,8 +16,6 @@ import {
 } from "@/types/cms";
 import { urlFor } from "@/sanity/lib/image";
 
-export const revalidate = 60;
-
 export async function generateMetadata(): Promise<Metadata> {
   const siteConfig = await sanityFetch<SITE_CONFIG_QUERYResult>({
     query: SITE_CONFIG_QUERY,

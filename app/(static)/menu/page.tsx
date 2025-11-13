@@ -24,9 +24,11 @@ export default async function MenuItemsPage() {
   const [menuItems, filterData, siteConfig] = await Promise.all([
     sanityFetch<ALL_MENU_ITEMS_QUERYResult>({
       query: ALL_MENU_ITEMS_QUERY,
+      tags: ["menuItems"],
     }),
     sanityFetch<MENU_FILTERS_DATA_QUERYResult>({
       query: MENU_FILTERS_DATA_QUERY,
+      tags: ["categories", "menuItems"],
     }),
     sanityFetch<SITE_CONFIG_QUERYResult>({
       query: SITE_CONFIG_QUERY,

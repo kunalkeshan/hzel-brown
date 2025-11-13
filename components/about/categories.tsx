@@ -7,6 +7,7 @@ import { CategoryCardsGrid } from "@/components/common/category-cards-grid";
 export async function Categories() {
   const categories = await sanityFetch<ALL_CATEGORIES_QUERYResult>({
     query: ALL_CATEGORIES_QUERY,
+    tags: ["categories"],
   });
 
   return (

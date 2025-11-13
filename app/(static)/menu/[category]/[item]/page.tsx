@@ -62,6 +62,7 @@ export async function generateMetadata({
         categorySlug: category,
         itemSlug: item,
       },
+      tags: ["menuItems", `menuItem:${item}`, `category:${category}`],
     }),
     sanityFetch<SITE_CONFIG_QUERYResult>({
       query: SITE_CONFIG_QUERY,
@@ -155,6 +156,7 @@ export default async function IndividualMenuItemPage({ params }: PageProps) {
       categorySlug: category,
       itemSlug: item,
     },
+    tags: ["menuItems", `menuItem:${item}`, `category:${category}`],
   });
 
   if (!data?.item) {

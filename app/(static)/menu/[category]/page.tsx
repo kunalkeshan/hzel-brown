@@ -48,6 +48,7 @@ export async function generateMetadata({
     sanityFetch<CATEGORY_BY_SLUG_QUERYResult>({
       query: CATEGORY_BY_SLUG_QUERY,
       params: { slug: category },
+      tags: ["categories", `category:${category}`],
     }),
     sanityFetch<SITE_CONFIG_QUERYResult>({
       query: SITE_CONFIG_QUERY,
@@ -139,13 +140,16 @@ export default async function MenuItemsByCategoryPage({ params }: PageProps) {
     sanityFetch<CATEGORY_BY_SLUG_QUERYResult>({
       query: CATEGORY_BY_SLUG_QUERY,
       params: { slug: category },
+      tags: ["categories", `category:${category}`],
     }),
     sanityFetch<MENU_ITEMS_BY_CATEGORY_QUERYResult>({
       query: MENU_ITEMS_BY_CATEGORY_QUERY,
       params: { categorySlug: category },
+      tags: ["menuItems", `category:${category}`],
     }),
     sanityFetch<MENU_FILTERS_DATA_QUERYResult>({
       query: MENU_FILTERS_DATA_QUERY,
+      tags: ["categories", "menuItems"],
     }),
     sanityFetch<SITE_CONFIG_QUERYResult>({
       query: SITE_CONFIG_QUERY,
