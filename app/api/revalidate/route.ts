@@ -42,6 +42,7 @@ export async function POST(req: NextRequest) {
         break;
 
       case "category":
+      case "menuCategory":
         // Revalidate all categories and menu pages
         tags.push("categories");
         // Revalidate specific category if slug exists
