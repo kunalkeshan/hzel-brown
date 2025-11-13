@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/empty";
 import { MotionSection } from "@/components/ui/motion-section";
 import type { Metadata } from "next";
+import { createCollectionTag } from "@/sanity/lib/cache-tags";
 
 export const metadata: Metadata = {
   title: "Legal Documents",
@@ -27,6 +28,7 @@ export const metadata: Metadata = {
 export default async function AllLegalItemsPage() {
   const legalDocuments = await sanityFetch<LEGAL_DOCUMENTS_QUERYResult>({
     query: LEGAL_DOCUMENTS_QUERY,
+    tags: [createCollectionTag("legal")],
   });
 
   return (

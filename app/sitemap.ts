@@ -11,21 +11,22 @@ import type {
   ALL_MENU_ITEMS_QUERYResult,
   LEGAL_DOCUMENTS_QUERYResult,
 } from "@/types/cms";
+import { createCollectionTag } from "@/sanity/lib/cache-tags";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Fetch all dynamic content
   const [menuCategories, menuItems, legalDocs] = await Promise.all([
     sanityFetch<MENU_CATEGORIES_QUERYResult>({
       query: MENU_CATEGORIES_QUERY,
-      tags: ["menuCategories"],
+      tags: [createCollectionTag("menuCategory")],
     }),
     sanityFetch<ALL_MENU_ITEMS_QUERYResult>({
       query: ALL_MENU_ITEMS_QUERY,
-      tags: ["menuItems"],
+      tags: [createCollectionTag("menuItem")],
     }),
     sanityFetch<LEGAL_DOCUMENTS_QUERYResult>({
       query: LEGAL_DOCUMENTS_QUERY,
-      tags: ["legal"],
+      tags: [createCollectionTag("legal")],
     }),
   ]);
 

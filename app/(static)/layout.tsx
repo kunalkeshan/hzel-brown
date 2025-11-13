@@ -15,13 +15,12 @@ import {
   FOOTER_LEGAL_LINKS_QUERYResult,
 } from "@/types/cms";
 import { urlFor } from "@/sanity/lib/image";
-
-export const revalidate = 60;
+import { createCollectionTag } from "@/sanity/lib/cache-tags";
 
 export async function generateMetadata(): Promise<Metadata> {
   const siteConfig = await sanityFetch<SITE_CONFIG_QUERYResult>({
     query: SITE_CONFIG_QUERY,
-    tags: ["siteConfig"],
+    tags: [createCollectionTag("siteConfig")],
   });
 
   const title = siteConfig?.title || "Hzel Brown";
@@ -84,11 +83,11 @@ export default async function RootLayout({
   const [siteConfig, legalLinks] = await Promise.all([
     sanityFetch<SITE_CONFIG_QUERYResult>({
       query: SITE_CONFIG_QUERY,
-      tags: ["siteConfig"],
+      tags: [createCollectionTag("siteConfig")],
     }),
     sanityFetch<FOOTER_LEGAL_LINKS_QUERYResult>({
       query: FOOTER_LEGAL_LINKS_QUERY,
-      tags: ["siteConfig"],
+      tags: [createCollectionTag("siteConfig")],
     }),
   ]);
   return (

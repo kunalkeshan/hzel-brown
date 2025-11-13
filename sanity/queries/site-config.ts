@@ -40,7 +40,11 @@ export const SITE_CONFIG_QUERY = defineQuery(`
       slug,
       description,
       price,
-      ingredients,
+      ingredients[]-> {
+        _id,
+        name,
+        slug
+      },
       allergens,
       isAvailable,
       isCombo,
