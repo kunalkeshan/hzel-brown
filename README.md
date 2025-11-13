@@ -10,6 +10,7 @@ An artisan dessert shop e-commerce platform specializing in handcrafted brownies
 - [Installation](#installation)
 - [Environment Variables](#environment-variables)
 - [Development](#development)
+- [On-Demand Revalidation with Sanity Webhooks](#on-demand-revalidation-with-sanity-webhooks)
 - [Available Scripts](#available-scripts)
 - [Project Structure](#project-structure)
 - [Deployment](#deployment)
@@ -111,6 +112,10 @@ NODE_ENV=development
 
 # Site Configuration
 SITE_URL=http://localhost:3000
+
+# Sanity Webhook Secret (required for on-demand revalidation)
+# Generate a strong secret and add the same value to your Sanity webhook configuration
+SANITY_WEBHOOK_SECRET=your_webhook_secret
 ```
 
 **Note**: For actual values and additional configuration details, refer to the `.env.sample` file or contact the repository owner.
@@ -145,6 +150,82 @@ The Sanity CMS admin panel is available at:
 http://localhost:3000/cms
 ```
 
+## On-Demand Revalidation with Sanity Webhooks
+
+This application uses **on-demand revalidation** instead of time-based revalidation for optimal performance and reduced API calls. When content is updated in Sanity CMS, webhooks automatically trigger cache invalidation for affected pages.
+
+### How It Works
+
+1. **Content Update**: You create, update, or delete content in Sanity Studio
+2. **Webhook Trigger**: Sanity sends a webhook to your Next.js application
+3. **Cache Invalidation**: The webhook handler identifies affected pages and revalidates specific cache tags
+4. **Fresh Content**: Users immediately see updated content without waiting for a time-based revalidation interval
+
+This approach provides:
+- ✅ **Instant updates**: Content changes are reflected immediately
+- ✅ **Reduced API usage**: No periodic polling or unnecessary revalidation
+- ✅ **Granular control**: Only affected pages are revalidated
+- ✅ **Better performance**: Cache stays fresh without rebuilding unaffected pages
+
+### Setting Up Webhooks
+
+To enable on-demand revalidation, configure a webhook in your Sanity project:
+
+1. **Navigate to Webhook Settings**
+   - Go to [sanity.io/manage](https://www.sanity.io/manage)
+   - Select your project → **API** → **Webhooks**
+
+2. **Create a New Webhook**
+   - **Name**: `Next.js On-Demand Revalidation`
+   - **URL**: `https://your-production-domain.com/api/revalidate`
+   - **HTTP Method**: `POST`
+   - **Trigger on**: ✅ Create, ✅ Update, ✅ Delete
+
+3. **Configure Filter (GROQ)**
+   ```groq
+   _type in ['menuItem', 'menuCategory', 'siteConfig', 'legal', 'faqs']
+   ```
+   This ensures the webhook only fires for relevant content types.
+
+4. **Configure Projection (GROQ)**
+   ```groq
+   {
+     _id,
+     _type,
+     "slug": slug.current,
+     "categorySlug": category->slug.current
+   }
+   ```
+   This sends just enough data to determine which cache tags to invalidate.
+
+5. **Add Secret**
+   - Generate a strong secret (use a password generator)
+   - Add it to the webhook configuration in Sanity
+   - Add the same value as `SANITY_WEBHOOK_SECRET` in your `.env.local` and production environment variables
+
+6. **Save and Test**
+   - Save the webhook configuration
+   - Test it by updating any content in Sanity Studio
+   - Check your deployment logs to verify the webhook is being received
+
+### Technical Details
+
+The webhook endpoint (`/app/api/revalidate/route.ts`) uses Next.js's [`revalidateTag`](https://nextjs.org/docs/app/api-reference/functions/revalidateTag) function to invalidate cache entries based on document type and slug:
+
+- **Collection-level tags**: `menuItems`, `categories`, `siteConfig`, `legal`, `faqs`
+- **Document-level tags**: `menuItem:{slug}`, `category:{slug}`, `legal:{slug}`
+
+For example, updating a menu item with slug `chocolate-brownie` will revalidate:
+- All menu pages (`menuItems` tag)
+- The specific item page (`menuItem:chocolate-brownie` tag)
+- The category page it belongs to (`category:brownies` tag)
+
+### Documentation References
+
+- **Sanity Webhooks**: [sanity.io/docs/webhooks](https://www.sanity.io/docs/compute-and-ai/webhooks)
+- **Next.js On-Demand Revalidation**: [nextjs.org/docs/app/guides/incremental-static-regeneration#on-demand-revalidation-with-revalidatetag](https://nextjs.org/docs/app/guides/incremental-static-regeneration#on-demand-revalidation-with-revalidatetag)
+- **revalidateTag API**: [nextjs.org/docs/app/api-reference/functions/revalidateTag](https://nextjs.org/docs/app/api-reference/functions/revalidateTag)
+
 ## Available Scripts
 
 | Script | Description |
@@ -165,6 +246,7 @@ hzel-brown/
 │   ├── (static)/          # Static pages (menu, cart, contact, etc.)
 │   ├── cms/               # Sanity Studio admin interface
 │   └── api/               # API routes
+│       └── revalidate/    # Webhook endpoint for on-demand revalidation
 ├── components/            # React components
 │   ├── landing/          # Landing page components
 │   ├── menu/             # Menu-related components
@@ -191,8 +273,9 @@ This application is designed to be deployed on [Vercel](https://vercel.com).
 
 1. Push your code to a Git repository (GitHub, GitLab, or Bitbucket)
 2. Import your repository to Vercel
-3. Configure your environment variables in the Vercel dashboard
+3. Configure your environment variables in the Vercel dashboard (including `SANITY_WEBHOOK_SECRET`)
 4. Deploy!
+5. **Important**: After deployment, configure the Sanity webhook with your production URL (see [On-Demand Revalidation](#on-demand-revalidation-with-sanity-webhooks))
 
 For more information, see the [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying).
 
