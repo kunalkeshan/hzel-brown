@@ -1,15 +1,25 @@
 import { revalidateTag } from "next/cache";
 import { type NextRequest, NextResponse } from "next/server";
 import { parseBody } from "next-sanity/webhook";
+import type { AllSanitySchemaTypes } from "@/types/cms";
+
+// Extract all _type values from Sanity schema types
+type SanityDocumentType = AllSanitySchemaTypes["_type"];
+
+// Webhook payload type
+type WebhookPayload = {
+  _id: string;
+  _type: SanityDocumentType;
+  slug?: string;
+  categorySlug?: string;
+};
 
 export async function POST(req: NextRequest) {
   try {
-    const { body, isValidSignature } = await parseBody<{
-      _id: string;
-      _type: string;
-      slug?: string;
-      categorySlug?: string;
-    }>(req, process.env.SANITY_WEBHOOK_SECRET);
+    const { body, isValidSignature } = await parseBody<WebhookPayload>(
+      req,
+      process.env.SANITY_WEBHOOK_SECRET
+    );
 
     // Validate the webhook signature
     if (!isValidSignature) {
@@ -41,7 +51,6 @@ export async function POST(req: NextRequest) {
         }
         break;
 
-      case "category":
       case "menuCategory":
         // Revalidate all categories and menu pages
         tags.push("categories");
@@ -64,7 +73,7 @@ export async function POST(req: NextRequest) {
         }
         break;
 
-      case "faq":
+      case "faqs":
         // Revalidate FAQs
         tags.push("faqs");
         break;
