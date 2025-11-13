@@ -4,7 +4,7 @@ import { parseBody } from "next-sanity/webhook";
 import type { AllSanitySchemaTypes } from "@/types/cms";
 
 // Extract all _type values from Sanity schema types
-type SanityDocumentType = AllSanitySchemaTypes["_type"];
+type SanityDocumentType = Extract<AllSanitySchemaTypes, { _type: string }>["_type"];
 
 // Webhook payload type
 type WebhookPayload = {
