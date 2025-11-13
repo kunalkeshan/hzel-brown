@@ -75,7 +75,7 @@ export async function POST(req: NextRequest) {
 
     // Revalidate all relevant tags
     for (const tag of tags) {
-      revalidateTag(tag);
+      revalidateTag(tag, "max");
     }
 
     return NextResponse.json({
