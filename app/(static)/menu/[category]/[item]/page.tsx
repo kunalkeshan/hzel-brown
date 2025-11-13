@@ -19,6 +19,7 @@ import { urlFor } from "@/sanity/lib/image";
 import { createCollectionTag, createDocumentTag } from "@/sanity/lib/cache-tags";
 import { JsonLdScript } from "@/components/json-ld/json-ld-script";
 import { generateProductSchema } from "@/lib/json-ld/product";
+import { createAbsoluteUrl } from "@/lib/json-ld/utils";
 import { SITE_CONFIG } from "@/config/site";
 
 interface PageProps {
@@ -175,7 +176,7 @@ export default async function IndividualMenuItemPage({ params }: PageProps) {
 
   // Generate Product JSON-LD schema
   const baseUrl = SITE_CONFIG.URL;
-  const productUrl = `${baseUrl}/menu/${category}/${item}`;
+  const productUrl = createAbsoluteUrl(`/menu/${category}/${item}`, baseUrl);
   const imageUrl = data.item.image?.asset
     ? urlFor(data.item.image)
         .width(1200)

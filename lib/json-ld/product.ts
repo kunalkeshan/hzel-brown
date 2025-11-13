@@ -1,6 +1,6 @@
 import type { WithContext, Product } from "schema-dts";
 import type { MENU_ITEM_BY_SLUGS_QUERYResult } from "@/types/cms";
-import { createAbsoluteUrl, formatPrice, getAvailability } from "./utils";
+import { formatPrice, getAvailability } from "./utils";
 
 interface ProductSchemaProps {
   item: NonNullable<MENU_ITEM_BY_SLUGS_QUERYResult>["item"];
@@ -32,10 +32,10 @@ export function generateProductSchema({
     throw new Error("Menu item is required to generate product schema");
   }
 
-  // Build category string from item categories
+  // Build category string from item categories, filtering out null values
   const categoryString =
     item.categories && item.categories.length > 0
-      ? item.categories.map((cat) => cat.title).join(", ")
+      ? item.categories.map((cat) => cat.title).filter(Boolean).join(", ") || "Bakery Products"
       : "Bakery Products";
 
   // Build additional properties for allergens and ingredients
@@ -94,7 +94,7 @@ export function generateProductSchema({
       "@type": "Offer",
       url: productUrl,
       priceCurrency: "INR",
-      price: item.price ? formatPrice(item.price) : undefined,
+      ...(item.price && { price: formatPrice(item.price) }),
       availability: getAvailability(item.isAvailable),
       seller: {
         "@type": "Organization",

@@ -17,24 +17,23 @@ export function generateWebSiteSchema({
   siteDescription,
   baseUrl,
 }: WebSiteSchemaProps): WithContext<WebSite> {
-  // Using type assertion for potentialAction because schema-dts doesn't include
-  // the query-input property, but it's valid according to schema.org specification
   const schema = {
     "@context": "https://schema.org",
     "@type": "WebSite",
     name: siteName,
     description: siteDescription,
     url: baseUrl,
-    // Potential search action for sitelinks searchbox
-    // Note: This is optional and requires actual search functionality
-    potentialAction: {
-      "@type": "SearchAction",
-      target: {
-        "@type": "EntryPoint",
-        urlTemplate: createAbsoluteUrl("/menu?search={search_term_string}", baseUrl),
-      },
-      "query-input": "required name=search_term_string",
-    },
+    // TODO: Add SearchAction when search functionality is implemented
+    // Only include potentialAction if you have working search functionality
+    // to avoid validation warnings and poor UX when Google displays a search box
+    // potentialAction: {
+    //   "@type": "SearchAction",
+    //   target: {
+    //     "@type": "EntryPoint",
+    //     urlTemplate: createAbsoluteUrl("/menu?search={search_term_string}", baseUrl),
+    //   },
+    //   "query-input": "required name=search_term_string",
+    // },
   } as WithContext<WebSite>;
 
   return schema;

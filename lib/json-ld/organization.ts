@@ -20,16 +20,23 @@ export function generateOrganizationSchema({
     throw new Error("Site config is required to generate organization schema");
   }
 
-  // Build address object
+  // Build address object - only include if at least one field is populated
   const address = siteConfig.address
-    ? {
-        "@type": "PostalAddress" as const,
-        streetAddress: siteConfig.address.street || undefined,
-        addressLocality: siteConfig.address.city || undefined,
-        addressRegion: siteConfig.address.state || undefined,
-        postalCode: siteConfig.address.postalCode || undefined,
-        addressCountry: siteConfig.address.country || undefined,
-      }
+    ? (() => {
+        const addr = {
+          "@type": "PostalAddress" as const,
+          streetAddress: siteConfig.address.street || undefined,
+          addressLocality: siteConfig.address.city || undefined,
+          addressRegion: siteConfig.address.state || undefined,
+          postalCode: siteConfig.address.postalCode || undefined,
+          addressCountry: siteConfig.address.country || undefined,
+        };
+        // Check if at least one address field is populated
+        const hasValue = Object.entries(addr)
+          .filter(([key]) => key !== "@type")
+          .some(([, value]) => value !== undefined && value !== null && value !== "");
+        return hasValue ? addr : undefined;
+      })()
     : undefined;
 
   // Build contact points

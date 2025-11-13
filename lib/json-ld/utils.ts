@@ -2,13 +2,17 @@ import type { Thing, WithContext } from "schema-dts";
 
 /**
  * Sanitizes JSON-LD data to prevent XSS attacks
- * Replaces < characters with their unicode equivalent to prevent HTML injection
+ * Replaces potentially dangerous HTML characters with their unicode equivalents
+ * to prevent HTML injection when embedded in script tags
  * @see https://nextjs.org/docs/app/guides/json-ld#rendering-json-ld-in-your-layouts
  */
 export function sanitizeJsonLd<T extends Thing>(
   jsonLd: WithContext<T>
 ): string {
-  return JSON.stringify(jsonLd).replace(/</g, "\\u003c");
+  return JSON.stringify(jsonLd)
+    .replace(/</g, "\\u003c")
+    .replace(/>/g, "\\u003e")
+    .replace(/&/g, "\\u0026");
 }
 
 /**
@@ -32,11 +36,13 @@ export function formatPrice(price: number): string {
 
 /**
  * Converts availability boolean to schema.org ItemAvailability
+ * Business logic: Treats null/undefined as OutOfStock (conservative approach)
+ * Only explicitly true values are marked as InStock
  */
 export function getAvailability(
   isAvailable: boolean | null | undefined
 ): "https://schema.org/InStock" | "https://schema.org/OutOfStock" {
-  return isAvailable
+  return isAvailable === true
     ? "https://schema.org/InStock"
     : "https://schema.org/OutOfStock";
 }
