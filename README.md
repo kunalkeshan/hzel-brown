@@ -210,15 +210,35 @@ To enable on-demand revalidation, configure a webhook in your Sanity project:
 
 ### Technical Details
 
-The webhook endpoint (`/app/api/revalidate/route.ts`) uses Next.js's [`revalidateTag`](https://nextjs.org/docs/app/api-reference/functions/revalidateTag) function to invalidate cache entries based on document type and slug:
+The webhook endpoint (`/app/api/revalidate/route.ts`) uses Next.js's [`revalidateTag`](https://nextjs.org/docs/app/api-reference/functions/revalidateTag) function to invalidate cache entries based on document type and slug.
 
-- **Collection-level tags**: `menuItems`, `categories`, `siteConfig`, `legal`, `faqs`
-- **Document-level tags**: `menuItem:{slug}`, `category:{slug}`, `legal:{slug}`
+**Cache Tag Patterns:**
 
-For example, updating a menu item with slug `chocolate-brownie` will revalidate:
-- All menu pages (`menuItems` tag)
-- The specific item page (`menuItem:chocolate-brownie` tag)
-- The category page it belongs to (`category:brownies` tag)
+The application uses a type-safe tagging system defined in `/sanity/lib/cache-tags.ts`:
+
+- **Collection-level tags**: `collection:{type}` - Used to invalidate all documents of a specific type
+  - `collection:menuItem` - All menu items
+  - `collection:menuCategory` - All menu categories
+  - `collection:siteConfig` - Site configuration
+  - `collection:legal` - All legal documents
+  - `collection:faqs` - All FAQs
+
+- **Document-level tags**: `{type}:{slug}` - Used to invalidate a specific document
+  - `menuItem:chocolate-brownie` - Specific menu item
+  - `menuCategory:brownies` - Specific category
+  - `legal:privacy-policy` - Specific legal document
+
+**Example:**
+
+When updating a menu item with slug `chocolate-brownie` in the `brownies` category, the webhook will revalidate:
+- `collection:menuItem` - All menu pages showing menu items
+- `menuItem:chocolate-brownie` - The specific item detail page
+- `menuCategory:brownies` - The brownies category page
+
+This type-safe approach ensures:
+- **Compile-time validation** - TypeScript enforces valid tag patterns
+- **Consistency** - Helper functions (`createCollectionTag`, `createDocumentTag`) ensure uniform tag creation
+- **Maintainability** - Tags are derived from Sanity schema types automatically
 
 ### Documentation References
 

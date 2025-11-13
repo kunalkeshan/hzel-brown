@@ -16,6 +16,7 @@ import type { Metadata } from "next";
 import { SITE_CONFIG_QUERY } from "@/sanity/queries/site-config";
 import type { SITE_CONFIG_QUERYResult } from "@/types/cms";
 import { urlFor } from "@/sanity/lib/image";
+import { createCollectionTag, createDocumentTag } from "@/sanity/lib/cache-tags";
 
 interface PageProps {
   params: Promise<{
@@ -27,7 +28,7 @@ interface PageProps {
 export async function generateStaticParams() {
   const menuItems = await sanityFetch<ALL_MENU_ITEMS_QUERYResult>({
     query: ALL_MENU_ITEMS_QUERY,
-    tags: ["menuItems"],
+    tags: [createCollectionTag("menuItem")],
   });
 
   const params: Array<{ category: string; item: string }> = [];
@@ -62,11 +63,11 @@ export async function generateMetadata({
         categorySlug: category,
         itemSlug: item,
       },
-      tags: ["menuItems", `menuItem:${item}`, `category:${category}`],
+      tags: [createCollectionTag("menuItem"), createDocumentTag("menuItem", item), createDocumentTag("menuCategory", category)],
     }),
     sanityFetch<SITE_CONFIG_QUERYResult>({
       query: SITE_CONFIG_QUERY,
-      tags: ["siteConfig"],
+      tags: [createCollectionTag("siteConfig")],
     }),
   ]);
 
@@ -156,7 +157,7 @@ export default async function IndividualMenuItemPage({ params }: PageProps) {
       categorySlug: category,
       itemSlug: item,
     },
-    tags: ["menuItems", `menuItem:${item}`, `category:${category}`],
+    tags: [createCollectionTag("menuItem"), createDocumentTag("menuItem", item), createDocumentTag("menuCategory", category)],
   });
 
   if (!data?.item) {

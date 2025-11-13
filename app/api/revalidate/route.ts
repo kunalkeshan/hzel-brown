@@ -1,10 +1,12 @@
 import { revalidateTag } from "next/cache";
 import { type NextRequest, NextResponse } from "next/server";
 import { parseBody } from "next-sanity/webhook";
-import type { AllSanitySchemaTypes } from "@/types/cms";
-
-// Extract all _type values from Sanity schema types
-type SanityDocumentType = Extract<AllSanitySchemaTypes, { _type: string }>["_type"];
+import {
+  type SanityDocumentType,
+  type CacheTag,
+  createCollectionTag,
+  createDocumentTag,
+} from "@/sanity/lib/cache-tags";
 
 // Webhook payload type
 type WebhookPayload = {
@@ -35,47 +37,47 @@ export async function POST(req: NextRequest) {
     }
 
     // Revalidate based on document type
-    const tags: string[] = [];
+    const tags: CacheTag[] = [];
 
     switch (body._type) {
       case "menuItem":
         // Revalidate all menu-related pages
-        tags.push("menuItems");
+        tags.push(createCollectionTag("menuItem"));
         // Revalidate specific menu item if slug exists
         if (body.slug) {
-          tags.push(`menuItem:${body.slug}`);
+          tags.push(createDocumentTag("menuItem", body.slug));
         }
         // Revalidate category page if categorySlug exists
         if (body.categorySlug) {
-          tags.push(`category:${body.categorySlug}`);
+          tags.push(createDocumentTag("menuCategory", body.categorySlug));
         }
         break;
 
       case "menuCategory":
         // Revalidate all categories and menu pages
-        tags.push("categories");
+        tags.push(createCollectionTag("menuCategory"));
         // Revalidate specific category if slug exists
         if (body.slug) {
-          tags.push(`category:${body.slug}`);
+          tags.push(createDocumentTag("menuCategory", body.slug));
         }
         break;
 
       case "siteConfig":
         // Site config affects all pages (used in layout)
-        tags.push("siteConfig");
+        tags.push(createCollectionTag("siteConfig"));
         break;
 
       case "legal":
         // Revalidate legal documents list and specific document
-        tags.push("legal");
+        tags.push(createCollectionTag("legal"));
         if (body.slug) {
-          tags.push(`legal:${body.slug}`);
+          tags.push(createDocumentTag("legal", body.slug));
         }
         break;
 
       case "faqs":
         // Revalidate FAQs
-        tags.push("faqs");
+        tags.push(createCollectionTag("faqs"));
         break;
 
       default:

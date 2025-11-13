@@ -8,15 +8,16 @@ import { SITE_CONFIG_QUERY } from "@/sanity/queries/site-config";
 import type { SITE_CONFIG_QUERYResult } from "@/types/cms";
 import { FAQS_QUERY } from "@/sanity/queries/faqs";
 import type { FAQS_QUERYResult } from "@/types/cms";
+import { createCollectionTag } from "@/sanity/lib/cache-tags";
 
 export default async function Home() {
   const siteConfig = await sanityFetch<SITE_CONFIG_QUERYResult>({
     query: SITE_CONFIG_QUERY,
-    tags: ["siteConfig"],
+    tags: [createCollectionTag("siteConfig")],
   });
   const faqs = await sanityFetch<FAQS_QUERYResult>({
     query: FAQS_QUERY,
-    tags: ["faqs"],
+    tags: [createCollectionTag("faqs")],
   });
 
   return (

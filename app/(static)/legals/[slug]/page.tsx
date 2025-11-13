@@ -18,6 +18,7 @@ import { format } from "date-fns";
 import { Clock, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { createCollectionTag, createDocumentTag } from "@/sanity/lib/cache-tags";
 
 interface LegalDocumentPageProps {
   params: Promise<{ slug: string }>;
@@ -26,7 +27,7 @@ interface LegalDocumentPageProps {
 export async function generateStaticParams() {
   const legalDocuments = await sanityFetch<LEGAL_DOCUMENTS_QUERYResult>({
     query: LEGAL_DOCUMENTS_QUERY,
-    tags: ["legal"],
+    tags: [createCollectionTag("legal")],
   });
 
   return legalDocuments
@@ -44,7 +45,7 @@ export async function generateMetadata({
   const legalDocument = await sanityFetch<LEGAL_DOCUMENT_BY_SLUG_QUERYResult>({
     query: LEGAL_DOCUMENT_BY_SLUG_QUERY,
     params: { slug },
-    tags: ["legal"],
+    tags: [createCollectionTag("legal"), createDocumentTag("legal", slug)],
   });
 
   if (!legalDocument) {
@@ -73,7 +74,7 @@ export default async function LegalDocumentPage({
   const legalDocument = await sanityFetch<LEGAL_DOCUMENT_BY_SLUG_QUERYResult>({
     query: LEGAL_DOCUMENT_BY_SLUG_QUERY,
     params: { slug },
-    tags: ["legal"],
+    tags: [createCollectionTag("legal"), createDocumentTag("legal", slug)],
   });
 
   if (!legalDocument) {
