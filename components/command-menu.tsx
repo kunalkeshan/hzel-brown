@@ -14,6 +14,7 @@ import {
 import { useCommandSearch } from "@/hooks/use-command-search";
 import { useCommandNavigation } from "@/hooks/use-command-navigation";
 import { getCommandIcon } from "@/constants/command-icons";
+import { formatCurrency } from "@/lib/numbers";
 
 /**
  * Global command menu component
@@ -168,7 +169,7 @@ export function CommandMenu() {
 												<span className="font-medium">{item.name}</span>
 												{item.price && (
 													<span className="text-sm text-muted-foreground">
-														₹{item.price.toFixed(2)}
+														{formatCurrency(item.price)}
 													</span>
 												)}
 											</div>
