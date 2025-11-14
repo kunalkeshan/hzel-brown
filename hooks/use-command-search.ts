@@ -55,9 +55,10 @@ const STATIC_PAGES: StaticPage[] = [
 
 /**
  * Search static pages by term
+ * Returns all pages if no search term (default state)
  */
 function searchStaticPages(searchTerm: string): StaticPage[] {
-	if (!searchTerm) return [];
+	if (!searchTerm) return STATIC_PAGES;
 
 	const term = searchTerm.toLowerCase();
 	return STATIC_PAGES.filter(
@@ -128,6 +129,7 @@ export function useCommandSearch(searchTerm: string) {
 	return {
 		...results,
 		isLoading: isLoading && debouncedTerm.length > 0,
+		isSearching: searchTerm.length > 0,
 		error,
 		hasResults,
 		isEmpty: !isLoading && !hasResults && searchTerm.length > 0,
