@@ -80,33 +80,33 @@ export function CommandMenu() {
 
 				{/* Pages Group - Always visible (default or filtered) */}
 				{pages.length > 0 && (
-					<>
-						<CommandGroup heading="Pages">
-							{pages.map((page) => {
-								const Icon = getCommandIcon("page", page.slug);
-								return (
-									<CommandItem
-										key={page.slug}
-										value={page.title}
-										onSelect={() => navigateToPage(page)}
-										className="cursor-pointer"
-									>
-										<Icon className="mr-2" />
-										<div className="flex flex-col">
-											<span className="font-medium">{page.title}</span>
-											{page.description && (
-												<span className="text-xs text-muted-foreground">
-													{page.description}
-												</span>
-											)}
-										</div>
-									</CommandItem>
-								);
-							})}
-						</CommandGroup>
-						{isSearching && <CommandSeparator />}
-					</>
+					<CommandGroup heading="Pages">
+						{pages.map((page) => {
+							const Icon = getCommandIcon("page", page.slug);
+							return (
+								<CommandItem
+									key={page.slug}
+									value={page.title}
+									onSelect={() => navigateToPage(page)}
+									className="cursor-pointer"
+								>
+									<Icon className="mr-2" />
+									<div className="flex flex-col">
+										<span className="font-medium">{page.title}</span>
+										{page.description && (
+											<span className="text-xs text-muted-foreground">
+												{page.description}
+											</span>
+										)}
+									</div>
+								</CommandItem>
+							);
+						})}
+					</CommandGroup>
 				)}
+
+				{/* Separator after Pages - Only show when searching and dynamic content will follow */}
+				{isSearching && pages.length > 0 && <CommandSeparator />}
 
 				{/* Loading State - Only show when actively searching dynamic content */}
 				{isSearching && isLoading && (
@@ -121,65 +121,65 @@ export function CommandMenu() {
 					<>
 						{/* Categories Group */}
 						{categories.length > 0 && (
-							<>
-								<CommandGroup heading="Categories">
-									{categories.map((category) => {
-										const Icon = getCommandIcon("category");
-										return (
-											<CommandItem
-												key={category._id}
-												value={category.title ?? ""}
-												onSelect={() => navigateToCategory(category)}
-												className="cursor-pointer"
-											>
-												<Icon className="mr-2" />
-												<div className="flex flex-col">
-													<span className="font-medium">{category.title}</span>
-													{category.description && (
-														<span className="text-xs text-muted-foreground">
-															{category.description}
-														</span>
-													)}
-												</div>
-											</CommandItem>
-										);
-									})}
-								</CommandGroup>
-								{(menuItems.length > 0 || legal.length > 0) && (
-									<CommandSeparator />
-								)}
-							</>
+							<CommandGroup heading="Categories">
+								{categories.map((category) => {
+									const Icon = getCommandIcon("category");
+									return (
+										<CommandItem
+											key={category._id}
+											value={category.title ?? ""}
+											onSelect={() => navigateToCategory(category)}
+											className="cursor-pointer"
+										>
+											<Icon className="mr-2" />
+											<div className="flex flex-col">
+												<span className="font-medium">{category.title}</span>
+												{category.description && (
+													<span className="text-xs text-muted-foreground">
+														{category.description}
+													</span>
+												)}
+											</div>
+										</CommandItem>
+									);
+								})}
+							</CommandGroup>
+						)}
+
+						{/* Separator after Categories */}
+						{categories.length > 0 && (menuItems.length > 0 || legal.length > 0) && (
+							<CommandSeparator />
 						)}
 
 						{/* Menu Items Group */}
 						{menuItems.length > 0 && (
-							<>
-								<CommandGroup heading="Menu Items">
-									{menuItems.map((item) => {
-										const Icon = getCommandIcon("menuItem");
-										return (
-											<CommandItem
-												key={item._id}
-												value={item.name ?? ""}
-												onSelect={() => navigateToMenuItem(item)}
-												className="cursor-pointer"
-											>
-												<Icon className="mr-2" />
-												<div className="flex flex-1 items-center justify-between">
-													<span className="font-medium">{item.name}</span>
-													{item.price && (
-														<span className="text-sm text-muted-foreground">
-															${item.price.toFixed(2)}
-														</span>
-													)}
-												</div>
-											</CommandItem>
-										);
-									})}
-								</CommandGroup>
-								{legal.length > 0 && <CommandSeparator />}
-							</>
+							<CommandGroup heading="Menu Items">
+								{menuItems.map((item) => {
+									const Icon = getCommandIcon("menuItem");
+									return (
+										<CommandItem
+											key={item._id}
+											value={item.name ?? ""}
+											onSelect={() => navigateToMenuItem(item)}
+											className="cursor-pointer"
+										>
+											<Icon className="mr-2" />
+											<div className="flex flex-1 items-center justify-between">
+												<span className="font-medium">{item.name}</span>
+												{item.price && (
+													<span className="text-sm text-muted-foreground">
+														${item.price.toFixed(2)}
+													</span>
+												)}
+											</div>
+										</CommandItem>
+									);
+								})}
+							</CommandGroup>
 						)}
+
+						{/* Separator after Menu Items */}
+						{menuItems.length > 0 && legal.length > 0 && <CommandSeparator />}
 
 						{/* Legal Documents Group */}
 						{legal.length > 0 && (
