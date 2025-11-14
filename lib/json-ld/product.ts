@@ -100,12 +100,84 @@ export function generateProductSchema({
         "@type": "Organization",
         name: organizationName,
       },
+      // TODO: Add priceValidUntil for merchant listings
+      // priceValidUntil: "2025-12-31" // ISO 8601 date format
+
+      // TODO: Add shippingDetails for merchant listings
+      // Optional but recommended for merchant listings to show shipping information
+      // Can reuse business address from organization schema
+      // shippingDetails: {
+      //   "@type": "OfferShippingDetails",
+      //   shippingRate: {
+      //     "@type": "MonetaryAmount",
+      //     value: "0",
+      //     currency: "INR"
+      //   },
+      //   shippingDestination: {
+      //     "@type": "DefinedRegion",
+      //     addressCountry: "IN",
+      //     addressRegion: "Tamil Nadu"
+      //   },
+      //   deliveryTime: {
+      //     "@type": "ShippingDeliveryTime",
+      //     businessDays: {
+      //       "@type": "OpeningHoursSpecification",
+      //       dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+      //     },
+      //     cutoffTime: "14:00:00",
+      //     handlingTime: {
+      //       "@type": "QuantitativeValue",
+      //       minValue: 0,
+      //       maxValue: 1,
+      //       unitCode: "DAY"
+      //     },
+      //     transitTime: {
+      //       "@type": "QuantitativeValue",
+      //       minValue: 1,
+      //       maxValue: 2,
+      //       unitCode: "DAY"
+      //     }
+      //   }
+      // }
+
+      // TODO: Add hasMerchantReturnPolicy for merchant listings
+      // Case-dependent - requires return policy document/page to be created first
+      // hasMerchantReturnPolicy: {
+      //   "@type": "MerchantReturnPolicy",
+      //   applicableCountry: "IN",
+      //   returnPolicyCategory: "https://schema.org/MerchantReturnFiniteReturnWindow",
+      //   merchantReturnDays: 7,
+      //   returnMethod: "https://schema.org/ReturnByMail",
+      //   returnFees: "https://schema.org/FreeReturn"
+      // }
     },
+
+    // TODO: Add reviews when review system is implemented
+    // Individual customer reviews for the product
+    // review: [
+    //   {
+    //     "@type": "Review",
+    //     reviewRating: {
+    //       "@type": "Rating",
+    //       ratingValue: "5",
+    //       bestRating: "5"
+    //     },
+    //     author: {
+    //       "@type": "Person",
+    //       name: "Customer Name"
+    //     },
+    //     reviewBody: "Delicious product, highly recommended!"
+    //   }
+    // ],
+
     // TODO: Add aggregateRating when review system is implemented
+    // Summary of all customer ratings
     // aggregateRating: {
     //   "@type": "AggregateRating",
     //   ratingValue: "4.5",
-    //   reviewCount: "24"
+    //   reviewCount: "24",
+    //   bestRating: "5",
+    //   worstRating: "1"
     // }
   };
 

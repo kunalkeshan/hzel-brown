@@ -29,7 +29,8 @@ export function generateOrganizationSchema({
           addressLocality: siteConfig.address.city || undefined,
           addressRegion: siteConfig.address.state || undefined,
           postalCode: siteConfig.address.postalCode || undefined,
-          addressCountry: siteConfig.address.country || undefined,
+          // Default to India (IN) if country is not provided in CMS
+          addressCountry: siteConfig.address.country || "IN",
         };
         // Check if at least one address field is populated
         const hasValue = Object.entries(addr)
@@ -81,6 +82,12 @@ export function generateOrganizationSchema({
     });
   }
 
+  // Get primary telephone number (first available phone number)
+  const primaryTelephone =
+    siteConfig.phoneNumbers && siteConfig.phoneNumbers.length > 0
+      ? siteConfig.phoneNumbers[0].number
+      : undefined;
+
   const schema: WithContext<Bakery> = {
     "@context": "https://schema.org",
     "@type": "Bakery",
@@ -92,6 +99,7 @@ export function generateOrganizationSchema({
     logo: createAbsoluteUrl("/assets/logo-text.png", baseUrl),
     image: createAbsoluteUrl("/assets/logo.png", baseUrl),
     ...(address && { address }),
+    ...(primaryTelephone && { telephone: primaryTelephone }),
     ...(contactPoint.length > 0 && { contactPoint }),
     ...(sameAs.length > 0 && { sameAs }),
     // Service area - Tamil Nadu
