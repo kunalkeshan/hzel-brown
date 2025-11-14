@@ -168,7 +168,7 @@ export function CommandMenu() {
 												<span className="font-medium">{item.name}</span>
 												{item.price && (
 													<span className="text-sm text-muted-foreground">
-														${item.price.toFixed(2)}
+														₹{item.price.toFixed(2)}
 													</span>
 												)}
 											</div>
