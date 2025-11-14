@@ -16,6 +16,10 @@ import {
 } from "@/types/cms";
 import { urlFor } from "@/sanity/lib/image";
 import { createCollectionTag } from "@/sanity/lib/cache-tags";
+import { JsonLdScript } from "@/components/json-ld/json-ld-script";
+import { generateOrganizationSchema } from "@/lib/json-ld/organization";
+import { generateWebSiteSchema } from "@/lib/json-ld/website";
+import { SITE_CONFIG } from "@/config/site";
 
 export async function generateMetadata(): Promise<Metadata> {
   const siteConfig = await sanityFetch<SITE_CONFIG_QUERYResult>({
@@ -90,8 +94,26 @@ export default async function RootLayout({
       tags: [createCollectionTag("siteConfig")],
     }),
   ]);
+
+  // Generate JSON-LD schemas
+  const baseUrl = SITE_CONFIG.URL;
+  const organizationSchema = siteConfig
+    ? generateOrganizationSchema({ siteConfig, baseUrl })
+    : null;
+  const websiteSchema = generateWebSiteSchema({
+    siteName: siteConfig?.title || "Hzel Brown",
+    siteDescription:
+      siteConfig?.description ||
+      "Artisan dessert shop curating handcrafted brownies, brookies, cupcakes and cookies, freshly baked with love.",
+    baseUrl,
+  });
+
   return (
     <>
+      {/* JSON-LD Structured Data */}
+      {organizationSchema && <JsonLdScript data={organizationSchema} />}
+      <JsonLdScript data={websiteSchema} />
+
       <NuqsAdapter>
         <ViewTransitionWrapper>
           <Navbar />

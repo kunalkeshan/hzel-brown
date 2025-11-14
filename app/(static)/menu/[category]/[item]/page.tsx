@@ -17,6 +17,10 @@ import { SITE_CONFIG_QUERY } from "@/sanity/queries/site-config";
 import type { SITE_CONFIG_QUERYResult } from "@/types/cms";
 import { urlFor } from "@/sanity/lib/image";
 import { createCollectionTag, createDocumentTag } from "@/sanity/lib/cache-tags";
+import { JsonLdScript } from "@/components/json-ld/json-ld-script";
+import { generateProductSchema } from "@/lib/json-ld/product";
+import { createAbsoluteUrl } from "@/lib/json-ld/utils";
+import { SITE_CONFIG } from "@/config/site";
 
 interface PageProps {
   params: Promise<{
@@ -151,41 +155,73 @@ export async function generateMetadata({
 export default async function IndividualMenuItemPage({ params }: PageProps) {
   const { category, item } = await params;
 
-  const data = await sanityFetch<MENU_ITEM_BY_SLUGS_QUERYResult>({
-    query: MENU_ITEM_BY_SLUGS_QUERY,
-    params: {
-      categorySlug: category,
-      itemSlug: item,
-    },
-    tags: [createCollectionTag("menuItem"), createDocumentTag("menuItem", item), createDocumentTag("menuCategory", category)],
-  });
+  const [data, siteConfig] = await Promise.all([
+    sanityFetch<MENU_ITEM_BY_SLUGS_QUERYResult>({
+      query: MENU_ITEM_BY_SLUGS_QUERY,
+      params: {
+        categorySlug: category,
+        itemSlug: item,
+      },
+      tags: [createCollectionTag("menuItem"), createDocumentTag("menuItem", item), createDocumentTag("menuCategory", category)],
+    }),
+    sanityFetch<SITE_CONFIG_QUERYResult>({
+      query: SITE_CONFIG_QUERY,
+      tags: [createCollectionTag("siteConfig")],
+    }),
+  ]);
 
   if (!data?.item) {
     notFound();
   }
 
+  // Generate Product JSON-LD schema
+  const baseUrl = SITE_CONFIG.URL;
+  const productUrl = createAbsoluteUrl(`/menu/${category}/${item}`, baseUrl);
+  const imageUrl = data.item.image?.asset
+    ? urlFor(data.item.image)
+        .width(1200)
+        .height(1200)
+        .fit("max")
+        .format("jpg")
+        .quality(90)
+        .url()
+    : undefined;
+
+  const productSchema = generateProductSchema({
+    item: data.item,
+    baseUrl,
+    organizationName: siteConfig?.title || "Hzel Brown",
+    imageUrl,
+    productUrl,
+  });
+
   return (
-    <main className="py-16 lg:pt-40">
-      <div className="container">
-        <div className="mx-auto max-w-2xl lg:max-w-7xl">
-          <MotionSection className="lg:grid lg:grid-cols-2 lg:items-start lg:gap-x-8">
-            {/* Image */}
-            <div className="lg:col-span-1 h-fit lg:sticky lg:top-32">
-              <MenuItemDisplay item={data.item} />
-            </div>
+    <>
+      {/* JSON-LD for Product */}
+      <JsonLdScript data={productSchema} />
 
-            {/* Product Info */}
-            <div className="mt-10 px-4 sm:mt-16 sm:px-0 lg:col-span-1 lg:mt-0">
-              <MenuItemDetails item={data.item} />
-            </div>
-          </MotionSection>
+      <main className="py-16 lg:pt-40">
+        <div className="container">
+          <div className="mx-auto max-w-2xl lg:max-w-7xl">
+            <MotionSection className="lg:grid lg:grid-cols-2 lg:items-start lg:gap-x-8">
+              {/* Image */}
+              <div className="lg:col-span-1 h-fit lg:sticky lg:top-32">
+                <MenuItemDisplay item={data.item} />
+              </div>
 
-          {/* Related Items */}
-          {data.relatedItems && data.relatedItems.length > 0 && (
-            <RelatedMenuItems items={data.relatedItems} />
-          )}
+              {/* Product Info */}
+              <div className="mt-10 px-4 sm:mt-16 sm:px-0 lg:col-span-1 lg:mt-0">
+                <MenuItemDetails item={data.item} />
+              </div>
+            </MotionSection>
+
+            {/* Related Items */}
+            {data.relatedItems && data.relatedItems.length > 0 && (
+              <RelatedMenuItems items={data.relatedItems} />
+            )}
+          </div>
         </div>
-      </div>
-    </main>
+      </main>
+    </>
   );
 }

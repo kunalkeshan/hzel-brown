@@ -9,6 +9,8 @@ import type { SITE_CONFIG_QUERYResult } from "@/types/cms";
 import { FAQS_QUERY } from "@/sanity/queries/faqs";
 import type { FAQS_QUERYResult } from "@/types/cms";
 import { createCollectionTag } from "@/sanity/lib/cache-tags";
+import { JsonLdScript } from "@/components/json-ld/json-ld-script";
+import { generateFAQSchema } from "@/lib/json-ld/faq";
 
 export default async function Home() {
   const siteConfig = await sanityFetch<SITE_CONFIG_QUERYResult>({
@@ -20,15 +22,23 @@ export default async function Home() {
     tags: [createCollectionTag("faqs")],
   });
 
+  // Generate FAQ schema
+  const faqSchema = generateFAQSchema({ faqs });
+
   return (
-    <main>
-      <Hero heroImages={siteConfig?.heroImages || []} />
-      <FeaturedMenuItems
-        featuredMenuItems={siteConfig?.featuredMenuItems || []}
-      />
-      <Stats />
-      <AboutUs />
-      <Faqs faqs={faqs} />
-    </main>
+    <>
+      {/* JSON-LD for FAQs */}
+      {faqSchema && <JsonLdScript data={faqSchema} />}
+
+      <main>
+        <Hero heroImages={siteConfig?.heroImages || []} />
+        <FeaturedMenuItems
+          featuredMenuItems={siteConfig?.featuredMenuItems || []}
+        />
+        <Stats />
+        <AboutUs />
+        <Faqs faqs={faqs} />
+      </main>
+    </>
   );
 }
