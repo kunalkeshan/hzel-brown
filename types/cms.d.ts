@@ -1033,6 +1033,34 @@ export type MENU_ITEMS_BY_INGREDIENT_QUERYResult = Array<{
   slug: string | null;
 }>;
 
+// Source: sanity/queries/search.ts
+// Variable: COMMAND_SEARCH_QUERY
+// Query: {  "categories": *[    _type == "menuCategory" &&    (title match $searchTerm || description match $searchTerm)  ] | order(title asc) [0...10] {    _id,    title,    slug,    description  },  "menuItems": *[    _type == "menuItem" &&    isAvailable == true &&    (name match $searchTerm || description match $searchTerm)  ] | order(name asc) [0...10] {    _id,    name,    slug,    price,    categories[]-> {      slug    },    isAvailable  },  "legal": *[    _type == "legal" &&    (title match $searchTerm || description match $searchTerm)  ] | order(title asc) [0...10] {    _id,    title,    slug,    description  }}
+export type COMMAND_SEARCH_QUERYResult = {
+  categories: Array<{
+    _id: string;
+    title: string | null;
+    slug: Slug | null;
+    description: string | null;
+  }>;
+  menuItems: Array<{
+    _id: string;
+    name: string | null;
+    slug: Slug | null;
+    price: number | null;
+    categories: Array<{
+      slug: Slug | null;
+    }> | null;
+    isAvailable: boolean | null;
+  }>;
+  legal: Array<{
+    _id: string;
+    title: string | null;
+    slug: Slug | null;
+    description: string | null;
+  }>;
+};
+
 // Source: sanity/queries/site-config.ts
 // Variable: SITE_CONFIG_QUERY
 // Query: *[_type == "siteConfig"][0] {    _id,    title,    description,    ogImage {      asset->,      alt    },    twitterImage {      asset->,      alt    },    phoneNumbers[] {      number,      label    },    emails[] {      email,      label    },    address {      street,      city,      state,      postalCode,      country    },    socialMedia[] {      platform,      url,      label    },    enableMenuPageGridView,    featuredMenuItems[]-> {      _id,      name,      slug,      description,      price,      ingredients[]-> {        _id,        name,        slug      },      allergens,      isAvailable,      isCombo,      comboDescription,      _createdAt,      _updatedAt,      comboItems[]-> {        _id,        name,        slug,        price,        isAvailable,        categories[]-> {          _id,          title,          slug        },        image {          asset->,          alt,          hotspot,          crop        }      },      categories[]-> {        _id,        title,        slug      },      image {        asset->,        alt,        hotspot,        crop      }    },    heroImages[] {      asset->,      alt,      hotspot,      crop    }  }
@@ -1254,6 +1282,7 @@ declare module "@sanity/client" {
     "\n  *[_type == \"menuCategory\" && slug.current == $slug][0] {\n    _id,\n    title,\n    slug,\n    description,\n    thumbnail {\n      asset->,\n      alt\n    }\n  }\n": CATEGORY_BY_SLUG_QUERYResult;
     "\n  *[_type == \"menuItem\" && $categorySlug in categories[]->slug.current] | order(name asc) {\n    _id,\n    name,\n    slug,\n    description,\n    price,\n    ingredients[]-> {\n      _id,\n      name,\n      slug\n    },\n    allergens,\n    isAvailable,\n    isCombo,\n    comboDescription,\n    _createdAt,\n    _updatedAt,\n    comboItems[]-> {\n      _id,\n      name,\n      slug,\n      price,\n      isAvailable,\n      categories[]-> {\n        _id,\n        title,\n        slug\n      },\n      image {\n        asset->,\n        alt,\n        hotspot,\n        crop\n      }\n    },\n    categories[]-> {\n      _id,\n      title,\n      slug\n    },\n    image {\n      asset->,\n      alt,\n      hotspot,\n      crop\n    }\n  }\n": MENU_ITEMS_BY_CATEGORY_QUERYResult;
     "\n  *[_type == \"menuItem\" && references($ingredientId)] {\n    _id,\n    \"slug\": slug.current\n  }\n": MENU_ITEMS_BY_INGREDIENT_QUERYResult;
+    "{\n  \"categories\": *[\n    _type == \"menuCategory\" &&\n    (title match $searchTerm || description match $searchTerm)\n  ] | order(title asc) [0...10] {\n    _id,\n    title,\n    slug,\n    description\n  },\n\n  \"menuItems\": *[\n    _type == \"menuItem\" &&\n    isAvailable == true &&\n    (name match $searchTerm || description match $searchTerm)\n  ] | order(name asc) [0...10] {\n    _id,\n    name,\n    slug,\n    price,\n    categories[]-> {\n      slug\n    },\n    isAvailable\n  },\n\n  \"legal\": *[\n    _type == \"legal\" &&\n    (title match $searchTerm || description match $searchTerm)\n  ] | order(title asc) [0...10] {\n    _id,\n    title,\n    slug,\n    description\n  }\n}": COMMAND_SEARCH_QUERYResult;
     "\n  *[_type == \"siteConfig\"][0] {\n    _id,\n    title,\n    description,\n    ogImage {\n      asset->,\n      alt\n    },\n    twitterImage {\n      asset->,\n      alt\n    },\n    phoneNumbers[] {\n      number,\n      label\n    },\n    emails[] {\n      email,\n      label\n    },\n    address {\n      street,\n      city,\n      state,\n      postalCode,\n      country\n    },\n    socialMedia[] {\n      platform,\n      url,\n      label\n    },\n    enableMenuPageGridView,\n    featuredMenuItems[]-> {\n      _id,\n      name,\n      slug,\n      description,\n      price,\n      ingredients[]-> {\n        _id,\n        name,\n        slug\n      },\n      allergens,\n      isAvailable,\n      isCombo,\n      comboDescription,\n      _createdAt,\n      _updatedAt,\n      comboItems[]-> {\n        _id,\n        name,\n        slug,\n        price,\n        isAvailable,\n        categories[]-> {\n          _id,\n          title,\n          slug\n        },\n        image {\n          asset->,\n          alt,\n          hotspot,\n          crop\n        }\n      },\n      categories[]-> {\n        _id,\n        title,\n        slug\n      },\n      image {\n        asset->,\n        alt,\n        hotspot,\n        crop\n      }\n    },\n    heroImages[] {\n      asset->,\n      alt,\n      hotspot,\n      crop\n    }\n  }\n": SITE_CONFIG_QUERYResult;
     "\n  *[_type == \"siteConfig\"][0].footerLegalLinks[]-> {\n    _id,\n    title,\n    slug,\n    description,\n    _updatedAt\n  }\n": FOOTER_LEGAL_LINKS_QUERYResult;
   }

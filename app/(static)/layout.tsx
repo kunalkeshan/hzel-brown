@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import { Toaster } from "@/components/ui/sonner";
-import { NuqsAdapter } from "nuqs/adapters/next/app";
 import Navbar from "@/components/layouts/navbar";
 import Footer from "@/components/layouts/footer";
 import { FloatingCheckoutButton } from "@/components/cart/floating-checkout-button";
 import { ViewTransitionWrapper } from "@/components/layouts/view-transition-wrapper";
+import { Providers } from "@/providers/providers";
+import { CommandMenu } from "@/components/command-menu";
 import { sanityFetch } from "@/sanity/lib/sanity-fetch";
 import {
   SITE_CONFIG_QUERY,
@@ -114,7 +115,7 @@ export default async function RootLayout({
       {organizationSchema && <JsonLdScript data={organizationSchema} />}
       <JsonLdScript data={websiteSchema} />
 
-      <NuqsAdapter>
+      <Providers>
         <ViewTransitionWrapper>
           <Navbar />
           {children}
@@ -122,7 +123,8 @@ export default async function RootLayout({
           <Toaster richColors />
           <FloatingCheckoutButton />
         </ViewTransitionWrapper>
-      </NuqsAdapter>
+        <CommandMenu />
+      </Providers>
     </>
   );
 }
