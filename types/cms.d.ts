@@ -903,7 +903,7 @@ export type MENU_ITEM_BY_SLUGS_QUERYResult = {
   }>;
 };
 // Variable: CATEGORY_BY_SLUG_QUERY
-// Query: *[_type == "menuCategory" && slug.current == $slug][0] {    _id,    title,    slug,    description,    thumbnail {      asset->,      alt    }  }
+// Query: *[_type == "menuCategory" && slug.current == $slug][0] {    _id,    title,    slug,    description,    thumbnail {      asset->,      alt    },    featuredItems[]-> {      _id,      name,      slug,      description,      price,      ingredients[]-> {        _id,        name,        slug      },      allergens,      isAvailable,      isCombo,      comboDescription,      _createdAt,      _updatedAt,      comboItems[]-> {        _id,        name,        slug,        price,        isAvailable,        categories[]-> {          _id,          title,          slug        },        image {          asset->,          alt,          hotspot,          crop        }      },      categories[]-> {        _id,        title,        slug      },      image {        asset->,        alt,        hotspot,        crop      }    }  }
 export type CATEGORY_BY_SLUG_QUERYResult = {
   _id: string;
   title: string | null;
@@ -934,6 +934,95 @@ export type CATEGORY_BY_SLUG_QUERYResult = {
     } | null;
     alt: string | null;
   } | null;
+  featuredItems: Array<{
+    _id: string;
+    name: string | null;
+    slug: Slug | null;
+    description: string | null;
+    price: number | null;
+    ingredients: Array<{
+      _id: string;
+      name: string | null;
+      slug: Slug | null;
+    }> | null;
+    allergens: Array<string> | null;
+    isAvailable: boolean | null;
+    isCombo: boolean | null;
+    comboDescription: string | null;
+    _createdAt: string;
+    _updatedAt: string;
+    comboItems: Array<{
+      _id: string;
+      name: string | null;
+      slug: Slug | null;
+      price: number | null;
+      isAvailable: boolean | null;
+      categories: Array<{
+        _id: string;
+        title: string | null;
+        slug: Slug | null;
+      }> | null;
+      image: {
+        asset: {
+          _id: string;
+          _type: "sanity.imageAsset";
+          _createdAt: string;
+          _updatedAt: string;
+          _rev: string;
+          originalFilename?: string;
+          label?: string;
+          title?: string;
+          description?: string;
+          altText?: string;
+          sha1hash?: string;
+          extension?: string;
+          mimeType?: string;
+          size?: number;
+          assetId?: string;
+          uploadId?: string;
+          path?: string;
+          url?: string;
+          metadata?: SanityImageMetadata;
+          source?: SanityAssetSourceData;
+        } | null;
+        alt: string | null;
+        hotspot: SanityImageHotspot | null;
+        crop: SanityImageCrop | null;
+      } | null;
+    }> | null;
+    categories: Array<{
+      _id: string;
+      title: string | null;
+      slug: Slug | null;
+    }> | null;
+    image: {
+      asset: {
+        _id: string;
+        _type: "sanity.imageAsset";
+        _createdAt: string;
+        _updatedAt: string;
+        _rev: string;
+        originalFilename?: string;
+        label?: string;
+        title?: string;
+        description?: string;
+        altText?: string;
+        sha1hash?: string;
+        extension?: string;
+        mimeType?: string;
+        size?: number;
+        assetId?: string;
+        uploadId?: string;
+        path?: string;
+        url?: string;
+        metadata?: SanityImageMetadata;
+        source?: SanityAssetSourceData;
+      } | null;
+      alt: string | null;
+      hotspot: SanityImageHotspot | null;
+      crop: SanityImageCrop | null;
+    } | null;
+  }> | null;
 } | null;
 // Variable: MENU_ITEMS_BY_CATEGORY_QUERY
 // Query: *[_type == "menuItem" && $categorySlug in categories[]->slug.current] | order(name asc) {    _id,    name,    slug,    description,    price,    ingredients[]-> {      _id,      name,      slug    },    allergens,    isAvailable,    isCombo,    comboDescription,    _createdAt,    _updatedAt,    comboItems[]-> {      _id,      name,      slug,      price,      isAvailable,      categories[]-> {        _id,        title,        slug      },      image {        asset->,        alt,        hotspot,        crop      }    },    categories[]-> {      _id,      title,      slug    },    image {      asset->,      alt,      hotspot,      crop    }  }
@@ -1279,7 +1368,7 @@ declare module "@sanity/client" {
     "\n  *[_type == \"siteConfig\"][0].menuCategories[]-> {\n    _id,\n    title,\n    slug,\n    description,\n    thumbnail {\n      asset->,\n      alt,\n      hotspot,\n      crop\n    }\n  }\n": ALL_CATEGORIES_QUERYResult;
     "\n  {\n    \"categories\": *[_type == \"menuCategory\"] | order(title asc) {\n      _id,\n      title,\n      slug\n    },\n    \"allergens\": array::unique(*[_type == \"menuItem\" && defined(allergens)].allergens[]),\n    \"priceRange\": {\n      \"min\": math::min(*[_type == \"menuItem\" && defined(price)].price),\n      \"max\": math::max(*[_type == \"menuItem\" && defined(price)].price)\n    }\n  }\n": MENU_FILTERS_DATA_QUERYResult;
     "\n  {\n    \"item\": *[_type == \"menuItem\" && slug.current == $itemSlug && $categorySlug in categories[]->slug.current][0] {\n      _id,\n      name,\n      slug,\n      description,\n      price,\n      ingredients[]-> {\n        _id,\n        name,\n        slug\n      },\n      allergens,\n      isAvailable,\n      isCombo,\n      comboDescription,\n      _createdAt,\n      _updatedAt,\n      comboItems[]-> {\n        _id,\n        name,\n        slug,\n        price,\n        isAvailable,\n        categories[]-> {\n          _id,\n          title,\n          slug\n        },\n        image {\n          asset->,\n          alt,\n          hotspot,\n          crop\n        }\n      },\n      categories[]-> {\n        _id,\n        title,\n        slug\n      },\n      image {\n        asset->,\n        alt,\n        hotspot,\n        crop\n      }\n    },\n    \"relatedItems\": *[_type == \"menuItem\" && slug.current != $itemSlug && $categorySlug in categories[]->slug.current && isAvailable == true] | order(name asc) [0...4] {\n      _id,\n      name,\n      slug,\n      description,\n      price,\n      ingredients[]-> {\n        _id,\n        name,\n        slug\n      },\n      allergens,\n      isAvailable,\n      isCombo,\n      comboDescription,\n      _createdAt,\n      _updatedAt,\n      comboItems[]-> {\n        _id,\n        name,\n        slug,\n        price,\n        isAvailable,\n        categories[]-> {\n          _id,\n          title,\n          slug\n        },\n        image {\n          asset->,\n          alt,\n          hotspot,\n          crop\n        }\n      },\n      categories[]-> {\n        _id,\n        title,\n        slug\n      },\n      image {\n        asset->,\n        alt,\n        hotspot,\n        crop\n      }\n    }\n  }\n": MENU_ITEM_BY_SLUGS_QUERYResult;
-    "\n  *[_type == \"menuCategory\" && slug.current == $slug][0] {\n    _id,\n    title,\n    slug,\n    description,\n    thumbnail {\n      asset->,\n      alt\n    }\n  }\n": CATEGORY_BY_SLUG_QUERYResult;
+    "\n  *[_type == \"menuCategory\" && slug.current == $slug][0] {\n    _id,\n    title,\n    slug,\n    description,\n    thumbnail {\n      asset->,\n      alt\n    },\n    featuredItems[]-> {\n      _id,\n      name,\n      slug,\n      description,\n      price,\n      ingredients[]-> {\n        _id,\n        name,\n        slug\n      },\n      allergens,\n      isAvailable,\n      isCombo,\n      comboDescription,\n      _createdAt,\n      _updatedAt,\n      comboItems[]-> {\n        _id,\n        name,\n        slug,\n        price,\n        isAvailable,\n        categories[]-> {\n          _id,\n          title,\n          slug\n        },\n        image {\n          asset->,\n          alt,\n          hotspot,\n          crop\n        }\n      },\n      categories[]-> {\n        _id,\n        title,\n        slug\n      },\n      image {\n        asset->,\n        alt,\n        hotspot,\n        crop\n      }\n    }\n  }\n": CATEGORY_BY_SLUG_QUERYResult;
     "\n  *[_type == \"menuItem\" && $categorySlug in categories[]->slug.current] | order(name asc) {\n    _id,\n    name,\n    slug,\n    description,\n    price,\n    ingredients[]-> {\n      _id,\n      name,\n      slug\n    },\n    allergens,\n    isAvailable,\n    isCombo,\n    comboDescription,\n    _createdAt,\n    _updatedAt,\n    comboItems[]-> {\n      _id,\n      name,\n      slug,\n      price,\n      isAvailable,\n      categories[]-> {\n        _id,\n        title,\n        slug\n      },\n      image {\n        asset->,\n        alt,\n        hotspot,\n        crop\n      }\n    },\n    categories[]-> {\n      _id,\n      title,\n      slug\n    },\n    image {\n      asset->,\n      alt,\n      hotspot,\n      crop\n    }\n  }\n": MENU_ITEMS_BY_CATEGORY_QUERYResult;
     "\n  *[_type == \"menuItem\" && references($ingredientId)] {\n    _id,\n    \"slug\": slug.current\n  }\n": MENU_ITEMS_BY_INGREDIENT_QUERYResult;
     "{\n  \"categories\": *[\n    _type == \"menuCategory\" &&\n    (title match $searchTerm || description match $searchTerm)\n  ] | order(title asc) [0...10] {\n    _id,\n    title,\n    slug,\n    description\n  },\n\n  \"menuItems\": *[\n    _type == \"menuItem\" &&\n    isAvailable == true &&\n    (name match $searchTerm || description match $searchTerm)\n  ] | order(name asc) [0...10] {\n    _id,\n    name,\n    slug,\n    price,\n    categories[]-> {\n      slug\n    },\n    isAvailable\n  },\n\n  \"legal\": *[\n    _type == \"legal\" &&\n    (title match $searchTerm || description match $searchTerm)\n  ] | order(title asc) [0...10] {\n    _id,\n    title,\n    slug,\n    description\n  }\n}": COMMAND_SEARCH_QUERYResult;
