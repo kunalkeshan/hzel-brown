@@ -14,6 +14,7 @@ import { MenuPageContent } from "@/components/menu/menu-page-content";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { Metadata } from "next";
 import { createCollectionTag } from "@/sanity/lib/cache-tags";
+import { sortMenuItemsByFeatured } from "@/lib/utils";
 
 export const metadata: Metadata = {
   title: "Menu",
@@ -37,6 +38,16 @@ export default async function MenuItemsPage() {
     }),
   ]);
 
+  // Extract featured item IDs from siteConfig
+  const featuredItemIds =
+    siteConfig?.featuredMenuItems?.map((item) => item._id).filter(Boolean) || [];
+
+  // Sort menu items: featured items first (in siteConfig order), then alphabetically
+  const sortedMenuItems = sortMenuItemsByFeatured(
+    menuItems || [],
+    featuredItemIds
+  );
+
   return (
     <main className="py-16 lg:pt-40">
       <div className="border-b border-gray-200 pb-10 container">
@@ -58,7 +69,7 @@ export default async function MenuItemsPage() {
         }
       >
         <MenuPageContent
-          menuItems={menuItems || []}
+          menuItems={sortedMenuItems}
           filterData={
             filterData || {
               categories: [],

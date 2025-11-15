@@ -20,6 +20,7 @@ import { SITE_CONFIG_QUERY } from "@/sanity/queries/site-config";
 import type { SITE_CONFIG_QUERYResult } from "@/types/cms";
 import { urlFor } from "@/sanity/lib/image";
 import { createCollectionTag, createDocumentTag } from "@/sanity/lib/cache-tags";
+import { sortMenuItemsByCategoryFeatured } from "@/lib/utils";
 
 interface PageProps {
   params: Promise<{
@@ -162,6 +163,21 @@ export default async function MenuItemsByCategoryPage({ params }: PageProps) {
     notFound();
   }
 
+  // Extract global featured item IDs from siteConfig
+  const globalFeaturedItemIds =
+    siteConfig?.featuredMenuItems?.map((item) => item._id).filter(Boolean) || [];
+
+  // Extract category-specific featured item IDs from categoryData
+  const categoryFeaturedItemIds =
+    categoryData.featuredItems?.map((item) => item._id).filter(Boolean) || [];
+
+  // Sort menu items: global featured first, then category featured, then alphabetically
+  const sortedMenuItems = sortMenuItemsByCategoryFeatured(
+    menuItems || [],
+    globalFeaturedItemIds,
+    categoryFeaturedItemIds
+  );
+
   return (
     <main className="py-16 lg:pt-40">
       <div className="border-b border-gray-200 pb-10 container">
@@ -183,7 +199,7 @@ export default async function MenuItemsByCategoryPage({ params }: PageProps) {
         }
       >
         <MenuPageContent
-          menuItems={menuItems || []}
+          menuItems={sortedMenuItems}
           filterData={
             filterData || {
               categories: [],
