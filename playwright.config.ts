@@ -25,12 +25,16 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
 
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-  reporter: [
-    ['html'],
-    ['list'],
-    // Add JSON reporter for CI
-    ...(process.env.CI ? [['json', { outputFile: 'test-results/results.json' }]] : []),
-  ],
+  reporter: process.env.CI
+    ? [
+        ['html'],
+        ['list'],
+        ['json', { outputFile: 'test-results/results.json' }]
+      ]
+    : [
+        ['html'],
+        ['list']
+      ],
 
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
