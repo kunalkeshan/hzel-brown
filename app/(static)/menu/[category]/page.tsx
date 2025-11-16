@@ -19,7 +19,10 @@ import type { Metadata } from "next";
 import { SITE_CONFIG_QUERY } from "@/sanity/queries/site-config";
 import type { SITE_CONFIG_QUERYResult } from "@/types/cms";
 import { urlFor } from "@/sanity/lib/image";
-import { createCollectionTag, createDocumentTag } from "@/sanity/lib/cache-tags";
+import {
+  createCollectionTag,
+  createDocumentTag,
+} from "@/sanity/lib/cache-tags";
 import { sortMenuItemsByCategoryFeatured } from "@/lib/utils";
 
 interface PageProps {
@@ -50,7 +53,10 @@ export async function generateMetadata({
     sanityFetch<CATEGORY_BY_SLUG_QUERYResult>({
       query: CATEGORY_BY_SLUG_QUERY,
       params: { slug: category },
-      tags: [createCollectionTag("menuCategory"), createDocumentTag("menuCategory", category)],
+      tags: [
+        createCollectionTag("menuCategory"),
+        createDocumentTag("menuCategory", category),
+      ],
     }),
     sanityFetch<SITE_CONFIG_QUERYResult>({
       query: SITE_CONFIG_QUERY,
@@ -142,16 +148,25 @@ export default async function MenuItemsByCategoryPage({ params }: PageProps) {
     sanityFetch<CATEGORY_BY_SLUG_QUERYResult>({
       query: CATEGORY_BY_SLUG_QUERY,
       params: { slug: category },
-      tags: [createCollectionTag("menuCategory"), createDocumentTag("menuCategory", category)],
+      tags: [
+        createCollectionTag("menuCategory"),
+        createDocumentTag("menuCategory", category),
+      ],
     }),
     sanityFetch<MENU_ITEMS_BY_CATEGORY_QUERYResult>({
       query: MENU_ITEMS_BY_CATEGORY_QUERY,
       params: { categorySlug: category },
-      tags: [createCollectionTag("menuItem"), createDocumentTag("menuCategory", category)],
+      tags: [
+        createCollectionTag("menuItem"),
+        createDocumentTag("menuCategory", category),
+      ],
     }),
     sanityFetch<MENU_FILTERS_DATA_QUERYResult>({
       query: MENU_FILTERS_DATA_QUERY,
-      tags: [createCollectionTag("menuCategory"), createCollectionTag("menuItem")],
+      tags: [
+        createCollectionTag("menuCategory"),
+        createCollectionTag("menuItem"),
+      ],
     }),
     sanityFetch<SITE_CONFIG_QUERYResult>({
       query: SITE_CONFIG_QUERY,
@@ -165,7 +180,8 @@ export default async function MenuItemsByCategoryPage({ params }: PageProps) {
 
   // Extract global featured item IDs from siteConfig
   const globalFeaturedItemIds =
-    siteConfig?.featuredMenuItems?.map((item) => item._id).filter(Boolean) || [];
+    siteConfig?.featuredMenuItems?.map((item) => item._id).filter(Boolean) ||
+    [];
 
   // Extract category-specific featured item IDs from categoryData
   const categoryFeaturedItemIds =
@@ -215,7 +231,11 @@ export default async function MenuItemsByCategoryPage({ params }: PageProps) {
   );
 }
 
-function MenuPageSkeleton({ useGridLayout = true }: { useGridLayout?: boolean }) {
+function MenuPageSkeleton({
+  useGridLayout = true,
+}: {
+  useGridLayout?: boolean;
+}) {
   return (
     <div className="pt-12 lg:grid lg:grid-cols-3 lg:gap-x-8 xl:grid-cols-4 container">
       <aside className="space-y-8">
@@ -254,9 +274,12 @@ function MenuPageSkeleton({ useGridLayout = true }: { useGridLayout?: boolean })
           // List skeleton - matches MenuList layout
           <div className="space-y-6">
             {Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="flex gap-4 md:gap-6 py-6 border-b border-gray-200">
+              <div
+                key={i}
+                className="flex gap-4 md:gap-6 py-6 border-b border-gray-200"
+              >
                 {/* Image skeleton */}
-                <Skeleton className="w-16 h-16 md:w-20 md:h-20 rounded-lg flex-shrink-0" />
+                <Skeleton className="w-16 h-16 md:w-20 md:h-20 rounded-lg shrink-0" />
 
                 {/* Content skeleton */}
                 <div className="flex-1 flex flex-col md:flex-row md:justify-between gap-2 md:gap-6">
