@@ -125,12 +125,21 @@ pnpm test:e2e cart-flow.spec.ts
 ### Visual Regression Tests
 
 ```bash
-# Run visual tests
+# ⚠️ FIRST TIME: Create baselines (will "fail" on first run - this is expected!)
+pnpm test:e2e visual-regression.spec.ts --update-snapshots
+
+# Normal runs: Compare against baselines
 pnpm test:e2e visual-regression.spec.ts
 
-# Update screenshot baselines (after intentional UI changes)
-pnpm test:e2e --update-snapshots
+# After intentional UI changes: Update baselines
+pnpm test:e2e visual-regression.spec.ts --update-snapshots
+
+# Then commit the updated baselines
+git add e2e/visual-regression.spec.ts-snapshots/
+git commit -m "test: update visual regression baselines"
 ```
+
+**Note:** Visual tests will "fail" on first run with `snapshot doesn't exist` - this is normal! Use `--update-snapshots` to create baselines.
 
 ### Run All Tests
 
@@ -229,6 +238,63 @@ test('homepage should match screenshot', async ({ page }) => {
   })
 })
 ```
+
+**⚠️ IMPORTANT: First Run Behavior**
+
+On the **first run** of visual regression tests, they will "fail" with a message like:
+```
+Error: A snapshot doesn't exist at [...]/homepage-desktop-chromium-darwin.png, writing actual.
+```
+
+**This is expected!** Playwright is creating the baseline screenshots.
+
+**To establish baselines:**
+
+1. **Run tests with --update-snapshots flag:**
+   ```bash
+   pnpm test:e2e visual-regression.spec.ts --update-snapshots
+   ```
+
+2. **Review the screenshots:**
+   ```bash
+   # Screenshots are saved in:
+   # e2e/visual-regression.spec.ts-snapshots/
+
+   # Check that pages look correct
+   ```
+
+3. **Commit the baselines to git:**
+   ```bash
+   git add e2e/visual-regression.spec.ts-snapshots/
+   git commit -m "chore: add visual regression test baselines"
+   ```
+
+4. **Future runs will compare against baselines:**
+   ```bash
+   # Now tests will pass (or fail if UI changes)
+   pnpm test:e2e visual-regression.spec.ts
+   ```
+
+**Updating baselines after intentional UI changes:**
+
+```bash
+# After making UI changes, update the baselines
+pnpm test:e2e visual-regression.spec.ts --update-snapshots
+
+# Commit the updated baselines
+git add e2e/visual-regression.spec.ts-snapshots/
+git commit -m "test: update visual regression baselines after UI changes"
+```
+
+**What gets committed vs ignored:**
+
+✅ Committed to git:
+- Baseline screenshots (`*-chromium-darwin.png`, etc.)
+
+❌ Ignored by git (.gitignore):
+- Test run artifacts (`*-actual.png`)
+- Visual diffs (`*-diff.png`)
+- Test results folder (`/test-results/`)
 
 ## Best Practices
 
