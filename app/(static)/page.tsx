@@ -1,4 +1,5 @@
 import { Hero } from "@/components/landing/hero";
+import { HeroLogoWithText } from "@/components/landing/hero-logo-with-text";
 import { HeroLogoCenter } from "@/components/landing/hero-logo-center";
 import { HeroLogoBanner } from "@/components/landing/hero-logo-banner";
 import { HeroLogoSplit } from "@/components/landing/hero-logo-split";
@@ -38,6 +39,9 @@ export default async function Home() {
       <main>
         {/* Original Hero */}
         <Hero heroImages={siteConfig?.heroImages || []} />
+
+        {/* Hero with Logo: Original layout + centered logo overlay */}
+        <HeroLogoWithText heroImages={siteConfig?.heroImages || []} />
 
         {/* Hero Variant 1: Logo Center - Logo absolutely positioned in center of 4 images */}
         <HeroLogoCenter heroImages={siteConfig?.heroImages || []} />
