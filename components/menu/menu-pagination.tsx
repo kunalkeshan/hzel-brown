@@ -26,10 +26,16 @@ export function MenuPagination({
 
   const handlePageChange = (page: number) => {
     onPageChange(page);
-    // Scroll to top of menu section smoothly
+    // Scroll to top of menu section with offset for sticky header
     const menuSection = document.querySelector("[data-menu-section]");
     if (menuSection) {
-      menuSection.scrollIntoView({ behavior: "smooth", block: "start" });
+      const menuSectionTop = menuSection.getBoundingClientRect().top + window.scrollY;
+      // Offset by 128px (top-32) + 16px for breathing room = 144px total
+      const offset = 144;
+      window.scrollTo({
+        top: menuSectionTop - offset,
+        behavior: "smooth",
+      });
     }
   };
 
