@@ -57,7 +57,7 @@ export function Faqs({ faqs }: FaqsProps) {
                 className="-bottom-[5.5px] -translate-x-1/2 pointer-events-none absolute left-[12.5px] size-2.5 text-muted-foreground group-last:hidden"
               />
 
-              <AccordionTrigger className="px-4 py-4 text-[15px] leading-6 hover:no-underline">
+              <AccordionTrigger className="cursor-pointer px-4 py-4 text-[15px] leading-6">
                 {item.question}
               </AccordionTrigger>
 
