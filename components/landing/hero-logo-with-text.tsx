@@ -28,7 +28,7 @@ export function HeroLogoWithText({ heroImages = [] }: HeroLogoWithTextProps) {
     })
     .filter((image) => image.src); // Filter out images without valid assets
   return (
-    <MotionSection>
+    <MotionSection className="relative">
       {/* Decorative SVG Background */}
       <svg
         aria-hidden="true"

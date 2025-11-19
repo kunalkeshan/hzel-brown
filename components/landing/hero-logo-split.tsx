@@ -28,7 +28,7 @@ export function HeroLogoSplit({ heroImages = [] }: HeroLogoSplitProps) {
     .filter((image) => image.src);
 
   return (
-    <MotionSection>
+    <MotionSection className="relative">
       {/* Decorative SVG Background */}
       <svg
         aria-hidden="true"

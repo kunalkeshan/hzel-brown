@@ -27,7 +27,7 @@ export function HeroLogoAsymmetric({ heroImages = [] }: HeroLogoAsymmetricProps)
     .filter((image) => image.src);
 
   return (
-    <MotionSection>
+    <MotionSection className="relative">
       {/* Decorative SVG Background */}
       <svg
         aria-hidden="true"

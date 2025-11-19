@@ -30,7 +30,7 @@ export function HeroLogoBanner({ heroImages = [] }: HeroLogoBannerProps) {
   const bannerImage = processedImages[0];
 
   return (
-    <MotionSection>
+    <MotionSection className="relative">
       {/* Decorative SVG Background */}
       <svg
         aria-hidden="true"

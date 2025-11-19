@@ -27,7 +27,7 @@ export function HeroLogoOverlay({ heroImages = [] }: HeroLogoOverlayProps) {
     .filter((image) => image.src);
 
   return (
-    <MotionSection>
+    <MotionSection className="relative">
       {/* Decorative SVG Background */}
       <svg
         aria-hidden="true"
