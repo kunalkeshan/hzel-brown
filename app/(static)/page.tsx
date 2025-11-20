@@ -35,7 +35,9 @@ export default async function Home() {
         <FeaturedMenuItems
           featuredMenuItems={siteConfig?.featuredMenuItems || []}
         />
-        <Stats />
+        <Stats
+          freeShippingThreshold={siteConfig?.freeShippingThreshold ?? 3000}
+        />
         <AboutUs />
         <Faqs faqs={faqs} />
       </main>

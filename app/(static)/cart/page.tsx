@@ -24,13 +24,19 @@ export default async function CartPage() {
     siteConfig?.phoneNumbers?.[0]?.number ||
     null;
 
+  // Extract shipping configuration
+  const shippingConfig = {
+    freeShippingThreshold: siteConfig?.freeShippingThreshold ?? 3000,
+    shippingCost: siteConfig?.shippingCost ?? 0,
+  };
+
   return (
     <main className="py-16 lg:pt-40">
       <div className="container">
         <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
           Shopping Cart
         </h1>
-        <Content phoneNumber={phoneNumber} />
+        <Content phoneNumber={phoneNumber} shippingConfig={shippingConfig} />
       </div>
     </main>
   );

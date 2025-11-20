@@ -86,7 +86,9 @@ export const SITE_CONFIG_QUERY = defineQuery(`
       alt,
       hotspot,
       crop
-    }
+    },
+    freeShippingThreshold,
+    shippingCost
   }
 `);
 

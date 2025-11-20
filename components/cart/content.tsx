@@ -8,9 +8,13 @@ import { OrderSummary } from "./order-summary";
 
 type ContentProps = {
   phoneNumber: string | null;
+  shippingConfig: {
+    freeShippingThreshold: number;
+    shippingCost: number;
+  };
 };
 
-export function Content({ phoneNumber }: ContentProps) {
+export function Content({ phoneNumber, shippingConfig }: ContentProps) {
   const { isEmpty } = useCart();
 
   return (
@@ -36,7 +40,10 @@ export function Content({ phoneNumber }: ContentProps) {
           className="mt-12 lg:grid lg:grid-cols-12 lg:items-start lg:gap-x-12 xl:gap-x-16"
         >
           <ItemsList />
-          <OrderSummary phoneNumber={phoneNumber} />
+          <OrderSummary
+            phoneNumber={phoneNumber}
+            shippingConfig={shippingConfig}
+          />
         </motion.form>
       )}
     </AnimatePresence>
