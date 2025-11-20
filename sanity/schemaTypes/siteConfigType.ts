@@ -26,6 +26,10 @@ export const siteConfigType = defineType({
       name: "hero",
       title: "Hero Section",
     },
+    {
+      name: "commerce",
+      title: "Commerce & Shipping",
+    },
   ],
   fields: [
     {
@@ -295,6 +299,26 @@ export const siteConfigType = defineType({
       validation: (Rule) => Rule.max(4).min(1),
       description:
         "Images displayed in the hero section (maximum 4 images). Order matters.",
+    },
+    {
+      name: "freeShippingThreshold",
+      title: "Free Shipping Threshold (₹)",
+      type: "number",
+      group: "commerce",
+      initialValue: 3000,
+      validation: (Rule) => Rule.required().min(0),
+      description:
+        "Minimum order amount (in rupees) required for free shipping. When a customer's cart total reaches this amount, shipping charges are waived. This threshold is displayed in the cart with a progress indicator showing how much more is needed for free delivery.",
+    },
+    {
+      name: "shippingCost",
+      title: "Shipping Cost (₹)",
+      type: "number",
+      group: "commerce",
+      initialValue: 0,
+      validation: (Rule) => Rule.required().min(0),
+      description:
+        "Base shipping charge (in rupees) applied to orders below the free shipping threshold. Set to 0 to display 'TBD' (To Be Determined) in the cart, which prompts customers to contact via WhatsApp for shipping details. Any value above 0 will be shown as the actual shipping charge.",
     },
   ],
   preview: {

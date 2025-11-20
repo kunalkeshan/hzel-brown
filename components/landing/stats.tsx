@@ -11,34 +11,36 @@ import {
 } from "@/components/ui/card";
 import { AnimatedNumber } from "@/components/ui/animated-number";
 import { cn } from "@/lib/utils";
-import { FREE_SHIPPING_THRESHOLD } from "@/constants/shipping";
 import { formatCurrency } from "@/lib/numbers";
 
-const statsData = [
-  {
-    icon: Percent,
-    number: 15,
-    numberSuffix: "% Off",
-    label: "Bulk Order",
-    animateNumber: true,
-  },
-  {
-    icon: Truck,
-    number: "Free Shipping",
-    label: `Over ${formatCurrency(FREE_SHIPPING_THRESHOLD)}`,
-    animateNumber: false,
-  },
-  {
-    icon: Gift,
-    number: "Custom Boxes",
-    label: "for Events",
-    animateNumber: false,
-  },
-] as const;
+type StatsProps = {
+  freeShippingThreshold?: number;
+};
 
-type StatItem = (typeof statsData)[number];
+export function Stats({ freeShippingThreshold = 3000 }: StatsProps) {
+  const statsData = [
+    {
+      icon: Percent,
+      number: 15,
+      numberSuffix: "% Off",
+      label: "Bulk Order",
+      animateNumber: true,
+    },
+    {
+      icon: Truck,
+      number: "Free Shipping",
+      label: `Over ${formatCurrency(freeShippingThreshold)}`,
+      animateNumber: false,
+    },
+    {
+      icon: Gift,
+      number: "Custom Boxes",
+      label: "for Events",
+      animateNumber: false,
+    },
+  ] as const;
 
-export function Stats() {
+  type StatItem = (typeof statsData)[number];
   return (
     <MotionSection className="py-16 lg:py-20">
       <div className="container">

@@ -13,24 +13,31 @@ import { formatCurrency } from "@/lib/numbers";
 import { toast } from "sonner";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { getSocialIcon } from "@/constants/navigation";
-import { FREE_SHIPPING_THRESHOLD, SHIPPING_COST } from "@/constants/shipping";
 import { AnimatePresence, motion } from "motion/react";
 
 type OrderSummaryProps = {
   phoneNumber: string | null;
+  shippingConfig: {
+    freeShippingThreshold: number;
+    shippingCost: number;
+  };
 };
 
-export function OrderSummary({ phoneNumber }: OrderSummaryProps) {
+export function OrderSummary({ phoneNumber, shippingConfig }: OrderSummaryProps) {
   const { totalCost, formatPrice, validateAndCheckout, items } = useCart();
 
   // Calculate free shipping eligibility
-  const qualifiesForFreeShipping = totalCost >= FREE_SHIPPING_THRESHOLD;
-  const remainingForFreeShipping = FREE_SHIPPING_THRESHOLD - totalCost;
+  const qualifiesForFreeShipping =
+    totalCost >= shippingConfig.freeShippingThreshold;
+  const remainingForFreeShipping =
+    shippingConfig.freeShippingThreshold - totalCost;
 
   // Calculate shipping charge
-  // If order qualifies for free shipping (>= 3000), shipping is 0
-  // Otherwise, use the base SHIPPING_COST from constants
-  const shippingCharge = qualifiesForFreeShipping ? 0 : SHIPPING_COST;
+  // If order qualifies for free shipping, shipping is 0
+  // Otherwise, use the base shippingCost from config
+  const shippingCharge = qualifiesForFreeShipping
+    ? 0
+    : shippingConfig.shippingCost;
 
   // Calculate order total
   // Only add shipping to total if shipping charge is greater than 0
@@ -120,7 +127,7 @@ export function OrderSummary({ phoneNumber }: OrderSummaryProps) {
             </Tooltip>
           </dt>
           <dd className="text-sm font-medium text-foreground">
-            {SHIPPING_COST === 0 ? (
+            {shippingConfig.shippingCost === 0 ? (
               "TBD"
             ) : shippingCharge === 0 ? (
               <span className="text-green-600">Free</span>
