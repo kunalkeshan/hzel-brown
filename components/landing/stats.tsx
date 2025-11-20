@@ -15,13 +15,17 @@ import { formatCurrency } from "@/lib/numbers";
 
 type StatsProps = {
   freeShippingThreshold?: number;
+  bulkDiscountPercentage?: number;
 };
 
-export function Stats({ freeShippingThreshold = 3000 }: StatsProps) {
+export function Stats({
+  freeShippingThreshold = 3000,
+  bulkDiscountPercentage = 15,
+}: StatsProps) {
   const statsData = [
     {
       icon: Percent,
-      number: 15,
+      number: bulkDiscountPercentage,
       numberSuffix: "% Off",
       label: "Bulk Order",
       animateNumber: true,

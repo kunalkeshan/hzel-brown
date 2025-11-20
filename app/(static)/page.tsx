@@ -37,6 +37,7 @@ export default async function Home() {
         />
         <Stats
           freeShippingThreshold={siteConfig?.freeShippingThreshold ?? 3000}
+          bulkDiscountPercentage={siteConfig?.bulkDiscountPercentage ?? 15}
         />
         <AboutUs />
         <Faqs faqs={faqs} />

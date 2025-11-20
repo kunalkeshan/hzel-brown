@@ -88,7 +88,8 @@ export const SITE_CONFIG_QUERY = defineQuery(`
       crop
     },
     freeShippingThreshold,
-    shippingCost
+    shippingCost,
+    bulkDiscountPercentage
   }
 `);
 
