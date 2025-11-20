@@ -320,6 +320,16 @@ export const siteConfigType = defineType({
       description:
         "Base shipping charge (in rupees) applied to orders below the free shipping threshold. Set to 0 to display 'TBD' (To Be Determined) in the cart, which prompts customers to contact via WhatsApp for shipping details. Any value above 0 will be shown as the actual shipping charge.",
     },
+    {
+      name: "bulkDiscountPercentage",
+      title: "Bulk Discount Percentage (%)",
+      type: "number",
+      group: "commerce",
+      initialValue: 15,
+      validation: (Rule) => Rule.required().min(0).max(100),
+      description:
+        "Percentage discount displayed for bulk orders on the homepage. Note: This is currently for UI display only and is not applied to cart calculations. Future updates will integrate bulk discount logic into the checkout process.",
+    },
   ],
   preview: {
     select: {

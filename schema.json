@@ -630,6 +630,13 @@
           "type": "number"
         },
         "optional": true
+      },
+      "bulkDiscountPercentage": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "number"
+        },
+        "optional": true
       }
     }
   },
