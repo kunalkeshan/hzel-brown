@@ -6,11 +6,11 @@ import { urlFor } from "@/sanity/lib/image";
 import { cn } from "@/lib/utils";
 import type { SITE_CONFIG_QUERYResult } from "@/types/cms";
 
-interface HeroProps {
+interface HeroLogoWithTextProps {
   heroImages: NonNullable<SITE_CONFIG_QUERYResult>["heroImages"];
 }
 
-export function Hero({ heroImages = [] }: HeroProps) {
+export function HeroLogoWithText({ heroImages = [] }: HeroLogoWithTextProps) {
   // Transform CMS images to include column assignments
   const processedImages = (heroImages || [])
     .map((image, index) => {
@@ -38,7 +38,7 @@ export function Hero({ heroImages = [] }: HeroProps) {
           <pattern
             x="50%"
             y={-1}
-            id="hero-pattern"
+            id="hero-logo-with-text-pattern"
             width={200}
             height={200}
             patternUnits="userSpaceOnUse"
@@ -53,7 +53,7 @@ export function Hero({ heroImages = [] }: HeroProps) {
           />
         </svg>
         <rect
-          fill="url(#hero-pattern)"
+          fill="url(#hero-logo-with-text-pattern)"
           width="100%"
           height="100%"
           strokeWidth={0}
@@ -87,10 +87,10 @@ export function Hero({ heroImages = [] }: HeroProps) {
             </div>
           </div>
 
-          {/* Image Gallery - Two Column Layout */}
+          {/* Image Gallery - Two Column Layout with Centered Logo */}
           <div className="mt-12 lg:mt-0 lg:flex-1 lg:max-w-lg lg:ml-12">
             {/* Mobile: Simple Grid */}
-            <div className="grid grid-cols-2 gap-4 lg:hidden">
+            <div className="relative grid grid-cols-2 gap-4 lg:hidden">
               {processedImages.slice(0, 4).map((image, index) => (
                 <Image
                   key={index}
@@ -111,53 +111,83 @@ export function Hero({ heroImages = [] }: HeroProps) {
                   priority={index < 2}
                 />
               ))}
+
+              {/* Centered Logo - Mobile */}
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                <div className="relative bg-background/95 backdrop-blur-sm rounded-3xl shadow-2xl p-6 border border-border pointer-events-auto">
+                  <Image
+                    src="/assets/logo-text.png"
+                    alt="Hzel Brown"
+                    width={200}
+                    height={80}
+                    className="w-auto h-16"
+                    priority
+                  />
+                </div>
+              </div>
             </div>
 
             {/* Desktop: Two Column Layout */}
             <div
-              className={cn("hidden lg:flex justify-start items-start gap-8")}
+              className={cn("hidden lg:block relative")}
             >
-              <div
-                className={cn(
-                  "flex-col justify-start items-start gap-8 inline-flex"
-                )}
-              >
-                {processedImages.slice(0, 2).map((image, index) => (
-                  <Image
-                    key={index}
-                    alt={image.alt}
-                    src={image.src}
-                    width={280}
-                    height={280}
-                    className={cn("object-cover aspect-square rounded-md", {
-                      "rounded-tl-4xl": index === 0,
-                      "rounded-bl-4xl": index === 1,
-                    })}
-                    sizes="280px"
-                    priority={index === 0}
-                  />
-                ))}
+              <div className={cn("flex justify-start items-start gap-8")}>
+                <div
+                  className={cn(
+                    "flex-col justify-start items-start gap-8 inline-flex"
+                  )}
+                >
+                  {processedImages.slice(0, 2).map((image, index) => (
+                    <Image
+                      key={index}
+                      alt={image.alt}
+                      src={image.src}
+                      width={280}
+                      height={280}
+                      className={cn("object-cover aspect-square rounded-md", {
+                        "rounded-tl-4xl": index === 0,
+                        "rounded-bl-4xl": index === 1,
+                      })}
+                      sizes="280px"
+                      priority={index === 0}
+                    />
+                  ))}
+                </div>
+                <div
+                  className={cn(
+                    "flex-col justify-start items-start gap-8 inline-flex"
+                  )}
+                >
+                  {processedImages.slice(2, 4).map((image, index) => (
+                    <Image
+                      key={index + 2}
+                      alt={image.alt}
+                      src={image.src}
+                      width={280}
+                      height={280}
+                      className={cn("object-cover aspect-square rounded-md", {
+                        "rounded-tr-4xl": index === 0,
+                        "rounded-br-4xl": index === 1,
+                      })}
+                      sizes="280px"
+                      priority={false}
+                    />
+                  ))}
+                </div>
               </div>
-              <div
-                className={cn(
-                  "flex-col justify-start items-start gap-8 inline-flex"
-                )}
-              >
-                {processedImages.slice(2, 4).map((image, index) => (
+
+              {/* Centered Logo - Desktop */}
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                <div className="relative bg-background/95 backdrop-blur-sm rounded-3xl shadow-2xl p-10 border border-border pointer-events-auto">
                   <Image
-                    key={index + 2}
-                    alt={image.alt}
-                    src={image.src}
-                    width={280}
-                    height={280}
-                    className={cn("object-cover aspect-square rounded-md", {
-                      "rounded-tr-4xl": index === 0,
-                      "rounded-br-4xl": index === 1,
-                    })}
-                    sizes="280px"
-                    priority={false}
+                    src="/assets/logo-text.png"
+                    alt="Hzel Brown"
+                    width={400}
+                    height={160}
+                    className="w-auto h-24 lg:h-32"
+                    priority
                   />
-                ))}
+                </div>
               </div>
             </div>
           </div>
