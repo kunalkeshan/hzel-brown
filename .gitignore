@@ -40,3 +40,19 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# testing
+/coverage
+/test-results/
+/playwright-report/
+/playwright/.cache/
+*.spec.ts-snapshots/*-actual.png
+*.spec.ts-snapshots/*-diff.png
+/e2e/.auth/user.json
+
+# vitest
+/vitest-coverage/
+
+# Keep screenshot baselines (committed to git)
+!*.spec.ts-snapshots/*-expected.png
+!*.spec.ts-snapshots/*.png

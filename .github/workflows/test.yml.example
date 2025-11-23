@@ -1,0 +1,195 @@
+# TODO: Rename this file to test.yml when ready to enable CI/CD
+#
+# This workflow runs all tests (unit + E2E) on every push and pull request
+#
+# To enable:
+# 1. Rename file: mv .github/workflows/test.yml.example .github/workflows/test.yml
+# 2. Commit and push
+# 3. Tests will run automatically on GitHub Actions
+
+name: Tests
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+# Cancel in-progress runs when new commit is pushed
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  unit-tests:
+    name: Unit & Component Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run unit tests with coverage
+        run: pnpm test:coverage
+
+      - name: Upload coverage to Codecov (optional)
+        # Uncomment to enable Codecov integration
+        # uses: codecov/codecov-action@v4
+        # with:
+        #   token: ${{ secrets.CODECOV_TOKEN }}
+        #   files: ./coverage/coverage-final.json
+        #   fail_ci_if_error: true
+
+  e2e-tests:
+    name: E2E Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Playwright browsers
+        run: pnpm playwright:install
+
+      - name: Run Playwright tests
+        run: pnpm test:e2e
+        env:
+          # Use production Sanity dataset or create a test dataset
+          # NEXT_PUBLIC_SANITY_DATASET: test
+          CI: true
+
+      - name: Upload Playwright report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: test-results
+          path: test-results/
+          retention-days: 7
+
+  # TODO: Add when Firebase Authentication is implemented
+  # e2e-with-auth:
+  #   name: E2E Tests (Authenticated)
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - uses: actions/setup-node@v4
+  #       with:
+  #         node-version: '20'
+  #         cache: 'pnpm'
+  #     - uses: pnpm/action-setup@v4
+  #     - run: pnpm install --frozen-lockfile
+  #     - run: pnpm playwright:install
+  #
+  #     # Setup Firebase Emulator for testing
+  #     - name: Setup Firebase Emulator
+  #       run: |
+  #         pnpm add -D firebase-tools
+  #         pnpm firebase emulators:start --only auth,firestore &
+  #
+  #     - name: Run auth tests
+  #       run: pnpm test:e2e e2e/auth-flow.spec.ts
+  #       env:
+  #         FIREBASE_AUTH_EMULATOR_HOST: localhost:9099
+  #         FIRESTORE_EMULATOR_HOST: localhost:8080
+
+  # TODO: Add visual regression testing in CI
+  # visual-regression:
+  #   name: Visual Regression Tests
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - uses: actions/setup-node@v4
+  #       with:
+  #         node-version: '20'
+  #         cache: 'pnpm'
+  #     - uses: pnpm/action-setup@v4
+  #     - run: pnpm install --frozen-lockfile
+  #     - run: pnpm playwright:install
+  #
+  #     - name: Run visual regression tests
+  #       run: pnpm test:e2e visual-regression.spec.ts
+  #
+  #     # Upload visual diff on failure
+  #     - name: Upload visual diffs
+  #       if: failure()
+  #       uses: actions/upload-artifact@v4
+  #       with:
+  #         name: visual-diffs
+  #         path: |
+  #           **/*-actual.png
+  #           **/*-diff.png
+
+  # TODO: Add when deploying to Vercel
+  # test-preview:
+  #   name: Test Vercel Preview
+  #   runs-on: ubuntu-latest
+  #   if: github.event_name == 'pull_request'
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - uses: actions/setup-node@v4
+  #       with:
+  #         node-version: '20'
+  #         cache: 'pnpm'
+  #     - uses: pnpm/action-setup@v4
+  #     - run: pnpm install --frozen-lockfile
+  #     - run: pnpm playwright:install
+  #
+  #     # Wait for Vercel deployment
+  #     - name: Wait for Vercel Preview
+  #       uses: UnlyEd/github-action-await-vercel@v1
+  #       with:
+  #         deployment-url: ${{ steps.vercel.outputs.preview-url }}
+  #         timeout: 300
+  #
+  #     # Run E2E tests against preview
+  #     - name: Run E2E tests on preview
+  #       run: pnpm test:e2e
+  #       env:
+  #         PLAYWRIGHT_TEST_BASE_URL: ${{ steps.vercel.outputs.preview-url }}
+
+# TODO: Add test coverage status check
+# This will block PRs if coverage drops below threshold
+#
+# Example with Codecov:
+# - name: Check coverage threshold
+#   run: |
+#     if [ $(cat coverage/coverage-summary.json | jq '.total.statements.pct') -lt 80 ]; then
+#       echo "Coverage is below 80%"
+#       exit 1
+#     fi
