@@ -74,15 +74,36 @@ self.addEventListener('fetch', (event) => {
   const { request } = event;
   const url = new URL(request.url);
 
-  // Skip cross-origin requests
+  // Handle cross-origin CMS requests (Sanity, etc.) with network-first strategy
   if (url.origin !== location.origin) {
+    const isCMSRequest = CMS_HOSTNAMES.some(hostname => url.hostname.includes(hostname));
+    
+    if (isCMSRequest) {
+      event.respondWith(
+        fetch(request)
+          .then((response) => {
+            // Cache successful responses
+            if (response.status === 200) {
+              const responseClone = response.clone();
+              caches.open(DYNAMIC_CACHE).then((cache) => {
+                cache.put(request, responseClone);
+                limitCacheSize(DYNAMIC_CACHE, MAX_DYNAMIC_CACHE_SIZE);
+              });
+            }
+            return response;
+          })
+          .catch(() => {
+            // Fallback to cache if network fails
+            return caches.match(request);
+          })
+      );
+    }
+    // Skip other cross-origin requests
     return;
   }
 
-  // Network-first for API/data requests (Sanity CMS, etc.)
-  if (url.pathname.startsWith('/api/') || 
-      CMS_HOSTNAMES.some(hostname => url.hostname.includes(hostname)) ||
-      url.pathname.includes('/cms/')) {
+  // Network-first for same-origin API/data requests
+  if (url.pathname.startsWith('/api/') || url.pathname.includes('/cms/')) {
     event.respondWith(
       fetch(request)
         .then((response) => {

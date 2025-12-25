@@ -34,14 +34,26 @@ export function PWAUpdateNotification() {
       });
     };
 
+    // Check for updates when tab becomes visible
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        navigator.serviceWorker.ready.then((registration) => {
+          registration.update();
+        });
+      }
+    };
+
     // Get the current registration
     navigator.serviceWorker.ready.then((registration) => {
       handleUpdate(registration);
 
-      // Check for updates every hour
-      updateCheckInterval = setInterval(() => {
-        registration.update();
-      }, 60 * 60 * 1000);
+      // Check for updates every hour (only if this is the main/first instance)
+      // Use a shared worker or limit to focused tabs to avoid redundant checks
+      if (document.hasFocus()) {
+        updateCheckInterval = setInterval(() => {
+          registration.update();
+        }, 60 * 60 * 1000);
+      }
     });
 
     // Handle controller change
@@ -50,6 +62,7 @@ export function PWAUpdateNotification() {
     };
     
     navigator.serviceWorker.addEventListener("controllerchange", handleControllerChange);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
 
     // Cleanup on unmount
     return () => {
@@ -57,6 +70,7 @@ export function PWAUpdateNotification() {
         clearInterval(updateCheckInterval);
       }
       navigator.serviceWorker.removeEventListener("controllerchange", handleControllerChange);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
   }, []);
 
