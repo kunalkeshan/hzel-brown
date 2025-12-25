@@ -146,7 +146,10 @@ export function Navbar() {
                           )}
                         />
                         {isActiveNavItem(item) && (
-                          <span className="absolute -bottom-0.5 left-0 right-0 h-0.5 bg-primary transition-all duration-300" />
+                          <span
+                            className="absolute -bottom-0.5 left-0 right-0 h-0.5 bg-primary transition-all duration-300"
+                            style={{ viewTransitionName: 'navbar-underline' }}
+                          />
                         )}
                       </button>
 
@@ -221,7 +224,10 @@ export function Navbar() {
                     >
                       {item.label}
                       {isActiveNavItem(item) && (
-                        <span className="absolute -bottom-0.5 left-0 right-0 h-0.5 bg-primary transition-all duration-300" />
+                        <span
+                          className="absolute -bottom-0.5 left-0 right-0 h-0.5 bg-primary transition-all duration-300"
+                          style={{ viewTransitionName: 'navbar-underline' }}
+                        />
                       )}
                     </Link>
                   </li>

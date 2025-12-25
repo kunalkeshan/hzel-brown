@@ -11,38 +11,44 @@ import {
 } from "@/components/ui/card";
 import { AnimatedNumber } from "@/components/ui/animated-number";
 import { cn } from "@/lib/utils";
-import { FREE_SHIPPING_THRESHOLD } from "@/constants/shipping";
 import { formatCurrency } from "@/lib/numbers";
 
-const statsData = [
-  {
-    icon: Percent,
-    number: 15,
-    numberSuffix: "% Off",
-    label: "Bulk Order",
-    animateNumber: true,
-  },
-  {
-    icon: Truck,
-    number: "Free Shipping",
-    label: `Over ${formatCurrency(FREE_SHIPPING_THRESHOLD)}`,
-    animateNumber: false,
-  },
-  {
-    icon: Gift,
-    number: "Custom Boxes",
-    label: "for Events",
-    animateNumber: false,
-  },
-] as const;
+type StatsProps = {
+  freeShippingThreshold?: number;
+  bulkDiscountPercentage?: number;
+};
 
-type StatItem = (typeof statsData)[number];
+export function Stats({
+  freeShippingThreshold = 3000,
+  bulkDiscountPercentage = 15,
+}: StatsProps) {
+  const statsData = [
+    {
+      icon: Percent,
+      number: bulkDiscountPercentage,
+      numberSuffix: "% Off",
+      label: "Bulk Order",
+      animateNumber: true,
+    },
+    {
+      icon: Truck,
+      number: "Free Shipping",
+      label: `Over ${formatCurrency(freeShippingThreshold)}`,
+      animateNumber: false,
+    },
+    {
+      icon: Gift,
+      number: "Custom Boxes",
+      label: "for Events",
+      animateNumber: false,
+    },
+  ] as const;
 
-export function Stats() {
+  type StatItem = (typeof statsData)[number];
   return (
     <MotionSection className="py-16 lg:py-20">
       <div className="container">
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-14">
+        <div className="grid grid-cols-1 xl:grid-cols-[3fr_7fr] gap-14">
           {/* Text Content */}
           <div className="flex flex-col gap-3">
             <p className="px-2 border border-primary/30 rounded-full bg-primary/10 text-xs font-medium leading-6 text-primary mb-2 w-fit mx-auto xl:mx-0">

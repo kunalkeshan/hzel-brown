@@ -20,6 +20,7 @@ import { sanityFetch } from "@/sanity/lib/sanity-fetch";
 import Footer from "@/components/layouts/footer";
 import { Metadata } from "next";
 import Link from "next/link";
+import { createCollectionTag } from "@/sanity/lib/cache-tags";
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
@@ -33,11 +34,11 @@ export default async function NotFoundPage() {
   const [siteConfig, legalLinks] = await Promise.all([
     sanityFetch<SITE_CONFIG_QUERYResult>({
       query: SITE_CONFIG_QUERY,
-      tags: ["siteConfig"],
+      tags: [createCollectionTag("siteConfig")],
     }),
     sanityFetch<FOOTER_LEGAL_LINKS_QUERYResult>({
       query: FOOTER_LEGAL_LINKS_QUERY,
-      tags: ["siteConfig"],
+      tags: [createCollectionTag("siteConfig")],
     }),
   ]);
 

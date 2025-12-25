@@ -3,6 +3,7 @@ import { sanityFetch } from "@/sanity/lib/sanity-fetch";
 import { SITE_CONFIG_QUERY } from "@/sanity/queries/site-config";
 import type { SITE_CONFIG_QUERYResult } from "@/types/cms";
 import type { Metadata } from "next";
+import { createCollectionTag } from "@/sanity/lib/cache-tags";
 
 export const metadata: Metadata = {
   title: "Contact Us",
@@ -13,7 +14,7 @@ export const metadata: Metadata = {
 export default async function ContactPage() {
   const siteConfig = await sanityFetch<SITE_CONFIG_QUERYResult>({
     query: SITE_CONFIG_QUERY,
-    tags: ["siteConfig"],
+    tags: [createCollectionTag("siteConfig")],
   });
 
   return (

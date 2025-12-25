@@ -26,6 +26,10 @@ export const siteConfigType = defineType({
       name: "hero",
       title: "Hero Section",
     },
+    {
+      name: "commerce",
+      title: "Commerce & Shipping",
+    },
   ],
   fields: [
     {
@@ -222,6 +226,15 @@ export const siteConfigType = defineType({
         "Add your social media profiles. Only platforms with URLs will be displayed.",
     },
     {
+      name: "enableMenuPageGridView",
+      title: "Enable Grid View for Menu Pages",
+      type: "boolean",
+      group: "content",
+      initialValue: true,
+      description:
+        "Toggle between grid and list layout for menu category pages. When enabled, menu items are displayed in a responsive grid (2-3 columns). When disabled, items are shown in a traditional linear menu format with images on the left. This setting applies to /menu and /menu/[category] pages only.",
+    },
+    {
       name: "menuCategories",
       title: "Menu Categories",
       type: "array",
@@ -286,6 +299,36 @@ export const siteConfigType = defineType({
       validation: (Rule) => Rule.max(4).min(1),
       description:
         "Images displayed in the hero section (maximum 4 images). Order matters.",
+    },
+    {
+      name: "freeShippingThreshold",
+      title: "Free Shipping Threshold (₹)",
+      type: "number",
+      group: "commerce",
+      initialValue: 3000,
+      validation: (Rule) => Rule.required().min(0),
+      description:
+        "Minimum order amount (in rupees) required for free shipping. When a customer's cart total reaches this amount, shipping charges are waived. This threshold is displayed in the cart with a progress indicator showing how much more is needed for free delivery.",
+    },
+    {
+      name: "shippingCost",
+      title: "Shipping Cost (₹)",
+      type: "number",
+      group: "commerce",
+      initialValue: 0,
+      validation: (Rule) => Rule.required().min(0),
+      description:
+        "Base shipping charge (in rupees) applied to orders below the free shipping threshold. Set to 0 to display 'TBD' (To Be Determined) in the cart, which prompts customers to contact via WhatsApp for shipping details. Any value above 0 will be shown as the actual shipping charge.",
+    },
+    {
+      name: "bulkDiscountPercentage",
+      title: "Bulk Discount Percentage (%)",
+      type: "number",
+      group: "commerce",
+      initialValue: 15,
+      validation: (Rule) => Rule.required().min(0).max(100),
+      description:
+        "Percentage discount displayed for bulk orders on the homepage. Note: This is currently for UI display only and is not applied to cart calculations. Future updates will integrate bulk discount logic into the checkout process.",
     },
   ],
   preview: {

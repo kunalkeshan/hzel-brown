@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 import { Toaster } from "@/components/ui/sonner";
-import { NuqsAdapter } from "nuqs/adapters/next/app";
 import Navbar from "@/components/layouts/navbar";
 import Footer from "@/components/layouts/footer";
 import { FloatingCheckoutButton } from "@/components/cart/floating-checkout-button";
+import { ViewTransitionWrapper } from "@/components/layouts/view-transition-wrapper";
+import { Providers } from "@/providers/providers";
+import { CommandMenu } from "@/components/command-menu";
 import { sanityFetch } from "@/sanity/lib/sanity-fetch";
 import {
   SITE_CONFIG_QUERY,
@@ -14,13 +16,16 @@ import {
   FOOTER_LEGAL_LINKS_QUERYResult,
 } from "@/types/cms";
 import { urlFor } from "@/sanity/lib/image";
-
-export const revalidate = 60;
+import { createCollectionTag } from "@/sanity/lib/cache-tags";
+import { JsonLdScript } from "@/components/json-ld/json-ld-script";
+import { generateOrganizationSchema } from "@/lib/json-ld/organization";
+import { generateWebSiteSchema } from "@/lib/json-ld/website";
+import { SITE_CONFIG } from "@/config/site";
 
 export async function generateMetadata(): Promise<Metadata> {
   const siteConfig = await sanityFetch<SITE_CONFIG_QUERYResult>({
     query: SITE_CONFIG_QUERY,
-    tags: ["siteConfig"],
+    tags: [createCollectionTag("siteConfig")],
   });
 
   const title = siteConfig?.title || "Hzel Brown";
@@ -83,22 +88,43 @@ export default async function RootLayout({
   const [siteConfig, legalLinks] = await Promise.all([
     sanityFetch<SITE_CONFIG_QUERYResult>({
       query: SITE_CONFIG_QUERY,
-      tags: ["siteConfig"],
+      tags: [createCollectionTag("siteConfig")],
     }),
     sanityFetch<FOOTER_LEGAL_LINKS_QUERYResult>({
       query: FOOTER_LEGAL_LINKS_QUERY,
-      tags: ["siteConfig"],
+      tags: [createCollectionTag("siteConfig")],
     }),
   ]);
+
+  // Generate JSON-LD schemas
+  const baseUrl = SITE_CONFIG.URL;
+  const organizationSchema = siteConfig
+    ? generateOrganizationSchema({ siteConfig, baseUrl })
+    : null;
+  const websiteSchema = generateWebSiteSchema({
+    siteName: siteConfig?.title || "Hzel Brown",
+    siteDescription:
+      siteConfig?.description ||
+      "Artisan dessert shop curating handcrafted brownies, brookies, cupcakes and cookies, freshly baked with love.",
+    baseUrl,
+  });
+
   return (
     <>
-      <NuqsAdapter>
-        <Navbar />
-        {children}
-        <Footer siteConfig={siteConfig} legalLinks={legalLinks} />
-        <Toaster richColors />
-        <FloatingCheckoutButton />
-      </NuqsAdapter>
+      {/* JSON-LD Structured Data */}
+      {organizationSchema && <JsonLdScript data={organizationSchema} />}
+      <JsonLdScript data={websiteSchema} />
+
+      <Providers>
+        <ViewTransitionWrapper>
+          <Navbar />
+          {children}
+          <Footer siteConfig={siteConfig} legalLinks={legalLinks} />
+          <Toaster richColors />
+          <FloatingCheckoutButton />
+        </ViewTransitionWrapper>
+        <CommandMenu />
+      </Providers>
     </>
   );
 }

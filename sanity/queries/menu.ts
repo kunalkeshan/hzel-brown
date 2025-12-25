@@ -249,6 +249,53 @@ export const CATEGORY_BY_SLUG_QUERY = defineQuery(`
     thumbnail {
       asset->,
       alt
+    },
+    featuredItems[]-> {
+      _id,
+      name,
+      slug,
+      description,
+      price,
+      ingredients[]-> {
+        _id,
+        name,
+        slug
+      },
+      allergens,
+      isAvailable,
+      isCombo,
+      comboDescription,
+      _createdAt,
+      _updatedAt,
+      comboItems[]-> {
+        _id,
+        name,
+        slug,
+        price,
+        isAvailable,
+        categories[]-> {
+          _id,
+          title,
+          slug
+        },
+        image {
+          asset->,
+          alt,
+          hotspot,
+          crop
+        }
+      },
+      categories[]-> {
+        _id,
+        title,
+        slug
+      },
+      image {
+        asset->,
+        alt,
+        hotspot,
+        crop
+      }
     }
   }
 `);
@@ -300,5 +347,12 @@ export const MENU_ITEMS_BY_CATEGORY_QUERY = defineQuery(`
       hotspot,
       crop
     }
+  }
+`);
+
+export const MENU_ITEMS_BY_INGREDIENT_QUERY = defineQuery(`
+  *[_type == "menuItem" && references($ingredientId)] {
+    _id,
+    "slug": slug.current
   }
 `);

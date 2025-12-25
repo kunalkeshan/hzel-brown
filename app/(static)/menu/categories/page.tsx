@@ -4,6 +4,7 @@ import type { ALL_CATEGORIES_QUERYResult } from "@/types/cms";
 import { MotionSection } from "@/components/ui/motion-section";
 import { CategoryCardsGrid } from "@/components/common/category-cards-grid";
 import type { Metadata } from "next";
+import { createCollectionTag } from "@/sanity/lib/cache-tags";
 
 export const metadata: Metadata = {
   title: "What We Bake",
@@ -14,6 +15,7 @@ export const metadata: Metadata = {
 export default async function CategoriesPage() {
   const categories = await sanityFetch<ALL_CATEGORIES_QUERYResult>({
     query: ALL_CATEGORIES_QUERY,
+    tags: [createCollectionTag("menuCategory")],
   });
 
   return (

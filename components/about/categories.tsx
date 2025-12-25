@@ -3,10 +3,12 @@ import { ALL_CATEGORIES_QUERY } from "@/sanity/queries/menu";
 import type { ALL_CATEGORIES_QUERYResult } from "@/types/cms";
 import { MotionSection } from "@/components/ui/motion-section";
 import { CategoryCardsGrid } from "@/components/common/category-cards-grid";
+import { createCollectionTag } from "@/sanity/lib/cache-tags";
 
 export async function Categories() {
   const categories = await sanityFetch<ALL_CATEGORIES_QUERYResult>({
     query: ALL_CATEGORIES_QUERY,
+    tags: [createCollectionTag("menuCategory")],
   });
 
   return (

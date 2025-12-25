@@ -7,11 +7,12 @@ import "server-only";
 import type { FilteredResponseQueryOptions, QueryParams } from "next-sanity";
 // import { draftMode } from 'next/headers';
 import { client } from "@/sanity/lib/client";
+import type { CacheTag } from "@/sanity/lib/cache-tags";
 
 const DEFAULT_PARAMS = {} as QueryParams;
-const DEFAULT_TAGS = [] as string[];
+const DEFAULT_TAGS = [] as CacheTag[];
 const FETCH_OPTIONS = {
-  revalidate: 30,
+  revalidate: false, // Use on-demand revalidation via webhook only
 } as FilteredResponseQueryOptions & NextFetchRequestConfig;
 
 export const token = process.env.SANITY_API_READ_TOKEN;
@@ -24,7 +25,7 @@ export async function sanityFetch<QueryResponse>({
 }: {
   query: string;
   params?: QueryParams;
-  tags?: string[];
+  tags?: CacheTag[];
   options?: FilteredResponseQueryOptions & NextFetchRequestConfig;
 }): Promise<QueryResponse> {
   // const isDraftMode = (await draftMode()).isEnabled;

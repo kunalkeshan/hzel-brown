@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useEffect } from "react";
+import { useMemo, useEffect, useCallback } from "react";
 import {
   parseAsArrayOf,
   parseAsInteger,
@@ -19,12 +19,14 @@ interface UseMenuFiltersProps {
   menuItems: MenuItem[];
   filterData: FilterData;
   lockedCategorySlug?: string;
+  itemsPerPage?: number; // Number of items per page (default: 12 for grid, 10 for list)
 }
 
 export function useMenuFilters({
   menuItems,
   filterData,
   lockedCategorySlug,
+  itemsPerPage = 12,
 }: UseMenuFiltersProps) {
   // Ensure we have valid price range values
   const defaultMinPrice = filterData?.priceRange?.min ?? 100;
@@ -40,6 +42,7 @@ export function useMenuFilters({
     allergens: parseAsArrayOf(parseAsString).withDefault([]),
     minPrice: parseAsInteger.withDefault(defaultMinPrice),
     maxPrice: parseAsInteger.withDefault(defaultMaxPrice),
+    page: parseAsInteger.withDefault(1),
   });
 
   // Ensure locked category is always in the categories array
@@ -53,21 +56,21 @@ export function useMenuFilters({
   }, [lockedCategorySlug, filters.categories, setFilters]);
 
   // Helper function to convert category slugs to IDs for filtering
-  const getCategoryIdsFromSlugs = (slugs: string[]) => {
+  const getCategoryIdsFromSlugs = useCallback((slugs: string[]) => {
     if (!filterData?.categories) return [];
     return filterData.categories
       .filter((category) => slugs.includes(category.slug?.current || ""))
       .map((category) => category._id);
-  };
+  }, [filterData?.categories]);
 
   // Helper function to convert category IDs to slugs for URL
-  const getCategorySlugsFromIds = (ids: string[]) => {
+  const getCategorySlugsFromIds = useCallback((ids: string[]) => {
     if (!filterData?.categories) return [];
     return filterData.categories
       .filter((category) => ids.includes(category._id))
       .map((category) => category.slug?.current || "")
       .filter((slug) => slug !== "");
-  };
+  }, [filterData?.categories]);
 
   const filteredItems = useMemo(() => {
     return menuItems.filter((item) => {
@@ -113,7 +116,26 @@ export function useMenuFilters({
 
       return true;
     });
-  }, [menuItems, filters]);
+  }, [menuItems, filters.search, filters.categories, filters.allergens, filters.minPrice, filters.maxPrice, getCategoryIdsFromSlugs]);
+
+  // Reset to page 1 when filters change (but not when page changes)
+  useEffect(() => {
+    if (filters.page !== 1) {
+      setFilters({ page: 1 });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filters.search, filters.categories, filters.allergens, filters.minPrice, filters.maxPrice]);
+
+  // Calculate pagination data
+  const totalPages = Math.ceil(filteredItems.length / itemsPerPage);
+  const currentPage = Math.min(filters.page, totalPages || 1); // Ensure page doesn't exceed total pages
+
+  // Calculate start and end indices for current page
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+
+  // Get items for current page
+  const paginatedItems = filteredItems.slice(startIndex, endIndex);
 
   const updateSearch = (search: string) => {
     setFilters({ search });
@@ -146,7 +168,12 @@ export function useMenuFilters({
       allergens: [],
       minPrice: defaultMinPrice,
       maxPrice: defaultMaxPrice,
+      page: 1,
     });
+  };
+
+  const updatePage = (page: number) => {
+    setFilters({ page });
   };
 
   const hasActiveFilters =
@@ -165,14 +192,26 @@ export function useMenuFilters({
       categories: selectedCategoryIds, // Return IDs for filter components
     },
     filteredItems,
+    paginatedItems,
     updateSearch,
     updateCategories,
     updateAllergens,
     updatePriceRange,
+    updatePage,
     clearFilters,
     hasActiveFilters,
     totalItems: menuItems.length,
     filteredCount: filteredItems.length,
     lockedCategorySlug,
+    // Pagination data
+    pagination: {
+      currentPage,
+      totalPages,
+      itemsPerPage,
+      startIndex: startIndex + 1, // 1-indexed for display
+      endIndex: Math.min(endIndex, filteredItems.length), // Don't exceed filtered count
+      hasNextPage: currentPage < totalPages,
+      hasPreviousPage: currentPage > 1,
+    },
   };
 }

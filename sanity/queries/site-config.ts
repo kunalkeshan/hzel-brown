@@ -33,13 +33,18 @@ export const SITE_CONFIG_QUERY = defineQuery(`
       url,
       label
     },
+    enableMenuPageGridView,
     featuredMenuItems[]-> {
       _id,
       name,
       slug,
       description,
       price,
-      ingredients,
+      ingredients[]-> {
+        _id,
+        name,
+        slug
+      },
       allergens,
       isAvailable,
       isCombo,
@@ -81,7 +86,10 @@ export const SITE_CONFIG_QUERY = defineQuery(`
       alt,
       hotspot,
       crop
-    }
+    },
+    freeShippingThreshold,
+    shippingCost,
+    bulkDiscountPercentage
   }
 `);
 
