@@ -3,6 +3,7 @@ import { Libre_Baskerville, Lora, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
 import { SITE_CONFIG } from "@/config/site";
 import { PWAInstallPrompt } from "@/components/pwa/pwa-install-prompt";
+import { PWAUpdateNotification } from "@/components/pwa/pwa-update-notification";
 
 const sans = Libre_Baskerville({
   variable: "--font-sans",
@@ -41,6 +42,7 @@ export default function RootLayout({
       >
         {children}
         <PWAInstallPrompt />
+        <PWAUpdateNotification />
       </body>
     </html>
   );
