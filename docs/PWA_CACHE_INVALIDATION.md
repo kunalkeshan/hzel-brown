@@ -72,12 +72,26 @@ Users see a friendly notification when updates are available:
 
 ## Cache Version Management
 
-The cache version (`CACHE_VERSION`) is incremented when:
-- PWA functionality changes
-- Static assets need to be refreshed
-- Service worker logic updates
+The cache version is **automatically generated** from Vercel environment variables during build:
 
-Old caches are automatically cleaned up during the activation phase.
+**Priority order:**
+1. `VERCEL_DEPLOYMENT_ID` - Unique ID for each deployment (recommended)
+2. `VERCEL_GIT_COMMIT_SHA` - Git commit hash (short form, 7 characters)
+3. Fallback: `dev-{timestamp}` for local development
+
+**How it works:**
+- During build, the `generate:sw` script reads `public/sw.template.js`
+- Replaces `{{CACHE_VERSION}}` placeholder with environment variable
+- Outputs final `public/sw.js` with unique version
+- Each deployment gets a unique cache version
+- Old caches are automatically cleaned up during activation phase
+
+**Vercel Configuration:**
+No additional configuration needed! Vercel automatically provides:
+- `VERCEL_DEPLOYMENT_ID` - Available in all deployments
+- `VERCEL_GIT_COMMIT_SHA` - Available when connected to Git
+
+See [Vercel Environment Variables](https://vercel.com/docs/environment-variables) for more details.
 
 ## API/Data Freshness
 
@@ -107,20 +121,43 @@ Users can manually clear the cache by:
 
 To test cache updates locally:
 
-1. **Deploy changes**: Make code changes and deploy
-2. **Update version**: Increment `CACHE_VERSION` in `public/sw.js`
+1. **Run the build**: `npm run build` (automatically generates sw.js with unique version)
+2. **Start the server**: `npm start`
 3. **Test in installed PWA**: 
    - Wait up to 1 hour for automatic check, or
    - Close and reopen the PWA to trigger update check
 4. **Verify notification**: Update notification should appear
 5. **Verify update**: Click "Update Now" and verify fresh content loads
 
+To test with specific version:
+```bash
+# Test with deployment ID
+VERCEL_DEPLOYMENT_ID=test-123 npm run generate:sw
+
+# Test with Git commit SHA
+VERCEL_GIT_COMMIT_SHA=abc123def456 npm run generate:sw
+```
+
 ## Developer Notes
 
-### Incrementing Cache Version
-```javascript
-// In public/sw.js
-const CACHE_VERSION = 'v3'; // Increment this number
+### Build Process
+The service worker is generated during build:
+```bash
+npm run build
+# Runs: generate:sw (creates sw.js from template) → next build
+```
+
+### Service Worker Template
+Edit `public/sw.template.js` to modify service worker logic.
+The `{{CACHE_VERSION}}` placeholder is replaced during build.
+
+### Manual Cache Version Override
+To override the cache version temporarily:
+```bash
+# In scripts/generate-sw.js, modify getCacheVersion() function
+const getCacheVersion = () => {
+  return 'my-custom-version'; // Your version here
+};
 ```
 
 ### Forcing Immediate Update (Development)
@@ -139,11 +176,12 @@ Use Chrome DevTools:
 
 ## Best Practices
 
-1. **Always increment cache version** when updating service worker logic
-2. **Test offline functionality** after cache changes
-3. **Monitor cache sizes** to ensure they don't grow unbounded
-4. **Update service worker** sparingly to avoid frequent user notifications
-5. **Test cross-browser** as PWA support varies by browser
+1. **Cache version is automatic** - No manual version management needed on Vercel
+2. **Edit the template file** - Always modify `public/sw.template.js`, not `public/sw.js`
+3. **Test offline functionality** after cache changes
+4. **Monitor cache sizes** to ensure they don't grow unbounded
+5. **Test locally before deploying** using `npm run generate:sw && npm run build`
+6. **Test cross-browser** as PWA support varies by browser
 
 ## Browser Compatibility
 
@@ -157,3 +195,4 @@ Use Chrome DevTools:
 - [MDN: Service Worker API](https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API)
 - [Web.dev: Service Worker Lifecycle](https://web.dev/service-worker-lifecycle/)
 - [Web.dev: Offline Cookbook](https://web.dev/offline-cookbook/)
+- [Vercel Environment Variables](https://vercel.com/docs/environment-variables)

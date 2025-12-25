@@ -1,6 +1,6 @@
 // Cache version is dynamically injected during build from Vercel environment variables
 // This ensures each deployment has a unique cache version for automatic invalidation
-const CACHE_VERSION = 'dev-1766696655878';
+const CACHE_VERSION = '{{CACHE_VERSION}}';
 const STATIC_CACHE = `hzel-brown-static-${CACHE_VERSION}`;
 const DYNAMIC_CACHE = `hzel-brown-dynamic-${CACHE_VERSION}`;
 const IMAGE_CACHE = `hzel-brown-images-${CACHE_VERSION}`;
