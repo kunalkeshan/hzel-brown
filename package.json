@@ -4,12 +4,13 @@
   "private": true,
   "scripts": {
     "dev": "concurrently --kill-others-on-fail --prefix-colors \"cyan.bold,magenta.bold\" --names \"⚡ Next.js,📧 Email\" --prefix \"[{name}]\" \"npm run dev:app\" \"npm run dev:email\"",
-    "dev:app": "next dev --turbopack",
+    "dev:app": "npm run generate:sw && next dev --turbopack",
     "dev:email": "email dev --port 3001",
-    "build": "next build",
+    "build": "npm run generate:sw && next build",
     "start": "next start",
     "lint": "eslint",
-    "generate:types": "sanity schema extract && sanity typegen generate"
+    "generate:types": "sanity schema extract && sanity typegen generate",
+    "generate:sw": "node scripts/generate-sw.js"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
