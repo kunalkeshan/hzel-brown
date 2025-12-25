@@ -11,8 +11,8 @@ export function PWAUpdateNotification() {
   );
   
   // Store event handlers in refs to ensure proper cleanup
-  const handleControllerChangeRef = useRef<() => void>();
-  const handleVisibilityChangeRef = useRef<() => void>();
+  const handleControllerChangeRef = useRef<() => void>(() => {});
+  const handleVisibilityChangeRef = useRef<() => void>(() => {});
 
   useEffect(() => {
     if (!("serviceWorker" in navigator)) return;
@@ -66,8 +66,8 @@ export function PWAUpdateNotification() {
     });
     
     // Add event listeners using the ref values
-    const controllerChangeHandler = () => handleControllerChangeRef.current?.();
-    const visibilityChangeHandler = () => handleVisibilityChangeRef.current?.();
+    const controllerChangeHandler = () => handleControllerChangeRef.current();
+    const visibilityChangeHandler = () => handleVisibilityChangeRef.current();
     
     navigator.serviceWorker.addEventListener("controllerchange", controllerChangeHandler);
     document.addEventListener("visibilitychange", visibilityChangeHandler);
