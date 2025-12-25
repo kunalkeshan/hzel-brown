@@ -15,16 +15,20 @@ const STATIC_ASSETS = [
 const MAX_DYNAMIC_CACHE_SIZE = 50;
 const MAX_IMAGE_CACHE_SIZE = 60;
 
-// Cache size management
-const limitCacheSize = (cacheName, maxSize) => {
-  caches.open(cacheName).then((cache) => {
-    cache.keys().then((keys) => {
-      if (keys.length > maxSize) {
-        // Delete oldest entries
-        cache.delete(keys[0]).then(() => limitCacheSize(cacheName, maxSize));
-      }
-    });
-  });
+// CMS hostnames for network-first strategy
+const CMS_HOSTNAMES = ['sanity.io'];
+
+// Cache size management - delete all excess entries at once
+const limitCacheSize = async (cacheName, maxSize) => {
+  const cache = await caches.open(cacheName);
+  const keys = await cache.keys();
+  
+  if (keys.length > maxSize) {
+    const entriesToDelete = keys.length - maxSize;
+    // Delete oldest entries (first in array)
+    const deletePromises = keys.slice(0, entriesToDelete).map(key => cache.delete(key));
+    await Promise.all(deletePromises);
+  }
 };
 
 // Install service worker and cache static resources
@@ -77,7 +81,7 @@ self.addEventListener('fetch', (event) => {
 
   // Network-first for API/data requests (Sanity CMS, etc.)
   if (url.pathname.startsWith('/api/') || 
-      url.hostname.includes('sanity.io') ||
+      CMS_HOSTNAMES.some(hostname => url.hostname.includes(hostname)) ||
       url.pathname.includes('/cms/')) {
     event.respondWith(
       fetch(request)
@@ -141,9 +145,10 @@ self.addEventListener('fetch', (event) => {
         return networkResponse;
       }).catch(() => {
         // If network fails, return cached response if available
-        return cachedResponse || new Response('Offline', {
+        return cachedResponse || new Response('Content unavailable offline. Please check your internet connection and try again.', {
           status: 503,
-          statusText: 'Service Unavailable'
+          statusText: 'Service Unavailable',
+          headers: { 'Content-Type': 'text/plain' }
         });
       });
 

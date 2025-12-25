@@ -13,6 +13,8 @@ export function PWAUpdateNotification() {
   useEffect(() => {
     if (!("serviceWorker" in navigator)) return;
 
+    let updateCheckInterval: NodeJS.Timeout;
+
     // Listen for new service worker updates
     const handleUpdate = (registration: ServiceWorkerRegistration) => {
       registration.addEventListener("updatefound", () => {
@@ -37,15 +39,25 @@ export function PWAUpdateNotification() {
       handleUpdate(registration);
 
       // Check for updates every hour
-      setInterval(() => {
+      updateCheckInterval = setInterval(() => {
         registration.update();
       }, 60 * 60 * 1000);
     });
 
     // Handle controller change
-    navigator.serviceWorker.addEventListener("controllerchange", () => {
+    const handleControllerChange = () => {
       window.location.reload();
-    });
+    };
+    
+    navigator.serviceWorker.addEventListener("controllerchange", handleControllerChange);
+
+    // Cleanup on unmount
+    return () => {
+      if (updateCheckInterval) {
+        clearInterval(updateCheckInterval);
+      }
+      navigator.serviceWorker.removeEventListener("controllerchange", handleControllerChange);
+    };
   }, []);
 
   const handleUpdate = () => {
