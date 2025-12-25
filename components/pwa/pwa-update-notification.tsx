@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { X, RefreshCw } from "lucide-react";
 
@@ -9,6 +9,10 @@ export function PWAUpdateNotification() {
   const [waitingWorker, setWaitingWorker] = useState<ServiceWorker | null>(
     null
   );
+  
+  // Store event handlers in refs to ensure proper cleanup
+  const handleControllerChangeRef = useRef<() => void>();
+  const handleVisibilityChangeRef = useRef<() => void>();
 
   useEffect(() => {
     if (!("serviceWorker" in navigator)) return;
@@ -35,12 +39,17 @@ export function PWAUpdateNotification() {
     };
 
     // Check for updates when tab becomes visible
-    const handleVisibilityChange = () => {
+    handleVisibilityChangeRef.current = () => {
       if (document.visibilityState === "visible") {
         navigator.serviceWorker.ready.then((registration) => {
           registration.update();
         });
       }
+    };
+
+    // Handle controller change
+    handleControllerChangeRef.current = () => {
+      window.location.reload();
     };
 
     // Get the current registration
@@ -55,22 +64,21 @@ export function PWAUpdateNotification() {
         }, 60 * 60 * 1000);
       }
     });
-
-    // Handle controller change
-    const handleControllerChange = () => {
-      window.location.reload();
-    };
     
-    navigator.serviceWorker.addEventListener("controllerchange", handleControllerChange);
-    document.addEventListener("visibilitychange", handleVisibilityChange);
+    // Add event listeners using the ref values
+    const controllerChangeHandler = () => handleControllerChangeRef.current?.();
+    const visibilityChangeHandler = () => handleVisibilityChangeRef.current?.();
+    
+    navigator.serviceWorker.addEventListener("controllerchange", controllerChangeHandler);
+    document.addEventListener("visibilitychange", visibilityChangeHandler);
 
     // Cleanup on unmount
     return () => {
       if (updateCheckInterval) {
         clearInterval(updateCheckInterval);
       }
-      navigator.serviceWorker.removeEventListener("controllerchange", handleControllerChange);
-      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      navigator.serviceWorker.removeEventListener("controllerchange", controllerChangeHandler);
+      document.removeEventListener("visibilitychange", visibilityChangeHandler);
     };
   }, []);
 
