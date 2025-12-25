@@ -50,14 +50,6 @@ const nextConfig: NextConfig = {
             value: "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://cdn.sanity.io; font-src 'self' data:; connect-src 'self' https://cdn.sanity.io https://*.sanity.io;",
           },
           {
-            key: "X-Content-Type-Options",
-            value: "nosniff",
-          },
-          {
-            key: "Referrer-Policy",
-            value: "strict-origin-when-cross-origin",
-          },
-          {
             key: "Permissions-Policy",
             value: "camera=(), microphone=(), geolocation=()",
           },
