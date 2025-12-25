@@ -25,10 +25,6 @@ const nextConfig: NextConfig = {
             value: "nosniff",
           },
           {
-        // Apply security headers to all routes
-        source: "/:path*",
-        headers: [
-          {
             key: "X-Frame-Options",
             value: "DENY",
           },
@@ -51,13 +47,7 @@ const nextConfig: NextConfig = {
           },
           {
             key: "Content-Security-Policy",
-            value: "default-src 'self'; script-src 'self'",
-            key: "X-Content-Type-Options",
-            value: "nosniff",
-          },
-          {
-            key: "Referrer-Policy",
-            value: "strict-origin-when-cross-origin",
+            value: "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://cdn.sanity.io; font-src 'self' data:; connect-src 'self' https://cdn.sanity.io https://*.sanity.io;",
           },
           {
             key: "Permissions-Policy",
@@ -66,11 +56,6 @@ const nextConfig: NextConfig = {
           {
             key: "Strict-Transport-Security",
             value: "max-age=63072000; includeSubDomains; preload",
-          },
-          {
-            key: "Content-Security-Policy",
-            value:
-              "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://cdn.sanity.io; font-src 'self' data:; connect-src 'self' https://cdn.sanity.io https://*.sanity.io;",
           },
         ],
       },
