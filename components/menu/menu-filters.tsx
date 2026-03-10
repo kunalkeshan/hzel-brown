@@ -34,8 +34,10 @@ interface MenuFiltersProps {
   onCategoriesChange: (categories: string[]) => void;
   onAllergensChange: (allergens: string[]) => void;
   onPriceRangeChange: (minPrice: number, maxPrice: number) => void;
+  onApplyFilters: () => void;
   onClearFilters: () => void;
   hasActiveFilters: boolean;
+  pendingFilterCount: number;
   filteredCount: number;
   totalCount: number;
   lockedCategorySlug?: string;
@@ -48,8 +50,10 @@ export function MenuFilters({
   onCategoriesChange,
   onAllergensChange,
   onPriceRangeChange,
+  onApplyFilters,
   onClearFilters,
   hasActiveFilters,
+  pendingFilterCount,
   filteredCount,
   totalCount,
   lockedCategorySlug,
@@ -205,6 +209,16 @@ export function MenuFilters({
           className="w-full"
         />
       </div>
+
+      {/* Apply Filters */}
+      <Button onClick={onApplyFilters} className="w-full">
+        Apply Filters
+        {pendingFilterCount > 0 && (
+          <span className="ml-2 rounded-full bg-primary-foreground px-2 py-0.5 text-xs text-primary">
+            {pendingFilterCount}
+          </span>
+        )}
+      </Button>
     </div>
   );
 }

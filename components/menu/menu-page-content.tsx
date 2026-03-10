@@ -30,6 +30,7 @@ export function MenuPageContent({
 
   const {
     filters,
+    draftFilters,
     filteredItems,
     paginatedItems,
     updateSearch,
@@ -37,8 +38,10 @@ export function MenuPageContent({
     updateAllergens,
     updatePriceRange,
     updatePage,
+    commitFilters,
     clearFilters,
     hasActiveFilters,
+    pendingFilterCount,
     totalItems,
     filteredCount,
     lockedCategorySlug: hookLockedCategorySlug,
@@ -107,13 +110,21 @@ export function MenuPageContent({
 
   const filterProps = {
     filterData,
-    filters,
+    filters: {
+      search: filters.search, // committed (live-reactive)
+      categories: draftFilters.categories, // draft (staged, not yet applied)
+      allergens: draftFilters.allergens,
+      minPrice: draftFilters.minPrice,
+      maxPrice: draftFilters.maxPrice,
+    },
     onSearchChange: updateSearch,
     onCategoriesChange: updateCategories,
     onAllergensChange: updateAllergens,
     onPriceRangeChange: updatePriceRange,
+    onApplyFilters: commitFilters,
     onClearFilters: clearFilters,
     hasActiveFilters,
+    pendingFilterCount,
     filteredCount,
     totalCount: totalItems,
     lockedCategorySlug: hookLockedCategorySlug,
