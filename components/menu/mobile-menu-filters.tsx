@@ -63,7 +63,7 @@ export function MobileMenuFilters(props: MobileMenuFiltersProps) {
           <SheetTitle>Filters</SheetTitle>
         </SheetHeader>
         <div className="mt-6 space-y-6">
-          <MenuFilters {...props} />
+          <MenuFilters {...props} showApplyButton={false} />
         </div>
         <div className="mt-6 py-4 border-t">
           <Button

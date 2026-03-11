@@ -61,6 +61,48 @@ export function useMenuFilters({
     };
   });
 
+  // Keep draftFilters in sync with committed filters when URL state changes externally
+  // (e.g., back/forward navigation, manual URL edits, or locked-category enforcement).
+  useEffect(() => {
+    let categories = filters.categories;
+    if (lockedCategorySlug && !categories.includes(lockedCategorySlug)) {
+      categories = [lockedCategorySlug, ...categories];
+    }
+
+    const nextDraft = {
+      categories,
+      allergens: filters.allergens,
+      minPrice: filters.minPrice,
+      maxPrice: filters.maxPrice,
+    };
+
+    setDraftFilters((prev) => {
+      const nextCatSet = new Set(nextDraft.categories);
+      const sameCategories =
+        prev.categories.length === nextDraft.categories.length &&
+        prev.categories.every((c) => nextCatSet.has(c));
+      const nextAllergenSet = new Set(nextDraft.allergens);
+      const sameAllergens =
+        prev.allergens.length === nextDraft.allergens.length &&
+        prev.allergens.every((a) => nextAllergenSet.has(a));
+      const samePrices =
+        prev.minPrice === nextDraft.minPrice &&
+        prev.maxPrice === nextDraft.maxPrice;
+
+      if (sameCategories && sameAllergens && samePrices) {
+        return prev;
+      }
+
+      return nextDraft;
+    });
+  }, [
+    filters.categories,
+    filters.allergens,
+    filters.minPrice,
+    filters.maxPrice,
+    lockedCategorySlug,
+  ]);
+
   // Ensure locked category is always in the categories array
   useEffect(() => {
     if (
@@ -185,6 +227,7 @@ export function useMenuFilters({
       allergens: draftFilters.allergens,
       minPrice: draftFilters.minPrice,
       maxPrice: draftFilters.maxPrice,
+      page: 1,
     });
   }, [draftFilters, setFilters]);
 

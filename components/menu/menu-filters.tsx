@@ -41,6 +41,7 @@ interface MenuFiltersProps {
   filteredCount: number;
   totalCount: number;
   lockedCategorySlug?: string;
+  showApplyButton?: boolean;
 }
 
 export function MenuFilters({
@@ -57,6 +58,7 @@ export function MenuFilters({
   filteredCount,
   totalCount,
   lockedCategorySlug,
+  showApplyButton = true,
 }: MenuFiltersProps) {
   const handleCategoryChange = (categoryId: string, checked: boolean) => {
     if (checked) {
@@ -211,14 +213,16 @@ export function MenuFilters({
       </div>
 
       {/* Apply Filters */}
-      <Button onClick={onApplyFilters} className="w-full">
-        Apply Filters
-        {pendingFilterCount > 0 && (
-          <span className="ml-2 rounded-full bg-primary-foreground px-2 py-0.5 text-xs text-primary">
-            {pendingFilterCount}
-          </span>
-        )}
-      </Button>
+      {showApplyButton && (
+        <Button onClick={onApplyFilters} className="w-full">
+          Apply Filters
+          {pendingFilterCount > 0 && (
+            <span className="ml-2 rounded-full bg-primary-foreground px-2 py-0.5 text-xs text-primary">
+              {pendingFilterCount}
+            </span>
+          )}
+        </Button>
+      )}
     </div>
   );
 }
