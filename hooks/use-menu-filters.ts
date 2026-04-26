@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useEffect, useCallback } from "react";
+import { useMemo, useEffect, useCallback, useState } from "react";
 import {
   parseAsArrayOf,
   parseAsInteger,
@@ -44,6 +44,64 @@ export function useMenuFilters({
     maxPrice: parseAsInteger.withDefault(defaultMaxPrice),
     page: parseAsInteger.withDefault(1),
   });
+
+  // Draft state — mirrors categories/allergens/price but is not immediately applied.
+  // Initialized from committed nuqs state (URL) on mount.
+  const [draftFilters, setDraftFilters] = useState(() => {
+    let categories = filters.categories;
+    // Ensure locked category is always in the initial draft
+    if (lockedCategorySlug && !categories.includes(lockedCategorySlug)) {
+      categories = [lockedCategorySlug, ...categories];
+    }
+    return {
+      categories, // slugs
+      allergens: filters.allergens,
+      minPrice: filters.minPrice,
+      maxPrice: filters.maxPrice,
+    };
+  });
+
+  // Keep draftFilters in sync with committed filters when URL state changes externally
+  // (e.g., back/forward navigation, manual URL edits, or locked-category enforcement).
+  useEffect(() => {
+    let categories = filters.categories;
+    if (lockedCategorySlug && !categories.includes(lockedCategorySlug)) {
+      categories = [lockedCategorySlug, ...categories];
+    }
+
+    const nextDraft = {
+      categories,
+      allergens: filters.allergens,
+      minPrice: filters.minPrice,
+      maxPrice: filters.maxPrice,
+    };
+
+    setDraftFilters((prev) => {
+      const nextCatSet = new Set(nextDraft.categories);
+      const sameCategories =
+        prev.categories.length === nextDraft.categories.length &&
+        prev.categories.every((c) => nextCatSet.has(c));
+      const nextAllergenSet = new Set(nextDraft.allergens);
+      const sameAllergens =
+        prev.allergens.length === nextDraft.allergens.length &&
+        prev.allergens.every((a) => nextAllergenSet.has(a));
+      const samePrices =
+        prev.minPrice === nextDraft.minPrice &&
+        prev.maxPrice === nextDraft.maxPrice;
+
+      if (sameCategories && sameAllergens && samePrices) {
+        return prev;
+      }
+
+      return nextDraft;
+    });
+  }, [
+    filters.categories,
+    filters.allergens,
+    filters.minPrice,
+    filters.maxPrice,
+    lockedCategorySlug,
+  ]);
 
   // Ensure locked category is always in the categories array
   useEffect(() => {
@@ -141,8 +199,9 @@ export function useMenuFilters({
     setFilters({ search });
   };
 
+  // Category/allergen/price handlers update draft state only — no immediate re-filtering.
   const updateCategories = (categoryIds: string[]) => {
-    // Convert category IDs to slugs for URL
+    // Convert category IDs to slugs for draft storage
     let categorySlugs = getCategorySlugsFromIds(categoryIds);
 
     // Ensure locked category is always included if provided
@@ -150,24 +209,39 @@ export function useMenuFilters({
       categorySlugs = [lockedCategorySlug, ...categorySlugs];
     }
 
-    setFilters({ categories: categorySlugs });
+    setDraftFilters((prev) => ({ ...prev, categories: categorySlugs }));
   };
 
   const updateAllergens = (allergens: string[]) => {
-    setFilters({ allergens });
+    setDraftFilters((prev) => ({ ...prev, allergens }));
   };
 
   const updatePriceRange = (minPrice: number, maxPrice: number) => {
-    setFilters({ minPrice, maxPrice });
+    setDraftFilters((prev) => ({ ...prev, minPrice, maxPrice }));
   };
 
-  const clearFilters = () => {
+  // Commits draft state to nuqs URL state, triggering a re-filter.
+  const commitFilters = useCallback(() => {
     setFilters({
-      search: "",
+      categories: draftFilters.categories,
+      allergens: draftFilters.allergens,
+      minPrice: draftFilters.minPrice,
+      maxPrice: draftFilters.maxPrice,
+      page: 1,
+    });
+  }, [draftFilters, setFilters]);
+
+  const clearFilters = () => {
+    const resetState = {
       categories: lockedCategorySlug ? [lockedCategorySlug] : [],
       allergens: [],
       minPrice: defaultMinPrice,
       maxPrice: defaultMaxPrice,
+    };
+    setDraftFilters(resetState);
+    setFilters({
+      search: "",
+      ...resetState,
       page: 1,
     });
   };
@@ -183,13 +257,46 @@ export function useMenuFilters({
     filters.minPrice !== defaultMinPrice ||
     filters.maxPrice !== defaultMaxPrice;
 
+  // Count filter dimensions where draft differs from committed state.
+  // Used to show a badge on the "Apply Filters" button and mobile trigger.
+  const pendingFilterCount = useMemo(() => {
+    let count = 0;
+    const committedCatSet = new Set(filters.categories);
+    if (
+      draftFilters.categories.length !== filters.categories.length ||
+      !draftFilters.categories.every((c) => committedCatSet.has(c))
+    ) {
+      count++;
+    }
+    const committedAllergenSet = new Set(filters.allergens);
+    if (
+      draftFilters.allergens.length !== filters.allergens.length ||
+      !draftFilters.allergens.every((a) => committedAllergenSet.has(a))
+    ) {
+      count++;
+    }
+    if (
+      draftFilters.minPrice !== filters.minPrice ||
+      draftFilters.maxPrice !== filters.maxPrice
+    ) {
+      count++;
+    }
+    return count;
+  }, [draftFilters, filters.categories, filters.allergens, filters.minPrice, filters.maxPrice]);
+
   // Convert current URL slugs back to IDs for the filter components
   const selectedCategoryIds = getCategoryIdsFromSlugs(filters.categories);
+  // Convert draft slugs to IDs for the filter components
+  const draftCategoryIds = getCategoryIdsFromSlugs(draftFilters.categories);
 
   return {
     filters: {
       ...filters,
       categories: selectedCategoryIds, // Return IDs for filter components
+    },
+    draftFilters: {
+      ...draftFilters,
+      categories: draftCategoryIds, // Return IDs for filter components
     },
     filteredItems,
     paginatedItems,
@@ -198,8 +305,10 @@ export function useMenuFilters({
     updateAllergens,
     updatePriceRange,
     updatePage,
+    commitFilters,
     clearFilters,
     hasActiveFilters,
+    pendingFilterCount,
     totalItems: menuItems.length,
     filteredCount: filteredItems.length,
     lockedCategorySlug,

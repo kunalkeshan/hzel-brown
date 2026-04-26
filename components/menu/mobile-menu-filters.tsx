@@ -26,8 +26,10 @@ interface MobileMenuFiltersProps {
   onCategoriesChange: (categories: string[]) => void;
   onAllergensChange: (allergens: string[]) => void;
   onPriceRangeChange: (minPrice: number, maxPrice: number) => void;
+  onApplyFilters: () => void;
   onClearFilters: () => void;
   hasActiveFilters: boolean;
+  pendingFilterCount: number;
   filteredCount: number;
   totalCount: number;
   lockedCategorySlug?: string;
@@ -46,17 +48,9 @@ export function MobileMenuFilters(props: MobileMenuFiltersProps) {
         >
           <Filter className="h-4 w-4" />
           Filters
-          {props.hasActiveFilters && (
+          {props.pendingFilterCount > 0 && (
             <span className="ml-1 rounded-full bg-primary px-2 py-0.5 text-xs text-primary-foreground">
-              {props.filters.categories.length +
-                props.filters.allergens.length +
-                (props.filters.search ? 1 : 0) +
-                (props.filters.minPrice !==
-                  (props.filterData?.priceRange?.min ?? 100) ||
-                props.filters.maxPrice !==
-                  (props.filterData?.priceRange?.max ?? 5000)
-                  ? 1
-                  : 0)}
+              {props.pendingFilterCount}
             </span>
           )}
         </Button>
@@ -69,11 +63,22 @@ export function MobileMenuFilters(props: MobileMenuFiltersProps) {
           <SheetTitle>Filters</SheetTitle>
         </SheetHeader>
         <div className="mt-6 space-y-6">
-          <MenuFilters {...props} />
+          <MenuFilters {...props} showApplyButton={false} />
         </div>
         <div className="mt-6 py-4 border-t">
-          <Button onClick={() => setIsOpen(false)} className="w-full">
+          <Button
+            onClick={() => {
+              props.onApplyFilters();
+              setIsOpen(false);
+            }}
+            className="w-full"
+          >
             Apply Filters
+            {props.pendingFilterCount > 0 && (
+              <span className="ml-2 rounded-full bg-primary-foreground px-2 py-0.5 text-xs text-primary">
+                {props.pendingFilterCount}
+              </span>
+            )}
           </Button>
         </div>
       </SheetContent>
