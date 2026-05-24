@@ -1,4 +1,10 @@
 import { Hero } from "@/components/landing/hero";
+import { HeroLogoWithText } from "@/components/landing/hero-logo-with-text";
+import { HeroLogoCenter } from "@/components/landing/hero-logo-center";
+import { HeroLogoBanner } from "@/components/landing/hero-logo-banner";
+import { HeroLogoSplit } from "@/components/landing/hero-logo-split";
+import { HeroLogoOverlay } from "@/components/landing/hero-logo-overlay";
+import { HeroLogoAsymmetric } from "@/components/landing/hero-logo-asymmetric";
 import { Stats } from "@/components/landing/stats";
 import { AboutUs } from "@/components/landing/about-us";
 import { Faqs } from "@/components/common/faqs";
@@ -31,7 +37,27 @@ export default async function Home() {
       {faqSchema && <JsonLdScript data={faqSchema} />}
 
       <main>
+        {/* Original Hero */}
         <Hero heroImages={siteConfig?.heroImages || []} />
+
+        {/* Hero with Logo: Original layout + centered logo overlay */}
+        <HeroLogoWithText heroImages={siteConfig?.heroImages || []} />
+
+        {/* Hero Variant 1: Logo Center - Logo absolutely positioned in center of 4 images */}
+        <HeroLogoCenter heroImages={siteConfig?.heroImages || []} />
+
+        {/* Hero Variant 2: Logo Banner - LinkedIn/Facebook style banner with logo overlay */}
+        <HeroLogoBanner heroImages={siteConfig?.heroImages || []} />
+
+        {/* Hero Variant 3: Logo Split - Logo dominant on left, images as sidebar */}
+        <HeroLogoSplit heroImages={siteConfig?.heroImages || []} />
+
+        {/* Hero Variant 4: Logo Overlay - Large overlay with centered logo */}
+        <HeroLogoOverlay heroImages={siteConfig?.heroImages || []} />
+
+        {/* Hero Variant 5: Logo Asymmetric - Asymmetric layout with logo in card */}
+        <HeroLogoAsymmetric heroImages={siteConfig?.heroImages || []} />
+
         <FeaturedMenuItems
           featuredMenuItems={siteConfig?.featuredMenuItems || []}
         />
